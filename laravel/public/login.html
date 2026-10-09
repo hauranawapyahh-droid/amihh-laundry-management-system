@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Amih Laundry</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;min-height:100%;font-family:"Segoe UI",Arial,sans-serif}
+body{background:#f3f9ff;overflow-x:hidden}
+.login-page{width:100%;min-height:100vh;display:grid;grid-template-columns:1.02fr .98fr}
+
+/* KIRI */
+.left{
+  min-height:100vh;position:relative;overflow:hidden;
+  padding:55px 7% 30px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  background:linear-gradient(135deg,#eaf6ff,#d2eaff);
+}
+.left:before,.left:after{content:"";position:absolute;border-radius:50%;background:#fff5;pointer-events:none}
+.left:before{width:340px;height:340px;left:-150px;top:-160px}
+.left:after{width:280px;height:280px;right:-130px;bottom:-100px}
+.brand{display:flex;align-items:center;gap:20px;position:relative;z-index:2}
+.logo{
+ width:88px;height:88px;border-radius:18px;background:linear-gradient(145deg,#258be9,#0863bd);
+ color:white;display:grid;place-items:center;font-size:49px;box-shadow:0 10px 25px #176db833;flex-shrink:0;position:relative
+}
+.logo:after{content:"✦";position:absolute;right:-12px;top:-17px;color:#1684e8;font-size:30px;animation:twinkle 2s infinite}
+.brand h1{font-size:clamp(34px,3.2vw,54px);color:#0754a5;margin:0;font-weight:750;line-height:1.05;white-space:nowrap}
+.brand p{font-size:clamp(16px,1.6vw,24px);color:#52759c;margin:7px 0 0}
+@keyframes twinkle{50%{transform:rotate(20deg) scale(1.2);opacity:.55}}
+.intro{position:relative;z-index:2;margin-top:20px}
+.intro h2{font-size:clamp(30px,2.8vw,43px);line-height:1.08;color:#07509b;margin:0;font-weight:750}
+.intro p{font-size:clamp(16px,1.35vw,20px);line-height:1.5;color:#426587;margin:12px 0 0;max-width:600px}
+
+/* ILUSTRASI */
+.scene{height:clamp(270px,36vh,370px);width:100%;position:relative;z-index:2;margin:12px auto 0}
+.machine{
+ position:absolute;width:36%;height:83%;left:50%;bottom:2%;transform:translateX(-50%);
+ background:linear-gradient(145deg,#fff,#e9f1f8);border:3px solid #d1dfeb;border-radius:18px;
+ box-shadow:0 18px 35px #3e78a333;animation:float 4s ease-in-out infinite
+}
+@keyframes float{50%{translate:0 -7px}}
+.machine-top{height:22%;border-bottom:3px solid #dce5ed;display:flex;align-items:center;padding:0 6%;gap:5%}
+.dot{width:7%;aspect-ratio:1;border:3px solid #a8b7c4;border-radius:50%}
+.dial{width:16%;aspect-ratio:1;border:5px solid #aab9c6;border-radius:50%}
+.display{margin-left:auto;width:23%;height:35%;background:#263f55;border-radius:5px}
+.door{
+ position:absolute;width:65%;aspect-ratio:1;border-radius:50%;left:50%;top:30%;transform:translateX(-50%);
+ border:11px solid #d1dfeb;background:radial-gradient(circle at 45% 40%,#55b9f7,#1683d4 60%,#07518e);
+ box-shadow:inset 0 0 0 6px #a8c3d9,0 5px 14px #174e7a33;overflow:hidden
+}
+.water{position:absolute;width:75%;height:30%;left:12%;bottom:15%;background:#78caff;border-radius:50%;transform:rotate(-15deg)}
+.water:after{content:"";position:absolute;width:55%;height:75%;right:-18%;top:-10%;background:#258bd8;border-radius:50%}
+.basket{position:absolute;left:2%;bottom:3%;width:20%;height:35%;border:4px solid #1478c8;border-top:12px solid #218be0;border-radius:8px 8px 22px 22px;background:repeating-linear-gradient(90deg,#258fe0 0 10px,#48a8e9 10px 17px);z-index:3}
+.cloth{position:absolute;left:-8%;top:-38%;width:115%;height:38%;border-radius:12px;background:#fff;box-shadow:0 -16px 0 #1785dc,0 -32px 0 #f8fbff}
+.bottle{position:absolute;left:24%;bottom:3%;height:30%;width:7%;background:linear-gradient(90deg,#fff,#e6f0f8);border:2px solid #d1dce6;border-radius:8px 8px 10px 10px;z-index:3}
+.bottle:before{content:"";position:absolute;top:-12px;left:25%;width:50%;height:12px;background:#1680d2;border-radius:4px}
+.plant{position:absolute;right:3%;bottom:3%;width:17%;height:52%;z-index:3}
+.pot{position:absolute;bottom:0;left:20%;width:65%;height:35%;background:linear-gradient(90deg,#e4e9ed,#fff);border:2px solid #d7e0e7;border-radius:5px 5px 18px 18px}
+.leaf{position:absolute;bottom:28%;left:45%;width:30%;height:53%;border-radius:100% 0 100% 0;background:linear-gradient(130deg,#82d77c,#319c56);transform-origin:bottom}
+.l1{transform:rotate(-42deg)}.l2{transform:rotate(5deg);height:65%}.l3{transform:rotate(42deg)}
+.bubble{position:absolute;border:2px solid #69b7e477;background:#ffffff55;border-radius:50%;animation:rise 4s infinite}
+.b1{width:18px;height:18px;left:45%;bottom:25%;}.b2{width:12px;height:12px;left:61%;bottom:15%;animation-delay:1.2s}.b3{width:15px;height:15px;left:72%;bottom:35%;animation-delay:2s}
+@keyframes rise{0%{opacity:0;transform:translateY(15px)}30%{opacity:1}100%{opacity:0;transform:translateY(-90px)}}
+
+/* KEUNGGULAN */
+.features{position:relative;z-index:2;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px}
+.feature{text-align:center;color:#124f8d;font-size:clamp(12px,1vw,16px);line-height:1.25}
+.feature-icon{width:62px;height:62px;border-radius:18px;background:#d9edff;display:grid;place-items:center;margin:0 auto 8px;color:#1377d0;font-size:29px}
+
+/* KANAN */
+.right{
+ min-height:100vh;display:flex;align-items:center;justify-content:center;
+ padding:35px 6%;background:linear-gradient(120deg,#f6fbff,#edf7ff)
+}
+.card{
+ width:100%;max-width:630px;background:#fff;border:1px solid #eaf1f7;border-radius:22px;
+ padding:35px clamp(25px,3vw,48px);box-shadow:0 18px 50px #326b991c
+}
+.card-logo{display:flex;justify-content:center;margin-bottom:8px}
+.card-logo .logo{width:82px;height:82px;font-size:43px}
+.card h1{text-align:center;color:#0753a3;font-size:clamp(32px,2.8vw,43px);margin:0;font-weight:750}
+.welcome{text-align:center;color:#084f97;font-size:clamp(25px,2.2vw,32px);margin:17px 0 3px;font-weight:750}
+.subtitle{text-align:center;color:#647f99;font-size:17px;margin:0 0 27px}
+.field{position:relative;margin-bottom:17px}
+.field>i{position:absolute;left:20px;top:50%;transform:translateY(-50%);font-size:22px;color:#32658e}
+.field input{
+ width:100%;height:64px;border:1.5px solid #d3dfe9;border-radius:12px;padding:0 58px;
+ font-size:17px;outline:none;color:#243f58;background:#fff
+}
+.field input:focus{border-color:#2786df;box-shadow:0 0 0 4px #2786df18}
+.field input::placeholder{color:#8da0b3}
+.toggle{position:absolute;right:17px;top:50%;transform:translateY(-50%);border:0;background:none;color:#3c6385;font-size:21px;cursor:pointer}
+.options{display:flex;justify-content:space-between;align-items:center;margin:5px 0 23px;color:#345878;font-size:15px;gap:10px}
+.remember{display:flex;align-items:center;gap:9px;cursor:pointer}
+.remember input{width:21px;height:21px;accent-color:#197bd5}
+a{color:#1477cf;text-decoration:none;font-weight:600}
+a:hover{text-decoration:underline}
+.btn-login{
+ width:100%;height:66px;border:0;border-radius:12px;background:linear-gradient(135deg,#2789e8,#1372d1);
+ color:white;font-size:21px;font-weight:700;cursor:pointer;box-shadow:0 10px 20px #1c7bd538;transition:.2s
+}
+.btn-login:hover{transform:translateY(-2px);box-shadow:0 13px 25px #1c7bd54d}
+.btn-login:disabled{opacity:.7;cursor:wait}
+#errorMessage{margin-bottom:16px;border-radius:10px;font-size:14px}
+.divider{display:flex;align-items:center;gap:14px;margin:23px 0;color:#8297aa}
+.divider:before,.divider:after{content:"";height:1px;background:#dce5ed;flex:1}
+.contact{text-align:center;color:#607c96;font-size:15px;margin:0}
+
+/* LAYAR KECIL */
+@media(max-width:900px){
+ .login-page{grid-template-columns:1fr}
+ .left{min-height:auto;padding:35px 7% 25px}
+ .scene{height:260px;max-width:600px}
+ .right{min-height:auto;padding:35px 6%}
+ .card{max-width:560px}
+}
+@media(max-width:520px){
+ .left{padding:28px 20px 22px}
+ .brand{gap:13px}.brand .logo{width:62px;height:62px;font-size:34px}
+ .brand h1{font-size:29px}.brand p{font-size:14px}
+ .intro h2{font-size:28px}.intro p{font-size:15px}
+ .scene{height:220px}
+ .features{gap:5px}.feature-icon{width:45px;height:45px;font-size:22px;border-radius:13px}
+ .feature{font-size:11px}
+ .right{padding:25px 16px}
+ .card{padding:28px 20px;border-radius:17px}
+ .card-logo .logo{width:65px;height:65px;font-size:34px}
+ .card h1{font-size:30px}.welcome{font-size:25px}.subtitle{font-size:14px}
+ .field input{height:57px;font-size:15px}
+ .btn-login{height:58px;font-size:18px}
+ .options{font-size:13px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*:before,*:after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+
+<body>
+<div class="login-page">
+
+  <section class="left">
+    <div class="brand">
+      <div class="logo"><i class="bi bi-droplet-half"></i></div>
+      <div>
+        <h1>Amih Laundry</h1>
+        <p>Bersih • Rapi • Terpercaya</p>
+      </div>
+    </div>
+
+    <div class="intro">
+      <h2>Sistem Informasi<br>Amih Laundry</h2>
+      <p>Kelola transaksi, pantau proses cucian,<br>dan berikan pelayanan terbaik untuk pelanggan.</p>
+
+      <div class="scene">
+        <div class="bubble b1"></div><div class="bubble b2"></div><div class="bubble b3"></div>
+        <div class="basket"><div class="cloth"></div></div>
+        <div class="bottle"></div>
+        <div class="machine">
+          <div class="machine-top"><span class="dot"></span><span class="dot"></span><span class="dial"></span><span class="display"></span></div>
+          <div class="door"><div class="water"></div></div>
+        </div>
+        <div class="plant"><span class="leaf l1"></span><span class="leaf l2"></span><span class="leaf l3"></span><div class="pot"></div></div>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feature"><div class="feature-icon"><i class="bi bi-shield-check"></i></div>Aman &<br>Terpercaya</div>
+      <div class="feature"><div class="feature-icon"><i class="bi bi-clock"></i></div>Proses Lebih<br>Cepat</div>
+      <div class="feature"><div class="feature-icon"><i class="bi bi-stars"></i></div>Hasil Cucian<br>Berkualitas</div>
+      <div class="feature"><div class="feature-icon"><i class="bi bi-emoji-smile"></i></div>Kepuasan<br>Pelanggan</div>
+    </div>
+  </section>
+
+  <section class="right">
+    <div class="card">
+      <div class="card-logo"><div class="logo"><i class="bi bi-droplet-half"></i></div></div>
+      <h1>Amih Laundry</h1>
+      <h2 class="welcome">Selamat Datang!</h2>
+      <p class="subtitle">Silakan masuk untuk melanjutkan</p>
+
+      <form id="formLogin">
+        <div class="field">
+          <i class="bi bi-person"></i>
+          <input type="text" id="username" placeholder="Username" required autocomplete="username">
+        </div>
+
+        <div class="field">
+          <i class="bi bi-lock"></i>
+          <input type="password" id="password" placeholder="Password" required autocomplete="current-password">
+          <button type="button" class="toggle" id="togglePassword" aria-label="Tampilkan password"><i class="bi bi-eye"></i></button>
+        </div>
+
+        <div id="errorMessage" class="alert alert-danger d-none" role="alert"></div>
+
+        <div class="options">
+          <label class="remember"><input type="checkbox" id="rememberMe"><span>Ingat saya</span></label>
+          <a href="#" id="forgotPassword">Lupa password?</a>
+        </div>
+
+        <button type="submit" class="btn-login" id="btnLogin"><i class="bi bi-box-arrow-in-right"></i> &nbsp;Masuk</button>
+      </form>
+
+      <div class="divider">atau</div>
+      <p class="contact">Belum punya akun? <a href="#" id="contactAdmin">Hubungi Admin</a></p>
+    </div>
+  </section>
+</div>
+
+<script>
+const form=document.getElementById("formLogin");
+const errorBox=document.getElementById("errorMessage");
+const btnLogin=document.getElementById("btnLogin");
+const usernameInput=document.getElementById("username");
+const passwordInput=document.getElementById("password");
+
+document.getElementById("togglePassword").addEventListener("click",function(){
+  const icon=this.querySelector("i");
+  const showing=passwordInput.type==="password";
+  passwordInput.type=showing?"text":"password";
+  icon.className=showing?"bi bi-eye-slash":"bi bi-eye";
+});
+
+const remembered=localStorage.getItem("remember_username");
+if(remembered){
+  usernameInput.value=remembered;
+  document.getElementById("rememberMe").checked=true;
+}
+
+form.addEventListener("submit",async function(e){
+  e.preventDefault();
+  errorBox.classList.add("d-none");
+  btnLogin.disabled=true;
+  btnLogin.innerHTML="Memproses...";
+
+  const username=usernameInput.value.trim();
+  const password=passwordInput.value;
+
+  try{
+    const response=await fetch("/api/auth/login",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({username,password})
+    });
+    const data=await response.json();
+
+    if(!response.ok||!data.success){
+      errorBox.textContent=data.message||"Username atau password salah";
+      errorBox.classList.remove("d-none");
+      btnLogin.disabled=false;
+      btnLogin.innerHTML='<i class="bi bi-box-arrow-in-right"></i> &nbsp;Masuk';
+      return;
+    }
+
+    localStorage.setItem("token",data.data.token);
+    localStorage.setItem("user",JSON.stringify(data.data.user));
+
+    if(document.getElementById("rememberMe").checked){
+      localStorage.setItem("remember_username",username);
+    }else{
+      localStorage.removeItem("remember_username");
+    }
+
+    const role=data.data.user.role;
+    const destinations={
+      KASIR:"dashboard-kasir.html",
+      ADMIN:"dashboard-admin.html",
+      OWNER:"dashboard-owner.html",
+      STAFF_LAUNDRY:"dashboard-staff.html"
+    };
+
+    if(destinations[role]){
+      window.location.href=destinations[role];
+    }else{
+      errorBox.textContent="Role tidak dikenali";
+      errorBox.classList.remove("d-none");
+      btnLogin.disabled=false;
+      btnLogin.innerHTML='<i class="bi bi-box-arrow-in-right"></i> &nbsp;Masuk';
+    }
+  }catch(error){
+    console.error(error);
+    errorBox.textContent="Tidak dapat terhubung ke server";
+    errorBox.classList.remove("d-none");
+    btnLogin.disabled=false;
+    btnLogin.innerHTML='<i class="bi bi-box-arrow-in-right"></i> &nbsp;Masuk';
+  }
+});
+
+document.getElementById("forgotPassword").addEventListener("click",function(e){
+  e.preventDefault();
+  alert("Untuk reset password, silakan hubungi Admin Amih Laundry.");
+});
+document.getElementById("contactAdmin").addEventListener("click",function(e){
+  e.preventDefault();
+  alert("Silakan hubungi Admin Amih Laundry untuk membuat akun.");
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,4231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Dashboard Kasir - Amih Laundry</title>
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+
+    /* =========================================================
+       DASAR
+    ========================================================= */
+
+    body {
+      background: #f5f8fc;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .kasir-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* =========================================================
+       SIDEBAR
+    ========================================================= */
+
+    .sidebar {
+      width: 250px;
+      height: 100vh;
+      min-height: 100vh;
+      background: #123f78;
+      color: white;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-brand {
+      padding: 24px 20px;
+      border-bottom: 1px solid rgba(255,255,255,.15);
+      flex: 0 0 auto;
+    }
+
+    .sidebar-brand h4 {
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .sidebar-brand small {
+      opacity: .75;
+    }
+
+    .sidebar-menu {
+      padding: 18px 12px;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .sidebar-menu::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar-menu::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,.25);
+      border-radius: 10px;
+    }
+
+    .menu-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      opacity: .6;
+      padding: 10px 14px;
+      margin-top: 5px;
+    }
+
+    .menu-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: rgba(255,255,255,.82);
+      text-decoration: none;
+      padding: 11px 14px;
+      border-radius: 10px;
+      margin-bottom: 4px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .menu-link:hover,
+    .menu-link.active {
+      background: rgba(255,255,255,.15);
+      color: white;
+    }
+
+    .menu-link i {
+      width: 20px;
+      font-size: 17px;
+    }
+
+    /* =========================================================
+       USER SIDEBAR
+    ========================================================= */
+
+    .sidebar-user {
+      flex: 0 0 auto;
+      margin: 10px 12px 15px;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.1);
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: white;
+      color: #123f78;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    /* =========================================================
+       MAIN
+    ========================================================= */
+
+    .main-content {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+      min-height: 100vh;
+    }
+
+    /* =========================================================
+       TOPBAR
+    ========================================================= */
+
+    .topbar {
+      height: 72px;
+      background: white;
+      border-bottom: 1px solid #e8edf3;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 900;
+    }
+
+    .topbar-search {
+      width: 320px;
+    }
+
+    .topbar-search input {
+      border-radius: 10px;
+      background: #f5f7fa;
+      border: 1px solid #e8edf3;
+    }
+
+    /* =========================================================
+       CONTENT
+    ========================================================= */
+
+    .content {
+      padding: 28px;
+    }
+
+    .page-section {
+      display: block;
+    }
+
+    .page-section.d-none {
+      display: none !important;
+    }
+
+    .page-header {
+      margin-bottom: 25px;
+    }
+
+    .page-header h2 {
+      font-weight: 700;
+      margin-bottom: 5px;
+      color: #1f2937;
+    }
+
+    .page-header p {
+      color: #6b7280;
+      margin: 0;
+    }
+
+    /* =========================================================
+       CARD
+    ========================================================= */
+
+    .stat-card,
+    .card-box {
+      background: white;
+      border: 1px solid #e8edf3;
+      border-radius: 16px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.03);
+    }
+
+    .stat-card {
+      padding: 20px;
+      height: 100%;
+    }
+
+    .card-box {
+      padding: 20px;
+    }
+
+    .stat-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 12px;
+      background: #eaf2ff;
+      color: #2f6fed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+
+    .stat-title {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-size: 25px;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .card-title {
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 4px;
+    }
+
+    .card-subtitle {
+      color: #8a94a6;
+      font-size: 13px;
+    }
+
+    /* =========================================================
+       TABLE
+    ========================================================= */
+
+    .table {
+      margin-bottom: 0;
+    }
+
+    .table th {
+      background: #f8fafc;
+      color: #667085;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .table td {
+      vertical-align: middle;
+      font-size: 14px;
+    }
+
+    /* =========================================================
+       BADGE
+    ========================================================= */
+
+    .badge-pill {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-soft-success {
+      background: #e7f7ee;
+      color: #15803d;
+    }
+
+    .badge-soft-muted {
+      background: #eef1f5;
+      color: #667085;
+    }
+
+    .badge-soft-secondary {
+      background: #e9eef5;
+      color: #475467;
+    }
+
+    .badge-soft-accent {
+      background: #fff4dc;
+      color: #b77900;
+    }
+
+    .badge-soft-danger {
+      background: #fdecec;
+      color: #c62828;
+    }
+
+    /* =========================================================
+       BUTTON
+    ========================================================= */
+
+    .btn-primary {
+      background: #2f6fed;
+      border-color: #2f6fed;
+    }
+
+    .btn-primary:hover {
+      background: #245dcc;
+      border-color: #245dcc;
+    }
+
+    /* =========================================================
+       EMPTY
+    ========================================================= */
+
+    .empty-state {
+      padding: 35px;
+      text-align: center;
+      color: #98a2b3;
+    }
+
+    /* =========================================================
+       CUSTOMER
+    ========================================================= */
+
+    .customer-box {
+      background: #f8fafc;
+      border: 1px solid #e8edf3;
+      border-radius: 12px;
+      padding: 15px;
+    }
+
+    /* =========================================================
+       SERVICE CARD
+    ========================================================= */
+
+    .service-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .service-card {
+      border: 1px solid #e8edf3;
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      transition: .2s;
+    }
+
+    .service-card:hover {
+      border-color: #2f6fed;
+      box-shadow: 0 3px 10px rgba(47,111,237,.08);
+    }
+
+    .service-name {
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .service-price {
+      color: #2f6fed;
+      font-weight: 700;
+      margin-top: 3px;
+    }
+
+    .service-unit {
+      color: #8a94a6;
+      font-size: 12px;
+    }
+
+    .qty-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qty-control button {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid #d9e0e8;
+      background: white;
+      color: #2f6fed;
+      font-weight: 700;
+    }
+
+    .qty-control button:hover {
+      background: #eaf2ff;
+    }
+
+    .qty-control input {
+      width: 70px;
+      text-align: center;
+      border: 1px solid #d9e0e8;
+      border-radius: 8px;
+      height: 32px;
+    }
+
+    /* =========================================================
+       PAYMENT CHOICE
+    ========================================================= */
+
+    .payment-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .payment-option {
+      border: 1px solid #e8edf3;
+      border-radius: 12px;
+      background: white;
+      padding: 15px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .payment-option:hover {
+      border-color: #2f6fed;
+    }
+
+    .payment-option.active {
+      border-color: #2f6fed;
+      background: #f5f9ff;
+      box-shadow: 0 0 0 1px #2f6fed;
+    }
+
+    .payment-option-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: #eaf2ff;
+      color: #2f6fed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      flex-shrink: 0;
+    }
+
+    .payment-option-title {
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .payment-option-subtitle {
+      font-size: 12px;
+      color: #8a94a6;
+    }
+
+    .payment-detail {
+      background: #f8fbff;
+      border: 1px solid #dce9ff;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+
+    .change-box {
+      background: #e7f7ee;
+      border-radius: 10px;
+      padding: 12px 15px;
+      margin-top: 12px;
+    }
+
+    .change-label {
+      color: #15803d;
+      font-size: 12px;
+    }
+
+    .change-value {
+      color: #15803d;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .kasbon-info {
+      background: #fff8e7;
+      border: 1px solid #ffe2a8;
+      color: #8a6200;
+      border-radius: 10px;
+      padding: 13px;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+
+    /* =========================================================
+       SUMMARY
+    ========================================================= */
+
+    .summary-card {
+      position: sticky;
+      top: 92px;
+    }
+
+    .summary-empty {
+      text-align: center;
+      padding: 25px 10px;
+      color: #98a2b3;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 8px 0;
+      font-size: 14px;
+    }
+
+    .summary-row + .summary-row {
+      border-top: 1px solid #edf0f4;
+    }
+
+    .summary-total {
+      font-size: 20px;
+      font-weight: 700;
+      color: #2f6fed;
+    }
+
+    /* =========================================================
+       TIMELINE
+    ========================================================= */
+
+    .timeline-item {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+    }
+
+    .timeline-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #2f6fed;
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+
+    .timeline-title {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .timeline-subtitle {
+      font-size: 12px;
+      color: #667085;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 1000px) {
+
+      .service-list {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar-search {
+        width: 220px;
+      }
+    }
+
+    @media (max-width: 900px) {
+
+      .sidebar {
+        width: 210px;
+      }
+
+      .main-content {
+        margin-left: 210px;
+        width: calc(100% - 210px);
+      }
+
+      .payment-options {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+
+      .sidebar {
+        display: none;
+      }
+
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .content {
+        padding: 15px;
+      }
+
+      .topbar-search {
+        display: none;
+      }
+
+      .summary-card {
+        position: static;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="kasir-layout">
+
+  <!-- =======================================================
+       SIDEBAR
+  ======================================================== -->
+
+  <aside class="sidebar">
+
+    <div class="sidebar-brand">
+      <h4>
+        <i class="bi bi-droplet-fill"></i>
+        Amih Laundry
+      </h4>
+
+      <small>Kasir Panel</small>
+    </div>
+
+    <div class="sidebar-menu">
+
+      <div class="menu-title">
+        Menu Utama
+      </div>
+
+      <a
+        class="menu-link active"
+        data-page="dashboard"
+      >
+        <i class="bi bi-grid-1x2-fill"></i>
+        <span>Dashboard</span>
+      </a>
+
+      <a
+        class="menu-link"
+        data-page="transaksi"
+      >
+        <i class="bi bi-receipt"></i>
+        <span>Transaksi Laundry</span>
+      </a>
+
+      <a
+        class="menu-link"
+        data-page="pembayaran"
+      >
+        <i class="bi bi-wallet2"></i>
+        <span>Pembayaran</span>
+      </a>
+
+      <a
+        class="menu-link"
+        data-page="riwayat"
+      >
+        <i class="bi bi-clock-history"></i>
+        <span>Riwayat Transaksi</span>
+      </a>
+
+      <a
+        class="menu-link"
+        href="#"
+        onclick="logout(); return false;"
+      >
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Logout</span>
+      </a>
+
+    </div>
+
+    <div class="sidebar-user">
+
+      <div class="d-flex align-items-center gap-2">
+
+        <div
+          class="avatar"
+          id="sidebarAvatarInitial"
+        >
+          K
+        </div>
+
+        <div>
+
+          <div
+            id="sidebarUserName"
+            class="fw-semibold"
+          >
+            Kasir
+          </div>
+
+          <small style="opacity:.7;">
+            KASIR
+          </small>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </aside>
+
+
+  <!-- =======================================================
+       MAIN CONTENT
+  ======================================================== -->
+
+  <main class="main-content">
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+      <div class="topbar-search">
+
+        <div class="input-group">
+
+          <span class="input-group-text border-0 bg-light">
+            <i class="bi bi-search"></i>
+          </span>
+
+          <input
+            type="text"
+            id="searchInput"
+            class="form-control border-0"
+            placeholder="Cari transaksi..."
+          >
+
+        </div>
+
+      </div>
+
+      <div class="d-flex align-items-center gap-4">
+
+        <div class="text-muted">
+
+          <i class="bi bi-calendar3"></i>
+
+          <span id="topbarDate"></span>
+
+        </div>
+
+        <div>
+          <i class="bi bi-bell fs-5"></i>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+
+          <div
+            class="avatar"
+            style="width:36px;height:36px;"
+          >
+            <span id="topAvatarInitial">
+              K
+            </span>
+          </div>
+
+          <div class="d-none d-md-block">
+
+            <div
+              id="userName"
+              class="fw-semibold"
+            >
+              Kasir
+            </div>
+
+            <small class="text-muted">
+              Kasir
+            </small>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <div class="content">
+
+
+      <!-- ===================================================
+           DASHBOARD
+      ==================================================== -->
+
+      <section
+        id="page-dashboard"
+        class="page-section"
+      >
+
+        <div class="page-header">
+
+          <h2>Dashboard</h2>
+
+          <p>
+            Selamat datang,
+            <strong id="dashboardUserName">
+              Kasir
+            </strong>
+            👋
+          </p>
+
+          <p>
+            Kelola transaksi dan pembayaran Amih Laundry.
+          </p>
+
+        </div>
+
+
+        <div class="row g-4 mb-4">
+
+          <div class="col-xl-3 col-md-6">
+
+            <div class="stat-card">
+
+              <div class="stat-icon">
+                <i class="bi bi-receipt"></i>
+              </div>
+
+              <div class="stat-title">
+                Total Transaksi
+              </div>
+
+              <div
+                class="stat-value"
+                id="statTotalTransaksi"
+              >
+                0
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="col-xl-3 col-md-6">
+
+            <div class="stat-card">
+
+              <div class="stat-icon">
+                <i class="bi bi-check-circle-fill"></i>
+              </div>
+
+              <div class="stat-title">
+                Sudah Dibayar
+              </div>
+
+              <div
+                class="stat-value"
+                id="statSudahDibayar"
+              >
+                0
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="col-xl-3 col-md-6">
+
+            <div class="stat-card">
+
+              <div class="stat-icon">
+                <i class="bi bi-hourglass-split"></i>
+              </div>
+
+              <div class="stat-title">
+                Belum Dibayar
+              </div>
+
+              <div
+                class="stat-value"
+                id="statBelumDibayar"
+              >
+                0
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="col-xl-3 col-md-6">
+
+            <div class="stat-card">
+
+              <div class="stat-icon">
+                <i class="bi bi-arrow-repeat"></i>
+              </div>
+
+              <div class="stat-title">
+                Dalam Proses
+              </div>
+
+              <div
+                class="stat-value"
+                id="statDalamProses"
+              >
+                0
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="card-box">
+
+          <div class="card-title">
+            Transaksi Terbaru
+          </div>
+
+          <div class="card-subtitle mb-3">
+            Transaksi laundry terbaru.
+          </div>
+
+          <div class="table-responsive">
+
+            <table class="table table-hover">
+
+              <thead>
+
+                <tr>
+                  <th>Kode</th>
+                  <th>Pelanggan</th>
+                  <th>Total</th>
+                  <th>Pembayaran</th>
+                  <th>Proses</th>
+                </tr>
+
+              </thead>
+
+              <tbody id="tabelDashboard">
+
+                <tr>
+
+                  <td colspan="5">
+
+                    <div class="empty-state">
+                      Memuat data...
+                    </div>
+
+                  </td>
+
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================
+           TRANSAKSI
+      ==================================================== -->
+
+      <section
+        id="page-transaksi"
+        class="page-section d-none"
+      >
+
+        <div class="page-header">
+
+          <h2>Transaksi Laundry</h2>
+
+          <p>
+            Buat transaksi laundry baru.
+          </p>
+
+        </div>
+
+
+        <div class="row g-4">
+
+          <!-- FORM -->
+
+          <div class="col-lg-8">
+
+            <div class="card-box">
+
+              <!-- PELANGGAN -->
+
+              
+              <!-- PELANGGAN -->
+
+<div class="mb-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-2">
+
+    <label class="form-label fw-semibold mb-0">
+      Pelanggan
+    </label>
+
+    <button
+      type="button"
+      class="btn btn-sm btn-primary"
+      onclick="bukaModalPelangganBaru()"
+    >
+      <i class="bi bi-person-plus"></i>
+      Pelanggan Baru
+    </button>
+
+  </div>
+
+  <select
+    id="selectPelanggan"
+    class="form-select"
+  >
+
+    <option value="">
+      Pilih pelanggan...
+    </option>
+
+  </select>
+
+  <div
+    id="selectedCustomer"
+    class="customer-box mt-2 d-none"
+  ></div>
+
+
+                <div
+                  id="selectedCustomer"
+                  class="customer-box mt-2 d-none"
+                ></div>
+
+              </div>
+
+
+              <!-- LAYANAN -->
+
+              <div class="mb-4">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                  <div>
+
+                    <div class="fw-bold">
+                      Layanan Laundry
+                    </div>
+
+                    <small class="text-muted">
+                      Tentukan jumlah / berat
+                    </small>
+
+                  </div>
+
+                </div>
+
+                <div
+                  id="serviceList"
+                  class="service-list"
+                >
+
+                  <div class="empty-state">
+                    Memuat layanan...
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- CATATAN -->
+
+              <div class="mb-4">
+
+                <label class="form-label fw-semibold">
+                  Catatan
+                </label>
+
+                <textarea
+                  id="catatanTransaksi"
+                  class="form-control"
+                  rows="3"
+                  placeholder="Catatan tambahan untuk transaksi..."
+                ></textarea>
+
+              </div>
+
+
+              <!-- PEMBAYARAN -->
+
+              <div class="mb-3">
+
+                <div class="fw-bold mb-3">
+                  Pembayaran
+                </div>
+
+
+                <div class="payment-options">
+
+                  <div
+                    id="paymentNowOption"
+                    class="payment-option active"
+                    onclick="pilihJenisPembayaran('SEKARANG')"
+                  >
+
+                    <div class="d-flex align-items-center gap-3">
+
+                      <div class="payment-option-icon">
+                        <i class="bi bi-wallet2"></i>
+                      </div>
+
+                      <div>
+
+                        <div class="payment-option-title">
+                          Bayar Sekarang
+                        </div>
+
+                        <div class="payment-option-subtitle">
+                          Transaksi langsung lunas
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+
+                  <div
+                    id="paymentKasbonOption"
+                    class="payment-option"
+                    onclick="pilihJenisPembayaran('KASBON')"
+                  >
+
+                    <div class="d-flex align-items-center gap-3">
+
+                      <div class="payment-option-icon">
+                        <i class="bi bi-clock-history"></i>
+                      </div>
+
+                      <div>
+
+                        <div class="payment-option-title">
+                          Kasbon
+                        </div>
+
+                        <div class="payment-option-subtitle">
+                          Bayar nanti
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+                <!-- DETAIL BAYAR SEKARANG -->
+
+                <div
+                  id="paymentDetail"
+                  class="payment-detail"
+                >
+
+                  <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                      <label class="form-label fw-semibold">
+                        Metode Pembayaran
+                      </label>
+
+                      <select
+                        id="metodePembayaran"
+                        class="form-select"
+                      >
+
+                        <option value="TUNAI">
+                          Tunai
+                        </option>
+
+                        <option value="TRANSFER_BANK">
+                          Transfer Bank
+                        </option>
+
+                        <option value="QRIS">
+                          QRIS
+                        </option>
+
+                      </select>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                      <label class="form-label fw-semibold">
+                        Jumlah Bayar
+                      </label>
+
+                      <input
+                        type="number"
+                        id="jumlahBayar"
+                        class="form-control"
+                        min="0"
+                        placeholder="Masukkan jumlah bayar"
+                        oninput="hitungKembalian()"
+                      >
+
+                    </div>
+
+                  </div>
+
+
+                  <div
+                    id="changeBox"
+                    class="change-box"
+                  >
+
+                    <div class="change-label">
+                      Kembalian
+                    </div>
+
+                    <div
+                      id="nilaiKembalian"
+                      class="change-value"
+                    >
+                      Rp 0
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+                <!-- KASBON -->
+
+                <div
+                  id="kasbonInfo"
+                  class="kasbon-info d-none"
+                >
+
+                  <i class="bi bi-info-circle me-1"></i>
+
+                  Transaksi akan berstatus
+                  <strong>BELUM DIBAYAR</strong>
+                  dan dapat dilunasi melalui menu
+                  <strong>Pembayaran</strong>.
+
+                </div>
+
+              </div>
+
+
+              <!-- BUTTON -->
+
+              <div class="d-flex justify-content-end gap-2 mt-4">
+
+                <button
+                  type="button"
+                  class="btn btn-light"
+                  onclick="resetTransaksi()"
+                >
+                  <i class="bi bi-arrow-counterclockwise"></i>
+                  Reset
+                </button>
+
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  onclick="buatTransaksi()"
+                >
+                  <i class="bi bi-check-circle"></i>
+                  Buat Transaksi
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- SUMMARY -->
+
+          <div class="col-lg-4">
+
+            <div class="card-box summary-card">
+
+              <div class="card-title">
+                Ringkasan Transaksi
+              </div>
+
+              <div
+                id="summaryContent"
+                class="mt-3"
+              >
+
+                <div class="summary-empty">
+                  Belum ada layanan dipilih.
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================
+           PEMBAYARAN
+      ==================================================== -->
+
+      <section
+        id="page-pembayaran"
+        class="page-section d-none"
+      >
+
+        <div class="page-header">
+
+          <h2>Pembayaran</h2>
+
+          <p>
+            Monitoring pembayaran dan pelunasan kasbon.
+          </p>
+
+        </div>
+
+
+        <div class="card-box">
+
+          <div class="table-responsive">
+
+            <table class="table table-hover">
+
+              <thead>
+
+                <tr>
+                  <th>Kode Transaksi</th>
+                  <th>Pelanggan</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+
+              </thead>
+
+              <tbody id="tabelPembayaran">
+
+                <tr>
+
+                  <td colspan="5">
+
+                    <div class="empty-state">
+                      Memuat data...
+                    </div>
+
+                  </td>
+
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================
+           RIWAYAT
+      ==================================================== -->
+
+      <section
+        id="page-riwayat"
+        class="page-section d-none"
+      >
+
+        <div class="page-header">
+
+          <h2>Riwayat Transaksi</h2>
+
+          <p>
+            Riwayat transaksi laundry.
+          </p>
+
+        </div>
+
+
+        <div class="card-box">
+
+          <div class="table-responsive">
+
+            <table class="table table-hover">
+
+              <thead>
+
+                <tr>
+                  <th>Kode</th>
+                  <th>Pelanggan</th>
+                  <th>Total</th>
+                  <th>Pembayaran</th>
+                  <th>Proses</th>
+                  <th>Aksi</th>
+                </tr>
+
+              </thead>
+
+              <tbody id="tabelRiwayat">
+
+                <tr>
+
+                  <td colspan="6">
+
+                    <div class="empty-state">
+                      Memuat data...
+                    </div>
+
+                  </td>
+
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<!-- =========================================================
+     MODAL BAYAR KASBON
+========================================================= -->
+
+<div
+  class="modal fade"
+  id="modalBayar"
+  tabindex="-1"
+>
+
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <h5 class="modal-title">
+          Pelunasan Pembayaran
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+        ></button>
+
+      </div>
+
+      <div class="modal-body">
+
+        <input
+          type="hidden"
+          id="bayarTransaksiId"
+        >
+
+        <div
+          id="bayarInfo"
+          class="mb-3"
+        ></div>
+
+        <div class="mb-3">
+
+          <label class="form-label fw-semibold">
+            Metode Pembayaran
+          </label>
+
+          <select
+            id="bayarMetode"
+            class="form-select"
+          >
+
+            <option value="TUNAI">
+              Tunai
+            </option>
+
+            <option value="TRANSFER_BANK">
+              Transfer Bank
+            </option>
+
+            <option value="QRIS">
+              QRIS
+            </option>
+
+          </select>
+
+        </div>
+
+        <div class="mb-3">
+
+          <label class="form-label fw-semibold">
+            Jumlah Bayar
+          </label>
+
+          <input
+            type="number"
+            id="bayarJumlah"
+            class="form-control"
+            min="0"
+            oninput="hitungKembalianModal()"
+          >
+
+        </div>
+
+        <div class="change-box">
+
+          <div class="change-label">
+            Kembalian
+          </div>
+
+          <div
+            id="bayarKembalian"
+            class="change-value"
+          >
+            Rp 0
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+        >
+          Batal
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          onclick="prosesPembayaran()"
+        >
+          <i class="bi bi-check-circle"></i>
+          Bayar
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     MODAL DETAIL
+========================================================= -->
+
+<div
+  class="modal fade"
+  id="modalDetail"
+  tabindex="-1"
+>
+
+  <div class="modal-dialog modal-lg">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <h5 class="modal-title">
+          Detail Transaksi
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+        ></button>
+
+      </div>
+
+      <div
+        id="detailContent"
+        class="modal-body"
+      >
+
+        <div class="empty-state">
+          Memuat...
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     SCRIPT
+========================================================= -->
+
+<script src="js/auth-guard.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+
+  /* =========================================================
+     STATE
+  ========================================================= */
+
+  let pelangganList = [];
+  let layananList = [];
+  let transaksiList = [];
+
+  let selectedServices = {};
+
+  let jenisPembayaran = "SEKARANG";
+
+  let selectedPaymentTransaction = null;
+
+
+  /* =========================================================
+     FORMAT
+  ========================================================= */
+
+  function formatRupiah(value) {
+
+    const number = Number(value || 0);
+
+    return "Rp " + number.toLocaleString("id-ID");
+
+  }
+
+
+  function formatTanggal(value) {
+
+    if (!value) {
+      return "-";
+    }
+
+    const date = new Date(value);
+
+    if (isNaN(date.getTime())) {
+      return "-";
+    }
+
+    return date.toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric"
+    });
+
+  }
+
+
+  function escapeHtml(value) {
+
+    if (value === null || value === undefined) {
+      return "";
+    }
+
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  }
+
+
+  /* =========================================================
+     API
+  ========================================================= */
+
+  async function apiRequest(url, options = {}) {
+
+    const token = localStorage.getItem("token");
+
+    const headers = {
+      "Accept": "application/json",
+      ...(options.headers || {})
+    };
+
+    if (token) {
+      headers["Authorization"] = "Bearer " + token;
+    }
+
+    if (options.body && !headers["Content-Type"]) {
+      headers["Content-Type"] = "application/json";
+    }
+
+    const response = await fetch(url, {
+      ...options,
+      headers
+    });
+
+    const text = await response.text();
+
+    let data;
+
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = {
+        success: false,
+        message: text
+      };
+    }
+
+    if (!response.ok) {
+
+      let message =
+        data.message ||
+        "Terjadi kesalahan pada server.";
+
+      if (data.errors) {
+
+        const errors = [];
+
+        Object.values(data.errors).forEach(list => {
+
+          if (Array.isArray(list)) {
+            errors.push(...list);
+          }
+
+        });
+
+        if (errors.length) {
+          message += "\n" + errors.join("\n");
+        }
+
+      }
+
+      throw new Error(message);
+
+    }
+
+    return data;
+
+  }
+
+
+  /* =========================================================
+     AUTH / USER
+  ========================================================= */
+
+  function initUser() {
+
+    let user = null;
+
+    try {
+
+      const saved =
+        localStorage.getItem("user");
+
+      if (saved) {
+        user = JSON.parse(saved);
+      }
+
+    } catch (error) {
+      console.warn(error);
+    }
+
+
+    if (!user) {
+      return;
+    }
+
+
+    const nama =
+      user.nama ||
+      user.name ||
+      "Kasir";
+
+
+    const initial =
+      nama.charAt(0).toUpperCase();
+
+
+    document.getElementById(
+      "sidebarUserName"
+    ).textContent = nama;
+
+
+    document.getElementById(
+      "userName"
+    ).textContent = nama;
+
+
+    document.getElementById(
+      "dashboardUserName"
+    ).textContent = nama;
+
+
+    document.getElementById(
+      "sidebarAvatarInitial"
+    ).textContent = initial;
+
+
+    document.getElementById(
+      "topAvatarInitial"
+    ).textContent = initial;
+
+  }
+
+
+  /* =========================================================
+     DATE
+  ========================================================= */
+
+  function tampilkanTanggal() {
+
+    const el =
+      document.getElementById("topbarDate");
+
+    if (!el) {
+      return;
+    }
+
+    const now = new Date();
+
+    el.textContent =
+      now.toLocaleDateString("id-ID", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      });
+
+  }
+
+
+  /* =========================================================
+     PAGE NAVIGATION
+  ========================================================= */
+
+  document.querySelectorAll(".menu-link[data-page]")
+    .forEach(link => {
+
+      link.addEventListener("click", function() {
+
+        const page =
+          this.dataset.page;
+
+        bukaPage(page);
+
+      });
+
+    });
+
+
+  function bukaPage(page) {
+
+    document
+      .querySelectorAll(".page-section")
+      .forEach(section => {
+
+        section.classList.add("d-none");
+
+      });
+
+
+    const target =
+      document.getElementById(
+        "page-" + page
+      );
+
+    if (target) {
+      target.classList.remove("d-none");
+    }
+
+
+    document
+      .querySelectorAll(".menu-link[data-page]")
+      .forEach(link => {
+
+        link.classList.remove("active");
+
+        if (link.dataset.page === page) {
+          link.classList.add("active");
+        }
+
+      });
+
+
+    if (page === "dashboard") {
+      loadDashboard();
+    }
+
+    if (page === "transaksi") {
+      loadPelanggan();
+      loadLayanan();
+    }
+
+    if (page === "pembayaran") {
+      loadPembayaran();
+    }
+
+    if (page === "riwayat") {
+      loadRiwayat();
+    }
+
+  }
+
+
+  /* =========================================================
+     PELANGGAN
+  ========================================================= */
+
+  async function loadPelanggan() {
+
+    const select =
+      document.getElementById(
+        "selectPelanggan"
+      );
+
+    try {
+
+      const response =
+        await apiRequest(
+          "/api/pelanggan"
+        );
+
+      pelangganList =
+        response.data || [];
+
+
+      select.innerHTML = `
+        <option value="">
+          Pilih pelanggan...
+        </option>
+      `;
+
+
+      pelangganList.forEach(pelanggan => {
+
+        select.innerHTML += `
+          <option value="${pelanggan.id_pelanggan}">
+            ${escapeHtml(pelanggan.nama)}
+            ${pelanggan.no_telepon
+              ? " - " + escapeHtml(pelanggan.no_telepon)
+              : ""}
+          </option>
+        `;
+
+      });
+
+    } catch (error) {
+
+      console.error(error);
+
+      select.innerHTML = `
+        <option value="">
+          Gagal memuat pelanggan
+        </option>
+      `;
+
+    }
+
+  }
+
+
+  document
+    .getElementById("selectPelanggan")
+    .addEventListener("change", function() {
+
+      const id =
+        Number(this.value);
+
+      const customer =
+        pelangganList.find(
+          item =>
+            Number(item.id_pelanggan) === id
+        );
+
+
+      const box =
+        document.getElementById(
+          "selectedCustomer"
+        );
+
+
+      if (!customer) {
+
+        box.classList.add("d-none");
+        box.innerHTML = "";
+
+        return;
+
+      }
+
+
+      box.classList.remove("d-none");
+
+      box.innerHTML = `
+        <div class="fw-semibold">
+          ${escapeHtml(customer.nama)}
+        </div>
+
+        <div class="small text-muted">
+          ${escapeHtml(customer.no_telepon || "-")}
+        </div>
+
+        <div class="small text-muted">
+          ${escapeHtml(customer.alamat || "-")}
+        </div>
+      `;
+
+    });
+
+
+  /* =========================================================
+     LAYANAN
+  ========================================================= */
+
+  async function loadLayanan() {
+
+    const container =
+      document.getElementById(
+        "serviceList"
+      );
+
+
+    try {
+
+      const response =
+        await apiRequest(
+          "/api/layanan"
+        );
+
+      layananList =
+        (response.data || [])
+        .filter(
+          item =>
+            Number(item.is_active) === 1
+        );
+
+
+      if (!layananList.length) {
+
+        container.innerHTML = `
+          <div class="empty-state">
+            Belum ada layanan aktif.
+          </div>
+        `;
+
+        return;
+
+      }
+
+
+      container.innerHTML =
+        layananList.map(service => {
+
+          const id =
+            Number(service.id_layanan);
+
+          const qty =
+            selectedServices[id] || 0;
+
+
+          return `
+
+            <div class="service-card">
+
+              <div class="d-flex justify-content-between gap-3">
+
+                <div>
+
+                  <div class="service-name">
+                    ${escapeHtml(service.nama_layanan)}
+                  </div>
+
+                  <div class="service-price">
+                    ${formatRupiah(service.harga_per_satuan)}
+                  </div>
+
+                  <div class="service-unit">
+                    per ${escapeHtml(service.jenis_satuan)}
+                  </div>
+
+                </div>
+
+
+                <div class="qty-control">
+
+                  <button
+                    type="button"
+                    onclick="ubahJumlah(${id}, -1)"
+                  >
+                    −
+                  </button>
+
+                  <input
+                    type="number"
+                    id="qty-${id}"
+                    value="${qty}"
+                    min="0"
+                    onchange="ubahJumlahInput(${id}, this.value)"
+                  >
+
+                  <button
+                    type="button"
+                    onclick="ubahJumlah(${id}, 1)"
+                  >
+                    +
+                  </button>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          `;
+
+        }).join("");
+
+
+      updateSummary();
+
+    } catch (error) {
+
+      console.error(error);
+
+      container.innerHTML = `
+        <div class="empty-state text-danger">
+          Gagal memuat layanan.
+        </div>
+      `;
+
+    }
+
+  }
+
+
+  function ubahJumlah(id, perubahan) {
+
+    const current =
+      Number(selectedServices[id] || 0);
+
+    const next =
+      Math.max(0, current + perubahan);
+
+
+    selectedServices[id] = next;
+
+
+    const input =
+      document.getElementById(
+        "qty-" + id
+      );
+
+    if (input) {
+      input.value = next;
+    }
+
+
+    updateSummary();
+
+  }
+
+
+  function ubahJumlahInput(id, value) {
+
+    const qty =
+      Math.max(
+        0,
+        Number(value || 0)
+      );
+
+    selectedServices[id] =
+      qty;
+
+    updateSummary();
+
+  }
+
+
+  /* =========================================================
+     SUMMARY
+  ========================================================= */
+
+  function getSelectedDetails() {
+
+    return layananList
+      .filter(service => {
+
+        const qty =
+          Number(
+            selectedServices[
+              service.id_layanan
+            ] || 0
+          );
+
+        return qty > 0;
+
+      })
+      .map(service => {
+
+        const qty =
+          Number(
+            selectedServices[
+              service.id_layanan
+            ]
+          );
+
+
+        const harga =
+          Number(
+            service.harga_per_satuan
+          );
+
+
+        return {
+          id_layanan:
+            Number(service.id_layanan),
+
+          nama_layanan:
+            service.nama_layanan,
+
+          jenis_satuan:
+            service.jenis_satuan,
+
+          berat_jumlah:
+            qty,
+
+          harga_satuan:
+            harga,
+
+          subtotal:
+            qty * harga
+        };
+
+      });
+
+  }
+
+
+  function getTotal() {
+
+    return getSelectedDetails()
+      .reduce(
+        (total, item) =>
+          total + item.subtotal,
+        0
+      );
+
+  }
+
+
+  function updateSummary() {
+
+    const container =
+      document.getElementById(
+        "summaryContent"
+      );
+
+
+    const details =
+      getSelectedDetails();
+
+
+    const total =
+      getTotal();
+
+
+    if (!details.length) {
+
+      container.innerHTML = `
+        <div class="summary-empty">
+          Belum ada layanan dipilih.
+        </div>
+      `;
+
+      hitungKembalian();
+
+      return;
+
+    }
+
+
+    container.innerHTML = `
+
+      <div class="mb-3">
+
+        ${details.map(item => `
+
+          <div class="summary-row">
+
+            <div>
+
+              <div class="fw-semibold">
+                ${escapeHtml(item.nama_layanan)}
+              </div>
+
+              <small class="text-muted">
+                ${item.berat_jumlah}
+                ${escapeHtml(item.jenis_satuan)}
+                ×
+                ${formatRupiah(item.harga_satuan)}
+              </small>
+
+            </div>
+
+            <div class="fw-semibold">
+              ${formatRupiah(item.subtotal)}
+            </div>
+
+          </div>
+
+        `).join("")}
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span class="fw-semibold">
+          Total
+        </span>
+
+        <span class="summary-total">
+          ${formatRupiah(total)}
+        </span>
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span>
+          Pembayaran
+        </span>
+
+        <span
+          id="summaryPaymentStatus"
+          class="badge-pill badge-soft-success"
+        >
+          Bayar Sekarang
+        </span>
+
+      </div>
+
+    `;
+
+
+    hitungKembalian();
+
+  }
+
+
+  /* =========================================================
+     JENIS PEMBAYARAN
+  ========================================================= */
+
+  function pilihJenisPembayaran(jenis) {
+
+    jenisPembayaran =
+      jenis;
+
+
+    const now =
+      document.getElementById(
+        "paymentNowOption"
+      );
+
+    const kasbon =
+      document.getElementById(
+        "paymentKasbonOption"
+      );
+
+    const detail =
+      document.getElementById(
+        "paymentDetail"
+      );
+
+    const info =
+      document.getElementById(
+        "kasbonInfo"
+      );
+
+
+    if (jenis === "SEKARANG") {
+
+      now.classList.add("active");
+
+      kasbon.classList.remove("active");
+
+      detail.classList.remove("d-none");
+
+      info.classList.add("d-none");
+
+    } else {
+
+      now.classList.remove("active");
+
+      kasbon.classList.add("active");
+
+      detail.classList.add("d-none");
+
+      info.classList.remove("d-none");
+
+    }
+
+
+    updateSummary();
+
+  }
+
+
+  /* =========================================================
+     KEMBALIAN
+  ========================================================= */
+
+  function hitungKembalian() {
+
+    const total =
+      getTotal();
+
+
+    const jumlah =
+      Number(
+        document.getElementById(
+          "jumlahBayar"
+        ).value || 0
+      );
+
+
+    const kembalian =
+      Math.max(
+        0,
+        jumlah - total
+      );
+
+
+    document.getElementById(
+      "nilaiKembalian"
+    ).textContent =
+      formatRupiah(kembalian);
+
+
+    const input =
+      document.getElementById(
+        "jumlahBayar"
+      );
+
+
+    if (jumlah > 0 && jumlah < total) {
+
+      input.classList.add(
+        "is-invalid"
+      );
+
+    } else {
+
+      input.classList.remove(
+        "is-invalid"
+      );
+
+    }
+
+  }
+
+
+  /* =========================================================
+     BUAT TRANSAKSI
+  ========================================================= */
+
+  async function buatTransaksi() {
+
+    const customerId =
+      Number(
+        document.getElementById(
+          "selectPelanggan"
+        ).value
+      );
+
+
+    if (!customerId) {
+
+      alert(
+        "Pilih pelanggan terlebih dahulu."
+      );
+
+      return;
+
+    }
+
+
+    const details =
+      getSelectedDetails();
+
+
+    if (!details.length) {
+
+      alert(
+        "Pilih minimal satu layanan."
+      );
+
+      return;
+
+    }
+
+
+    const total =
+      getTotal();
+
+
+    const catatan =
+      document.getElementById(
+        "catatanTransaksi"
+      ).value.trim();
+
+
+    const pembayaran = {
+      status:
+        jenisPembayaran
+    };
+
+
+    if (jenisPembayaran === "SEKARANG") {
+
+      const metode =
+        document.getElementById(
+          "metodePembayaran"
+        ).value;
+
+
+      const jumlahBayar =
+        Number(
+          document.getElementById(
+            "jumlahBayar"
+          ).value || 0
+        );
+
+
+      if (jumlahBayar < total) {
+
+        alert(
+          "Jumlah bayar masih kurang dari total transaksi."
+        );
+
+        return;
+
+      }
+
+
+      pembayaran.metode_pembayaran =
+        metode;
+
+      pembayaran.jumlah_bayar =
+        jumlahBayar;
+
+    }
+
+
+    const payload = {
+
+      id_pelanggan:
+        customerId,
+
+      detail:
+        details.map(item => ({
+
+          id_layanan:
+            item.id_layanan,
+
+          berat_jumlah:
+            item.berat_jumlah
+
+        })),
+
+      catatan:
+        catatan,
+
+      pembayaran:
+        pembayaran
+
+    };
+
+
+    const button =
+      event?.currentTarget;
+
+
+    try {
+
+      if (button) {
+        button.disabled = true;
+      }
+
+
+      const response =
+        await apiRequest(
+          "/api/transaksi",
+          {
+            method: "POST",
+            body:
+              JSON.stringify(payload)
+          }
+        );
+
+
+      const transaction =
+        response.data?.transaksi ||
+        response.data;
+
+
+      const kode =
+        transaction?.kode_transaksi ||
+        "-";
+
+
+      const status =
+        transaction?.status_pembayaran ||
+        (jenisPembayaran === "SEKARANG"
+          ? "LUNAS"
+          : "BELUM_DIBAYAR");
+
+
+      alert(
+        "Transaksi berhasil dibuat!\n\n" +
+        "Kode Transaksi: " +
+        kode +
+        "\n" +
+        "Total: " +
+        formatRupiah(total) +
+        "\n" +
+        "Status Pembayaran: " +
+        status
+      );
+
+
+      resetTransaksi();
+
+
+      await loadDashboard();
+
+
+      bukaPage("dashboard");
+
+
+    } catch (error) {
+
+      console.error(
+        "GAGAL BUAT TRANSAKSI:",
+        error
+      );
+
+
+      alert(
+        "Gagal membuat transaksi.\n\n" +
+        error.message
+      );
+
+    } finally {
+
+      if (button) {
+        button.disabled = false;
+      }
+
+    }
+
+  }
+
+
+  /* =========================================================
+     RESET TRANSAKSI
+  ========================================================= */
+
+  function resetTransaksi() {
+
+    selectedServices = {};
+
+    jenisPembayaran =
+      "SEKARANG";
+
+
+    document.getElementById(
+      "selectPelanggan"
+    ).value = "";
+
+
+    document.getElementById(
+      "selectedCustomer"
+    ).classList.add("d-none");
+
+
+    document.getElementById(
+      "selectedCustomer"
+    ).innerHTML = "";
+
+
+    document.getElementById(
+      "catatanTransaksi"
+    ).value = "";
+
+
+    document.getElementById(
+      "metodePembayaran"
+    ).value = "TUNAI";
+
+
+    document.getElementById(
+      "jumlahBayar"
+    ).value = "";
+
+
+    pilihJenisPembayaran(
+      "SEKARANG"
+    );
+
+
+    document.getElementById(
+      "nilaiKembalian"
+    ).textContent =
+      "Rp 0";
+
+
+    loadLayanan();
+
+  }
+
+
+  /* =========================================================
+     TRANSAKSI API
+  ========================================================= */
+
+ async function loadTransaksi() {
+
+  try {
+
+    const response = await apiRequest("/api/transaksi");
+
+    console.log("HASIL API TRANSAKSI:", response);
+
+    let data = response.data;
+
+    // Antisipasi kalau API mengembalikan data langsung
+    if (Array.isArray(data)) {
+      transaksiList = data;
+    }
+
+    // Antisipasi kalau API berbentuk { data: [...] }
+    else if (data && Array.isArray(data.data)) {
+      transaksiList = data.data;
+    }
+
+    else {
+      transaksiList = [];
+    }
+
+    console.log("TRANSAKSI YANG DIBACA FRONTEND:", transaksiList);
+
+    return transaksiList;
+
+  } catch (error) {
+
+    console.error("GAGAL LOAD TRANSAKSI:", error);
+
+    // JANGAN diam-diam dianggap tidak ada data
+    alert(
+      "Gagal mengambil data transaksi dari server.\n\n" +
+      error.message
+    );
+
+    transaksiList = [];
+
+    return [];
+
+  }
+
+}
+
+
+  /* =========================================================
+     STATUS PEMBAYARAN
+  ========================================================= */
+
+  function badgePembayaran(status) {
+
+    if (status === "LUNAS") {
+
+      return `
+        <span class="badge-pill badge-soft-success">
+          LUNAS
+        </span>
+      `;
+
+    }
+
+
+    return `
+      <span class="badge-pill badge-soft-accent">
+        BELUM DIBAYAR
+      </span>
+    `;
+
+  }
+
+
+  /* =========================================================
+     STATUS PROSES
+  ========================================================= */
+
+  function getStatusProses(transaksi) {
+
+    const list =
+      transaksi.proses_cucian ||
+      transaksi.prosesCucian ||
+      [];
+
+
+    if (!list.length) {
+
+      return "BELUM DIPROSES";
+
+    }
+
+
+    const sorted =
+      [...list].sort(
+        (a, b) =>
+          Number(a.id_proses) -
+          Number(b.id_proses)
+      );
+
+
+    return (
+      sorted[
+        sorted.length - 1
+      ].status_proses ||
+      "BELUM DIPROSES"
+    );
+
+  }
+
+
+  function badgeProses(status) {
+
+    if (status === "SELESAI") {
+
+      return `
+        <span class="badge-pill badge-soft-success">
+          SELESAI
+        </span>
+      `;
+
+    }
+
+
+    if (
+      status === "DICUCI" ||
+      status === "DIKERINGKAN" ||
+      status === "DISETRIKA" ||
+      status === "DITERIMA"
+    ) {
+
+      return `
+        <span class="badge-pill badge-soft-accent">
+          ${escapeHtml(status)}
+        </span>
+      `;
+
+    }
+
+
+    return `
+      <span class="badge-pill badge-soft-muted">
+        BELUM DIPROSES
+      </span>
+    `;
+
+  }
+
+
+  /* =========================================================
+     DASHBOARD
+  ========================================================= */
+
+  async function loadDashboard() {
+
+    const list =
+      await loadTransaksi();
+
+
+    document.getElementById(
+      "statTotalTransaksi"
+    ).textContent =
+      list.length;
+
+
+    document.getElementById(
+      "statSudahDibayar"
+    ).textContent =
+      list.filter(
+        item =>
+          item.status_pembayaran ===
+          "LUNAS"
+      ).length;
+
+
+    document.getElementById(
+      "statBelumDibayar"
+    ).textContent =
+      list.filter(
+        item =>
+          item.status_pembayaran !==
+          "LUNAS"
+      ).length;
+
+
+    document.getElementById(
+      "statDalamProses"
+    ).textContent =
+      list.filter(item => {
+
+        const status =
+          getStatusProses(item);
+
+        return (
+          status !== "SELESAI" &&
+          status !== "BELUM DIPROSES"
+        );
+
+      }).length;
+
+
+    const tbody =
+      document.getElementById(
+        "tabelDashboard"
+      );
+
+
+    const latest =
+      [...list]
+      .sort(
+        (a, b) =>
+          Number(b.id_transaksi) -
+          Number(a.id_transaksi)
+      )
+      .slice(0, 8);
+
+
+    if (!latest.length) {
+
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="5">
+            <div class="empty-state">
+              Belum ada transaksi.
+            </div>
+          </td>
+        </tr>
+      `;
+
+      return;
+
+    }
+
+
+    tbody.innerHTML =
+      latest.map(item => {
+
+        const nama =
+          item.pelanggan?.nama ||
+          item.pelanggan?.nama_pelanggan ||
+          "-";
+
+
+        const status =
+          getStatusProses(item);
+
+
+        return `
+
+          <tr>
+
+            <td>
+              <span class="fw-semibold">
+                ${escapeHtml(item.kode_transaksi)}
+              </span>
+            </td>
+
+            <td>
+              ${escapeHtml(nama)}
+            </td>
+
+            <td>
+              ${formatRupiah(item.total_harga)}
+            </td>
+
+            <td>
+              ${badgePembayaran(
+                item.status_pembayaran
+              )}
+            </td>
+
+            <td>
+              ${badgeProses(status)}
+            </td>
+
+          </tr>
+
+        `;
+
+      }).join("");
+
+  }
+
+
+  /* =========================================================
+     PEMBAYARAN
+  ========================================================= */
+
+  async function loadPembayaran() {
+
+    const tbody =
+      document.getElementById(
+        "tabelPembayaran"
+      );
+
+
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5">
+          <div class="empty-state">
+            Memuat data...
+          </div>
+        </td>
+      </tr>
+    `;
+
+
+    const list =
+      await loadTransaksi();
+
+
+    const sorted =
+      [...list].sort(
+        (a, b) =>
+          Number(b.id_transaksi) -
+          Number(a.id_transaksi)
+      );
+
+
+    if (!sorted.length) {
+
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="5">
+            <div class="empty-state">
+              Belum ada transaksi.
+            </div>
+          </td>
+        </tr>
+      `;
+
+      return;
+
+    }
+
+
+    tbody.innerHTML =
+      sorted.map(item => {
+
+        const nama =
+          item.pelanggan?.nama ||
+          "-";
+
+
+        const lunas =
+          item.status_pembayaran ===
+          "LUNAS";
+
+
+        return `
+
+          <tr>
+
+            <td>
+              <span class="fw-semibold">
+                ${escapeHtml(item.kode_transaksi)}
+              </span>
+            </td>
+
+            <td>
+              ${escapeHtml(nama)}
+            </td>
+
+            <td>
+              ${formatRupiah(item.total_harga)}
+            </td>
+
+            <td>
+              ${badgePembayaran(
+                item.status_pembayaran
+              )}
+            </td>
+
+            <td>
+
+              ${
+                lunas
+
+                ?
+
+                `
+                  <span class="text-muted small">
+                    <i class="bi bi-check-circle"></i>
+                    Sudah Lunas
+                  </span>
+                `
+
+                :
+
+                `
+                  <button
+                    class="btn btn-sm btn-primary"
+                    onclick="bukaModalBayar(${item.id_transaksi})"
+                  >
+                    <i class="bi bi-wallet2"></i>
+                    Bayar
+                  </button>
+                `
+              }
+
+            </td>
+
+          </tr>
+
+        `;
+
+      }).join("");
+
+  }
+
+
+  /* =========================================================
+     MODAL BAYAR
+  ========================================================= */
+
+  async function bukaModalBayar(id) {
+
+    try {
+
+      const response =
+        await apiRequest(
+          "/api/transaksi/" + id
+        );
+
+
+      const transaksi =
+        response.data;
+
+
+      selectedPaymentTransaction =
+        transaksi;
+
+
+      document.getElementById(
+        "bayarTransaksiId"
+      ).value =
+        transaksi.id_transaksi;
+
+
+      document.getElementById(
+        "bayarInfo"
+      ).innerHTML = `
+
+        <div class="customer-box">
+
+          <div class="fw-bold">
+            ${escapeHtml(
+              transaksi.kode_transaksi
+            )}
+          </div>
+
+          <div class="small text-muted">
+            ${escapeHtml(
+              transaksi.pelanggan?.nama || "-"
+            )}
+          </div>
+
+          <hr>
+
+          <div class="d-flex justify-content-between">
+
+            <span>
+              Total
+            </span>
+
+            <strong>
+              ${formatRupiah(
+                transaksi.total_harga
+              )}
+            </strong>
+
+          </div>
+
+        </div>
+
+      `;
+
+
+      document.getElementById(
+        "bayarJumlah"
+      ).value =
+        "";
+
+
+      document.getElementById(
+        "bayarKembalian"
+      ).textContent =
+        "Rp 0";
+
+
+      const modal =
+        new bootstrap.Modal(
+          document.getElementById(
+            "modalBayar"
+          )
+        );
+
+
+      modal.show();
+
+    } catch (error) {
+
+      alert(
+        "Gagal mengambil detail transaksi.\n\n" +
+        error.message
+      );
+
+    }
+
+  }
+
+
+  function hitungKembalianModal() {
+
+    if (!selectedPaymentTransaction) {
+      return;
+    }
+
+
+    const total =
+      Number(
+        selectedPaymentTransaction.total_harga
+      );
+
+
+    const jumlah =
+      Number(
+        document.getElementById(
+          "bayarJumlah"
+        ).value || 0
+      );
+
+
+    const kembalian =
+      Math.max(
+        0,
+        jumlah - total
+      );
+
+
+    document.getElementById(
+      "bayarKembalian"
+    ).textContent =
+      formatRupiah(kembalian);
+
+  }
+
+
+  async function prosesPembayaran() {
+
+    if (!selectedPaymentTransaction) {
+      return;
+    }
+
+
+    const id =
+      selectedPaymentTransaction.id_transaksi;
+
+
+    const total =
+      Number(
+        selectedPaymentTransaction.total_harga
+      );
+
+
+    const metode =
+      document.getElementById(
+        "bayarMetode"
+      ).value;
+
+
+    const jumlah =
+      Number(
+        document.getElementById(
+          "bayarJumlah"
+        ).value || 0
+      );
+
+
+    if (jumlah < total) {
+
+      alert(
+        "Jumlah pembayaran kurang dari total transaksi."
+      );
+
+      return;
+
+    }
+
+
+    try {
+
+      await apiRequest(
+        "/api/transaksi/" +
+        id +
+        "/pembayaran",
+        {
+          method: "POST",
+
+          body: JSON.stringify({
+
+            metode_pembayaran:
+              metode,
+
+            jumlah_bayar:
+              jumlah,
+
+            catatan_pelunasan:
+              "Pelunasan kasbon"
+
+          })
+
+        }
+      );
+
+
+      alert(
+        "Pembayaran berhasil. Transaksi sekarang LUNAS."
+      );
+
+
+      const modalElement =
+        document.getElementById(
+          "modalBayar"
+        );
+
+
+      const modal =
+        bootstrap.Modal.getInstance(
+          modalElement
+        );
+
+
+      if (modal) {
+        modal.hide();
+      }
+
+
+      selectedPaymentTransaction =
+        null;
+
+
+      await loadPembayaran();
+
+      await loadDashboard();
+
+    } catch (error) {
+
+      alert(
+        "Pembayaran gagal.\n\n" +
+        error.message
+      );
+
+    }
+
+  }
+
+
+  /* =========================================================
+     RIWAYAT
+  ========================================================= */
+
+  async function loadRiwayat() {
+
+    const tbody =
+      document.getElementById(
+        "tabelRiwayat"
+      );
+
+
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6">
+          <div class="empty-state">
+            Memuat data...
+          </div>
+        </td>
+      </tr>
+    `;
+
+
+    const list =
+      await loadTransaksi();
+
+
+    const sorted =
+      [...list].sort(
+        (a, b) =>
+          Number(b.id_transaksi) -
+          Number(a.id_transaksi)
+      );
+
+
+    if (!sorted.length) {
+
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6">
+            <div class="empty-state">
+              Belum ada transaksi.
+            </div>
+          </td>
+        </tr>
+      `;
+
+      return;
+
+    }
+
+
+    tbody.innerHTML =
+      sorted.map(item => {
+
+        const nama =
+          item.pelanggan?.nama ||
+          "-";
+
+
+        const status =
+          getStatusProses(item);
+
+
+        return `
+
+          <tr>
+
+            <td>
+              <span class="fw-semibold">
+                ${escapeHtml(
+                  item.kode_transaksi
+                )}
+              </span>
+            </td>
+
+            <td>
+              ${escapeHtml(nama)}
+            </td>
+
+            <td>
+              ${formatRupiah(
+                item.total_harga
+              )}
+            </td>
+
+            <td>
+              ${badgePembayaran(
+                item.status_pembayaran
+              )}
+            </td>
+
+            <td>
+              ${badgeProses(status)}
+            </td>
+
+            <td>
+
+              <button
+                class="btn btn-sm btn-outline-primary"
+                onclick="lihatDetail(${item.id_transaksi})"
+              >
+                <i class="bi bi-eye"></i>
+                Detail
+              </button>
+
+            </td>
+
+          </tr>
+
+        `;
+
+      }).join("");
+
+  }
+
+
+  /* =========================================================
+     DETAIL TRANSAKSI
+  ========================================================= */
+
+  async function lihatDetail(id) {
+
+    const container =
+      document.getElementById(
+        "detailContent"
+      );
+
+
+    container.innerHTML = `
+      <div class="empty-state">
+        Memuat detail...
+      </div>
+    `;
+
+
+    const modal =
+      new bootstrap.Modal(
+        document.getElementById(
+          "modalDetail"
+        )
+      );
+
+
+    modal.show();
+
+
+    try {
+
+      const response =
+        await apiRequest(
+          "/api/transaksi/" + id
+        );
+
+
+      const trx =
+        response.data;
+
+
+      const details =
+        trx.detail ||
+        trx.detail_transaksi ||
+        [];
+
+
+      const payment =
+        trx.pembayaran;
+
+
+      const proses =
+        trx.proses_cucian ||
+        trx.prosesCucian ||
+        [];
+
+
+      const sortedProses =
+        [...proses].sort(
+          (a, b) =>
+            Number(a.id_proses) -
+            Number(b.id_proses)
+        );
+
+
+      container.innerHTML = `
+
+        <div class="row g-4">
+
+          <div class="col-md-6">
+
+            <div class="card-box">
+
+              <div class="card-title mb-3">
+                Informasi Transaksi
+              </div>
+
+              <div class="summary-row">
+                <span>Kode</span>
+                <strong>
+                  ${escapeHtml(
+                    trx.kode_transaksi
+                  )}
+                </strong>
+              </div>
+
+              <div class="summary-row">
+                <span>Pelanggan</span>
+                <span>
+                  ${escapeHtml(
+                    trx.pelanggan?.nama || "-"
+                  )}
+                </span>
+              </div>
+
+              <div class="summary-row">
+                <span>Total</span>
+                <strong>
+                  ${formatRupiah(
+                    trx.total_harga
+                  )}
+                </strong>
+              </div>
+
+              <div class="summary-row">
+                <span>Pembayaran</span>
+                ${badgePembayaran(
+                  trx.status_pembayaran
+                )}
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="col-md-6">
+
+            <div class="card-box">
+
+              <div class="card-title mb-3">
+                Pembayaran
+              </div>
+
+              ${
+                payment
+
+                ?
+
+                `
+
+                  <div class="summary-row">
+                    <span>Metode</span>
+                    <strong>
+                      ${escapeHtml(
+                        payment.metode_pembayaran ||
+                        "-"
+                      )}
+                    </strong>
+                  </div>
+
+                  <div class="summary-row">
+                    <span>Jumlah Bayar</span>
+                    <strong>
+                      ${formatRupiah(
+                        payment.jumlah_bayar
+                      )}
+                    </strong>
+                  </div>
+
+                  <div class="summary-row">
+                    <span>Kembalian</span>
+                    <strong>
+                      ${formatRupiah(
+                        payment.kembalian
+                      )}
+                    </strong>
+                  </div>
+
+                  <div class="summary-row">
+                    <span>Status</span>
+                    <span class="badge-pill badge-soft-success">
+                      CONFIRMED
+                    </span>
+                  </div>
+
+                `
+
+                :
+
+                `
+                  <div class="empty-state">
+                    Belum ada pembayaran.
+                  </div>
+                `
+              }
+
+            </div>
+
+          </div>
+
+
+          <div class="col-12">
+
+            <div class="card-box">
+
+              <div class="card-title mb-3">
+                Layanan
+              </div>
+
+              <div class="table-responsive">
+
+                <table class="table">
+
+                  <thead>
+
+                    <tr>
+                      <th>Layanan</th>
+                      <th>Jumlah</th>
+                      <th>Harga</th>
+                      <th>Subtotal</th>
+                    </tr>
+
+                  </thead>
+
+                  <tbody>
+
+                    ${
+                      details.length
+
+                      ?
+
+                      details.map(detail => {
+
+                        const layanan =
+                          detail.layanan || {};
+
+
+                        return `
+
+                          <tr>
+
+                            <td>
+                              ${escapeHtml(
+                                layanan.nama_layanan ||
+                                "-"
+                              )}
+                            </td>
+
+                            <td>
+                              ${detail.berat_jumlah || 0}
+                              ${escapeHtml(
+                                layanan.jenis_satuan ||
+                                ""
+                              )}
+                            </td>
+
+                            <td>
+                              ${formatRupiah(
+                                detail.harga_satuan
+                              )}
+                            </td>
+
+                            <td>
+                              ${formatRupiah(
+                                detail.subtotal
+                              )}
+                            </td>
+
+                          </tr>
+
+                        `;
+
+                      }).join("")
+
+                      :
+
+                      `
+                        <tr>
+                          <td colspan="4">
+                            <div class="empty-state">
+                              Tidak ada detail layanan.
+                            </div>
+                          </td>
+                        </tr>
+                      `
+                    }
+
+                  </tbody>
+
+                </table>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="col-12">
+
+            <div class="card-box">
+
+              <div class="card-title mb-3">
+                Proses Cucian
+              </div>
+
+              ${
+                sortedProses.length
+
+                ?
+
+                sortedProses.map(item => `
+
+                  <div class="timeline-item">
+
+                    <div class="timeline-dot"></div>
+
+                    <div>
+
+                      <div class="timeline-title">
+                        ${escapeHtml(
+                          item.status_proses
+                        )}
+                      </div>
+
+                      <div class="timeline-subtitle">
+                        ${escapeHtml(
+                          item.catatan_proses ||
+                          "-"
+                        )}
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                `).join("")
+
+                :
+
+                `
+                  <div class="empty-state">
+                    Belum ada proses cucian.
+                  </div>
+                `
+              }
+
+            </div>
+
+          </div>
+
+        </div>
+
+      `;
+
+    } catch (error) {
+
+      container.innerHTML = `
+        <div class="alert alert-danger">
+          ${escapeHtml(error.message)}
+        </div>
+      `;
+
+    }
+
+  }
+
+
+  /* =========================================================
+     SEARCH
+  ========================================================= */
+
+  document
+    .getElementById("searchInput")
+    .addEventListener("input", function() {
+
+      const keyword =
+        this.value
+          .toLowerCase()
+          .trim();
+
+
+      document
+        .querySelectorAll(
+          "#tabelDashboard tr, #tabelPembayaran tr, #tabelRiwayat tr"
+        )
+        .forEach(row => {
+
+          row.style.display =
+            row.innerText
+              .toLowerCase()
+              .includes(keyword)
+              ? ""
+              : "none";
+
+        });
+
+    });
+
+
+  /* =========================================================
+     INIT
+  ========================================================= */
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    async function() {
+
+      /*
+       * auth-guard.js kamu tetap dipakai.
+       * Kalau fungsi checkAuth tersedia,
+       * pastikan role harus KASIR.
+       */
+
+      if (
+        typeof checkAuth === "function"
+      ) {
+
+        try {
+          checkAuth("KASIR");
+        } catch (error) {
+          console.warn(error);
+        }
+
+      }
+
+
+      initUser();
+
+      tampilkanTanggal();
+
+      await loadPelanggan();
+
+      await loadLayanan();
+
+      await loadDashboard();
+
+    }
+  );
+
+</script>
+<!-- MODAL PELANGGAN BARU -->
+<div
+  class="modal fade"
+  id="modalPelangganBaru"
+  tabindex="-1"
+  aria-labelledby="modalPelangganBaruLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalPelangganBaruLabel">
+          <i class="bi bi-person-plus me-2"></i>
+          Pelanggan Baru
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <form id="formPelangganBaru">
+
+        <div class="modal-body">
+
+          <div class="mb-3">
+            <label for="pelangganBaruNama" class="form-label">
+              Nama Pelanggan
+            </label>
+
+            <input
+              type="text"
+              class="form-control"
+              id="pelangganBaruNama"
+              placeholder="Masukkan nama pelanggan"
+              required
+            >
+          </div>
+
+          <div class="mb-3">
+            <label for="pelangganBaruTelepon" class="form-label">
+              No. Telepon
+            </label>
+
+            <input
+              type="text"
+              class="form-control"
+              id="pelangganBaruTelepon"
+              placeholder="Masukkan nomor telepon"
+              required
+            >
+          </div>
+
+          <div class="mb-3">
+            <label for="pelangganBaruAlamat" class="form-label">
+              Alamat
+            </label>
+
+            <textarea
+              class="form-control"
+              id="pelangganBaruAlamat"
+              rows="3"
+              placeholder="Masukkan alamat pelanggan"
+            ></textarea>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Batal
+          </button>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+          >
+            <i class="bi bi-check-lg me-1"></i>
+            Simpan Pelanggan
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+<script>
+function bukaModalPelangganBaru() {
+    const form = document.getElementById("formPelangganBaru");
+
+    if (form) {
+        form.reset();
+    }
+
+    const modalElement = document.getElementById("modalPelangganBaru");
+
+    if (!modalElement) {
+        alert("Form pelanggan baru tidak ditemukan.");
+        return;
+    }
+
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.getElementById("formPelangganBaru");
+
+    if (!form) {
+        return;
+    }
+
+    form.addEventListener("submit", async function (event) {
+
+        event.preventDefault();
+
+        const nama = document
+            .getElementById("pelangganBaruNama")
+            .value
+            .trim();
+
+        const noTelepon = document
+            .getElementById("pelangganBaruTelepon")
+            .value
+            .trim();
+
+        const alamat = document
+            .getElementById("pelangganBaruAlamat")
+            .value
+            .trim();
+
+        if (!nama) {
+            alert("Nama pelanggan wajib diisi.");
+            return;
+        }
+
+        if (!noTelepon) {
+            alert("No. telepon pelanggan wajib diisi.");
+            return;
+        }
+
+        try {
+
+            const response = await apiRequest("/api/pelanggan", {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+
+                body: JSON.stringify({
+                    nama: nama,
+                    no_telepon: noTelepon,
+                    alamat: alamat || null
+                })
+            });
+
+            console.log("HASIL TAMBAH PELANGGAN:", response);
+
+            if (!response.success) {
+                throw new Error(
+                    response.message || "Gagal menambahkan pelanggan."
+                );
+            }
+
+            const pelanggan = response.data;
+
+            if (!pelanggan || !pelanggan.id_pelanggan) {
+                throw new Error(
+                    "Data pelanggan berhasil disimpan tetapi ID pelanggan tidak diterima."
+                );
+            }
+
+            // Reload daftar pelanggan
+            await loadPelanggan();
+
+            // Pilih pelanggan yang baru dibuat
+            const select = document.getElementById("selectPelanggan");
+
+            if (select) {
+                select.value = pelanggan.id_pelanggan;
+
+                // Trigger event change jika ada listener
+                select.dispatchEvent(new Event("change"));
+            }
+
+            // Tutup modal
+            const modalElement = document.getElementById(
+                "modalPelangganBaru"
+            );
+
+            const modal = bootstrap.Modal.getInstance(modalElement);
+
+            if (modal) {
+                modal.hide();
+            }
+
+            // Reset form
+            form.reset();
+
+            alert(
+                "Pelanggan berhasil ditambahkan!\n\n" +
+                "Nama: " + pelanggan.nama
+            );
+
+        } catch (error) {
+
+            console.error(
+                "GAGAL TAMBAH PELANGGAN:",
+                error
+            );
+
+            alert(
+                "Gagal menambahkan pelanggan.\n\n" +
+                error.message
+            );
+        }
+
+    });
+
+});
+</script>
+
+</body>
+</html>

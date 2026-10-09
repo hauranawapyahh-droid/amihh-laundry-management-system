@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Dashboard Staff Laundry - Amih Laundry</title>
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-diterima {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-dicuci {
+      background: #cff4fc;
+      color: #055160;
+    }
+
+    .status-dikeringkan {
+      background: #e2e3ff;
+      color: #383d8f;
+    }
+
+    .status-diserika {
+      background: #f8d7da;
+      color: #842029;
+    }
+
+    .status-selesai {
+      background: #d1e7dd;
+      color: #0f5132;
+    }
+
+    .empty-state {
+      padding: 40px 20px;
+      text-align: center;
+      color: #6c757d;
+    }
+
+    .empty-state i {
+      font-size: 40px;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .table-custom {
+      overflow-x: auto;
+    }
+
+    .table-custom table {
+      min-width: 950px;
+    }
+
+    .btn-process {
+      white-space: nowrap;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div>
+
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon">
+          <i class="bi bi-droplet-fill"></i>
+        </div>
+
+        Amih Laundry
+      </div>
+
+      <ul class="sidebar-menu">
+
+        <li>
+          <a
+            href="#"
+            class="menu-link active"
+            data-page="dashboard"
+          >
+            <i class="bi bi-grid-1x2-fill"></i>
+            Dashboard
+          </a>
+        </li>
+
+        <li>
+          <a
+            href="#"
+            class="menu-link"
+            data-page="cucian"
+          >
+            <i class="bi bi-basket"></i>
+            Daftar Cucian
+          </a>
+        </li>
+
+        <li>
+          <a
+            href="#"
+            class="menu-link"
+            data-page="proses"
+          >
+            <i class="bi bi-kanban"></i>
+            Proses Cucian
+          </a>
+        </li>
+
+      </ul>
+
+    </div>
+
+
+    <!-- USER -->
+    <div class="sidebar-footer">
+
+      <div
+        class="sidebar-avatar"
+        id="sidebarAvatarInitial"
+      >
+        ST
+      </div>
+
+      <div class="footer-text">
+
+        <span id="userName">
+          Staff
+        </span>
+
+        <small>
+          Staff Laundry
+        </small>
+
+      </div>
+
+      <button
+        class="btn btn-sm btn-outline-light ms-auto"
+        onclick="logout()"
+      >
+        <i class="bi bi-box-arrow-right"></i>
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+
+      <span
+        class="topbar-date-badge"
+        id="topbarDate"
+      >
+        -
+      </span>
+
+    </div>
+
+
+    <div class="page-content">
+
+
+      <!-- ========================= -->
+      <!-- DASHBOARD -->
+      <!-- ========================= -->
+
+      <div
+        class="page-section"
+        id="page-dashboard"
+      >
+
+        <div class="page-title">
+          Dashboard Staff Laundry
+        </div>
+
+        <div class="page-subtitle">
+          Pantau proses pengerjaan cucian
+        </div>
+
+
+        <div class="row g-3">
+
+
+          <!-- TOTAL -->
+          <div class="col-md-3">
+
+            <div class="card-stat border-primary-left">
+
+              <div class="stat-label">
+                Total Cucian
+              </div>
+
+              <div
+                class="stat-value"
+                id="totalCucian"
+              >
+                -
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- DITERIMA -->
+          <div class="col-md-3">
+
+            <div class="card-stat border-accent-left">
+
+              <div class="stat-label">
+                Diterima
+              </div>
+
+              <div
+                class="stat-value"
+                id="diterima"
+              >
+                -
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- DIPROSES -->
+          <div class="col-md-3">
+
+            <div class="card-stat border-secondary-left">
+
+              <div class="stat-label">
+                Sedang Diproses
+              </div>
+
+              <div
+                class="stat-value"
+                id="diproses"
+              >
+                -
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- SELESAI -->
+          <div class="col-md-3">
+
+            <div class="card-stat border-success-left">
+
+              <div class="stat-label">
+                Selesai
+              </div>
+
+              <div
+                class="stat-value"
+                id="selesai"
+              >
+                -
+              </div>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ========================= -->
+      <!-- DAFTAR CUCIAN -->
+      <!-- ========================= -->
+
+      <div
+        class="page-section d-none"
+        id="page-cucian"
+      >
+
+        <div class="page-title">
+          Daftar Cucian
+        </div>
+
+        <div class="page-subtitle">
+          Daftar transaksi cucian yang masuk
+        </div>
+
+
+        <div class="table-custom">
+
+          <table class="table mb-0">
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Kode Transaksi
+                </th>
+
+                <th>
+                  Pelanggan
+                </th>
+
+                <th>
+                  Layanan
+                </th>
+
+                <th>
+                  Status Proses
+                </th>
+
+                <th>
+                  Catatan
+                </th>
+
+                <th>
+                  Waktu
+                </th>
+
+                <th>
+                  Aksi
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody id="tabelCucian">
+
+              <tr>
+
+                <td
+                  colspan="7"
+                  class="text-center text-muted"
+                >
+                  Memuat data...
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ========================= -->
+      <!-- PROSES CUCIAN -->
+      <!-- ========================= -->
+
+      <div
+        class="page-section d-none"
+        id="page-proses"
+      >
+
+        <div class="page-title">
+          Proses Cucian
+        </div>
+
+        <div class="page-subtitle">
+          Pantau dan perbarui proses pengerjaan laundry
+        </div>
+
+
+        <div class="table-custom">
+
+          <table class="table mb-0">
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Kode Transaksi
+                </th>
+
+                <th>
+                  Pelanggan
+                </th>
+
+                <th>
+                  Layanan
+                </th>
+
+                <th>
+                  Status
+                </th>
+
+                <th>
+                  Catatan
+                </th>
+
+                <th>
+                  Waktu
+                </th>
+
+                <th>
+                  Aksi
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody id="tabelProses">
+
+              <tr>
+
+                <td
+                  colspan="7"
+                  class="text-center text-muted"
+                >
+                  Memuat data...
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+  </main>
+
+</div>
+
+
+
+<!-- AUTH GUARD -->
+<script src="js/auth-guard.js"></script>
+
+
+<script>
+
+  /* =====================================================
+     AUTH
+  ===================================================== */
+
+  const auth = checkAuth("STAFF_LAUNDRY");
+
+
+  if (auth && auth.user) {
+
+    document.getElementById("userName").textContent =
+      auth.user.nama || "Staff";
+
+
+    document.getElementById("sidebarAvatarInitial").textContent =
+      (auth.user.nama || "Staff")
+        .split(" ")
+        .map(w => w[0])
+        .join("")
+        .substring(0, 2)
+        .toUpperCase();
+
+  }
+
+
+
+  /* =====================================================
+     TANGGAL TOPBAR
+  ===================================================== */
+
+  document.getElementById("topbarDate").textContent =
+    new Date().toLocaleDateString(
+      "id-ID",
+      {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+      }
+    );
+
+
+
+  /* =====================================================
+     MENU SIDEBAR
+  ===================================================== */
+
+  document
+    .querySelectorAll(".menu-link")
+    .forEach(link => {
+
+      link.addEventListener("click", function(e) {
+
+        e.preventDefault();
+
+
+        document
+          .querySelectorAll(".menu-link")
+          .forEach(item => {
+
+            item.classList.remove("active");
+
+          });
+
+
+        this.classList.add("active");
+
+
+        document
+          .querySelectorAll(".page-section")
+          .forEach(section => {
+
+            section.classList.add("d-none");
+
+          });
+
+
+        const page =
+          document.getElementById(
+            "page-" + this.dataset.page
+          );
+
+
+        if (page) {
+
+          page.classList.remove("d-none");
+
+        }
+
+      });
+
+    });
+
+
+
+  /* =====================================================
+     STATUS BADGE
+  ===================================================== */
+
+  function getStatusBadge(status) {
+
+    let className = "status-diterima";
+
+    let icon = "bi-inbox";
+
+    let label = status;
+
+
+    if (status === "DITERIMA") {
+
+      className = "status-diterima";
+      icon = "bi-inbox";
+      label = "Diterima";
+
+    }
+
+    else if (status === "DICUCI") {
+
+      className = "status-dicuci";
+      icon = "bi-droplet";
+      label = "Dicuci";
+
+    }
+
+    else if (status === "DIKERINGKAN") {
+
+      className = "status-dikeringkan";
+      icon = "bi-sun";
+      label = "Dikeringkan";
+
+    }
+
+    else if (status === "DISETRIKA") {
+
+      className = "status-diserika";
+      icon = "bi-fire";
+      label = "Disetrika";
+
+    }
+
+    else if (status === "SELESAI") {
+
+      className = "status-selesai";
+      icon = "bi-check-circle";
+      label = "Selesai";
+
+    }
+
+
+    return `
+      <span class="status-badge ${className}">
+        <i class="bi ${icon}"></i>
+        ${label}
+      </span>
+    `;
+
+  }
+
+
+
+  /* =====================================================
+     TOMBOL STATUS BERIKUTNYA
+  ===================================================== */
+
+  function tombolStatus(
+    idTransaksi,
+    status
+  ) {
+
+    if (status === "DITERIMA") {
+
+      return `
+        <button
+          class="btn btn-sm btn-primary btn-process"
+          onclick="updateStatus(
+            ${idTransaksi},
+            'DICUCI'
+          )"
+        >
+          <i class="bi bi-droplet me-1"></i>
+          Mulai Cuci
+        </button>
+      `;
+
+    }
+
+
+    if (status === "DICUCI") {
+
+      return `
+        <button
+          class="btn btn-sm btn-primary btn-process"
+          onclick="updateStatus(
+            ${idTransaksi},
+            'DIKERINGKAN'
+          )"
+        >
+          <i class="bi bi-sun me-1"></i>
+          Keringkan
+        </button>
+      `;
+
+    }
+
+
+    if (status === "DIKERINGKAN") {
+
+      return `
+        <button
+          class="btn btn-sm btn-primary btn-process"
+          onclick="updateStatus(
+            ${idTransaksi},
+            'DISETRIKA'
+          )"
+        >
+          <i class="bi bi-fire me-1"></i>
+          Setrika
+        </button>
+      `;
+
+    }
+
+
+    if (status === "DISETRIKA") {
+
+      return `
+        <button
+          class="btn btn-sm btn-success btn-process"
+          onclick="updateStatus(
+            ${idTransaksi},
+            'SELESAI'
+          )"
+        >
+          <i class="bi bi-check-circle me-1"></i>
+          Selesaikan
+        </button>
+      `;
+
+    }
+
+
+    return `
+      <span class="badge bg-success">
+        <i class="bi bi-check-circle me-1"></i>
+        Selesai
+      </span>
+    `;
+
+  }
+
+
+
+  /* =====================================================
+     UPDATE STATUS PROSES
+  ===================================================== */
+
+  async function updateStatus(
+    idTransaksi,
+    statusProses
+  ) {
+
+    try {
+
+      const res = await apiFetch(
+        `/api/transaksi/${idTransaksi}/proses`,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+
+          body: JSON.stringify({
+            status_proses: statusProses
+          })
+        }
+      );
+
+
+      const result = await res.json();
+
+
+      if (!res.ok || !result.success) {
+
+        throw new Error(
+          result.message ||
+          "Gagal memperbarui status cucian."
+        );
+
+      }
+
+
+      alert(
+        "Status berhasil diubah menjadi " +
+        statusProses
+      );
+
+
+      await loadProses();
+
+    }
+
+    catch (err) {
+
+      console.error(
+        "Gagal update status:",
+        err
+      );
+
+
+      alert(
+        "Gagal memperbarui status cucian.\n\n" +
+        err.message
+      );
+
+    }
+
+  }
+
+
+
+  /* =====================================================
+     LOAD DATA PROSES CUCIAN
+  ===================================================== */
+
+  async function loadProses() {
+
+    try {
+
+      const res =
+        await apiFetch(
+          "/api/proses-cucian"
+        );
+
+
+      const result =
+        await res.json();
+
+
+      if (!res.ok || !result.success) {
+
+        throw new Error(
+          result.message ||
+          "Gagal mengambil data cucian."
+        );
+
+      }
+
+
+      const data =
+        result.data || [];
+
+
+      /* =================================================
+         AMBIL STATUS TERAKHIR PER TRANSAKSI
+
+         Karena setiap update status membuat record proses
+         baru, kita hanya tampilkan status TERAKHIR.
+      ================================================= */
+
+      const latestMap = new Map();
+
+
+      data.forEach(item => {
+
+        const id =
+          item.id_transaksi;
+
+
+        if (!latestMap.has(id)) {
+
+          latestMap.set(
+            id,
+            item
+          );
+
+        }
+
+      });
+
+
+      const latestData =
+        Array.from(
+          latestMap.values()
+        );
+
+
+
+      /* =================================================
+         DASHBOARD STATISTIK
+      ================================================= */
+
+      document.getElementById(
+        "totalCucian"
+      ).textContent =
+        latestData.length;
+
+
+      document.getElementById(
+        "diterima"
+      ).textContent =
+        latestData.filter(
+          x =>
+            x.status_proses === "DITERIMA"
+        ).length;
+
+
+      document.getElementById(
+        "diproses"
+      ).textContent =
+        latestData.filter(
+          x =>
+            [
+              "DICUCI",
+              "DIKERINGKAN",
+              "DISETRIKA"
+            ].includes(
+              x.status_proses
+            )
+        ).length;
+
+
+      document.getElementById(
+        "selesai"
+      ).textContent =
+        latestData.filter(
+          x =>
+            x.status_proses === "SELESAI"
+        ).length;
+
+
+
+      /* =================================================
+         BUAT TABEL
+      ================================================= */
+
+      if (latestData.length === 0) {
+
+        const emptyHtml = `
+          <tr>
+            <td colspan="7">
+              <div class="empty-state">
+
+                <i class="bi bi-basket"></i>
+
+                Belum ada cucian yang masuk.
+
+              </div>
+            </td>
+          </tr>
+        `;
+
+
+        document.getElementById(
+          "tabelCucian"
+        ).innerHTML =
+          emptyHtml;
+
+
+        document.getElementById(
+          "tabelProses"
+        ).innerHTML =
+          emptyHtml;
+
+
+        return;
+
+      }
+
+
+
+      const html =
+        latestData.map(
+          x => {
+
+            const transaksi =
+              x.transaksi || {};
+
+
+            const pelanggan =
+              transaksi.pelanggan || {};
+
+
+            const detail =
+              transaksi.detail || [];
+
+
+            const layanan =
+              detail.length > 0 &&
+              detail[0].layanan
+                ? detail[0].layanan.nama_layanan
+                : "-";
+
+
+            return `
+
+              <tr>
+
+                <td>
+
+                  <strong>
+                    ${
+                      transaksi.kode_transaksi ||
+                      x.id_transaksi ||
+                      "-"
+                    }
+                  </strong>
+
+                </td>
+
+
+                <td>
+
+                  ${
+                    pelanggan.nama ||
+                    "-"
+                  }
+
+                </td>
+
+
+                <td>
+
+                  ${
+                    layanan
+                  }
+
+                </td>
+
+
+                <td>
+
+                  ${
+                    getStatusBadge(
+                      x.status_proses
+                    )
+                  }
+
+                </td>
+
+
+                <td>
+
+                  ${
+                    x.catatan_proses ||
+                    "-"
+                  }
+
+                </td>
+
+
+                <td>
+
+                  ${
+                    x.created_at
+                      ? new Date(
+                          x.created_at
+                        ).toLocaleString(
+                          "id-ID"
+                        )
+                      : "-"
+                  }
+
+                </td>
+
+
+                <td>
+
+                  ${
+                    tombolStatus(
+                      x.id_transaksi,
+                      x.status_proses
+                    )
+                  }
+
+                </td>
+
+              </tr>
+
+            `;
+
+          }
+        ).join("");
+
+
+      document.getElementById(
+        "tabelCucian"
+      ).innerHTML =
+        html;
+
+
+      document.getElementById(
+        "tabelProses"
+      ).innerHTML =
+        html;
+
+    }
+
+
+    catch (err) {
+
+      console.error(
+        "Gagal mengambil data proses:",
+        err
+      );
+
+
+      const errorHtml = `
+        <tr>
+
+          <td
+            colspan="7"
+            class="text-center text-danger py-4"
+          >
+
+            <i class="bi bi-exclamation-circle me-1"></i>
+
+            Gagal mengambil data cucian.
+
+          </td>
+
+        </tr>
+      `;
+
+
+      document.getElementById(
+        "tabelCucian"
+      ).innerHTML =
+        errorHtml;
+
+
+      document.getElementById(
+        "tabelProses"
+      ).innerHTML =
+        errorHtml;
+
+    }
+
+  }
+
+
+
+  /* =====================================================
+     LOAD AWAL
+  ===================================================== */
+
+  loadProses();
+
+</script>
+
+</body>
+</html>
