@@ -1,10 +1,20 @@
 node_modules/
+vendor/
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
 dist/
 build/
 coverage/
 *.log
 .DS_Store
 .vscode/
+
+# Backup dan file sementara
+*.bak
+*.bak-*
+*.backup
+*.backup-*
+laravel/cek-customer.ps1
+laravel/perbaiki-customer.ps1
+laravel/public/js/dashboard-customer.html
