@@ -429,91 +429,35 @@
     }
 
     /* =========================================================
-       PAYMENT CHOICE
+       PEMBAYARAN
     ========================================================= */
 
-    .payment-options {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .payment-option {
+    .payment-detail {
+      background: #f8fafc;
       border: 1px solid #e8edf3;
       border-radius: 12px;
-      background: white;
       padding: 15px;
-      cursor: pointer;
-      transition: .2s;
-    }
-
-    .payment-option:hover {
-      border-color: #2f6fed;
-    }
-
-    .payment-option.active {
-      border-color: #2f6fed;
-      background: #f5f9ff;
-      box-shadow: 0 0 0 1px #2f6fed;
-    }
-
-    .payment-option-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      background: #eaf2ff;
-      color: #2f6fed;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 19px;
-      flex-shrink: 0;
-    }
-
-    .payment-option-title {
-      font-weight: 700;
-      color: #1f2937;
-    }
-
-    .payment-option-subtitle {
-      font-size: 12px;
-      color: #8a94a6;
-    }
-
-    .payment-detail {
-      background: #f8fbff;
-      border: 1px solid #dce9ff;
-      border-radius: 12px;
-      padding: 16px;
-      margin-top: 12px;
     }
 
     .change-box {
-      background: #e7f7ee;
-      border-radius: 10px;
+      margin-top: 15px;
       padding: 12px 15px;
-      margin-top: 12px;
+      background: #eaf2ff;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .change-label {
-      color: #15803d;
-      font-size: 12px;
+      font-size: 13px;
+      color: #667085;
     }
 
     .change-value {
-      color: #15803d;
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
-    }
-
-    .kasbon-info {
-      background: #fff8e7;
-      border: 1px solid #ffe2a8;
-      color: #8a6200;
-      border-radius: 10px;
-      padding: 13px;
-      font-size: 13px;
-      margin-top: 12px;
+      color: #2f6fed;
     }
 
     /* =========================================================
@@ -603,10 +547,6 @@
         margin-left: 210px;
         width: calc(100% - 210px);
       }
-
-      .payment-options {
-        grid-template-columns: 1fr;
-      }
     }
 
     @media (max-width: 700px) {
@@ -647,10 +587,7 @@
   <aside class="sidebar">
 
     <div class="sidebar-brand">
-      <h4>
-        <i class="bi bi-droplet-fill"></i>
-        Amih Laundry
-      </h4>
+      <h4 style="display:flex;align-items:center;gap:9px"><img src="/logo-amih-laundry.png" alt="Logo Amih Laundry" style="width:42px;height:42px;object-fit:contain;background:white;border-radius:8px;padding:2px;flex-shrink:0"> Amih Laundry</h4>
 
       <small>Kasir Panel</small>
     </div>
@@ -834,7 +771,7 @@
             <strong id="dashboardUserName">
               Kasir
             </strong>
-            👋
+&#128075;
           </p>
 
           <p>
@@ -1025,44 +962,36 @@
 
               <!-- PELANGGAN -->
 
-              
-              <!-- PELANGGAN -->
+              <div class="mb-4">
 
-<div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                  <label class="form-label fw-semibold mb-0">Pelanggan</label>
+                  <div class="d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="bukaModalPelangganBaru()">
+                      <i class="bi bi-person-plus"></i> Pelanggan Baru
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="buatPelangganUmumKasir()">
+                      <i class="bi bi-person"></i> Pelanggan Umum
+                    </button>
+                  </div>
+                </div>
 
-  <div class="d-flex justify-content-between align-items-center mb-2">
-
-    <label class="form-label fw-semibold mb-0">
-      Pelanggan
-    </label>
-
-    <button
-      type="button"
-      class="btn btn-sm btn-primary"
-      onclick="bukaModalPelangganBaru()"
-    >
-      <i class="bi bi-person-plus"></i>
-      Pelanggan Baru
-    </button>
-
-  </div>
-
-  <select
-    id="selectPelanggan"
-    class="form-select"
-  >
-
-    <option value="">
-      Pilih pelanggan...
-    </option>
-
+                <div class="input-group">
+  <select id="selectPelanggan" class="form-select" onchange="tampilPelangganTerpilih()">
+    <option value="">Pilih pelanggan...</option>
   </select>
-
-  <div
-    id="selectedCustomer"
-    class="customer-box mt-2 d-none"
-  ></div>
-
+  <button type="button" class="btn btn-outline-primary"
+          title="Cari pelanggan" aria-label="Cari pelanggan"
+          onclick="toggleCariPelangganKasir()">
+    <i class="bi bi-search"></i>
+  </button>
+</div>
+<div id="panelCariPelangganKasir" class="mt-2 d-none">
+  <input type="text" id="cariPelangganKasir" class="form-control"
+         placeholder="Cari nama atau nomor telepon..."
+         autocomplete="off" oninput="filterPelangganKasir()">
+  <div id="hasilCariPelangganKasir" class="list-group mt-1"></div>
+</div>
 
                 <div
                   id="selectedCustomer"
@@ -1132,75 +1061,7 @@
                   Pembayaran
                 </div>
 
-
-                <div class="payment-options">
-
-                  <div
-                    id="paymentNowOption"
-                    class="payment-option active"
-                    onclick="pilihJenisPembayaran('SEKARANG')"
-                  >
-
-                    <div class="d-flex align-items-center gap-3">
-
-                      <div class="payment-option-icon">
-                        <i class="bi bi-wallet2"></i>
-                      </div>
-
-                      <div>
-
-                        <div class="payment-option-title">
-                          Bayar Sekarang
-                        </div>
-
-                        <div class="payment-option-subtitle">
-                          Transaksi langsung lunas
-                        </div>
-
-                      </div>
-
-                    </div>
-
-                  </div>
-
-
-                  <div
-                    id="paymentKasbonOption"
-                    class="payment-option"
-                    onclick="pilihJenisPembayaran('KASBON')"
-                  >
-
-                    <div class="d-flex align-items-center gap-3">
-
-                      <div class="payment-option-icon">
-                        <i class="bi bi-clock-history"></i>
-                      </div>
-
-                      <div>
-
-                        <div class="payment-option-title">
-                          Kasbon
-                        </div>
-
-                        <div class="payment-option-subtitle">
-                          Bayar nanti
-                        </div>
-
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-
-                <!-- DETAIL BAYAR SEKARANG -->
-
-                <div
-                  id="paymentDetail"
-                  class="payment-detail"
-                >
+                <div class="payment-detail">
 
                   <div class="row g-3">
 
@@ -1214,23 +1075,12 @@
                         id="metodePembayaran"
                         class="form-select"
                       >
-
-                        <option value="TUNAI">
-                          Tunai
-                        </option>
-
-                        <option value="TRANSFER_BANK">
-                          Transfer Bank
-                        </option>
-
-                        <option value="QRIS">
-                          QRIS
-                        </option>
-
+                        <option value="TUNAI">Tunai</option>
+                        <option value="TRANSFER_BANK">Transfer Bank</option>
+                        <option value="QRIS">QRIS</option>
                       </select>
 
                     </div>
-
 
                     <div class="col-md-6">
 
@@ -1251,41 +1101,17 @@
 
                   </div>
 
-
-                  <div
-                    id="changeBox"
-                    class="change-box"
-                  >
+                  <div class="change-box">
 
                     <div class="change-label">
                       Kembalian
                     </div>
 
-                    <div
-                      id="nilaiKembalian"
-                      class="change-value"
-                    >
+                    <div id="nilaiKembalian" class="change-value">
                       Rp 0
                     </div>
 
                   </div>
-
-                </div>
-
-
-                <!-- KASBON -->
-
-                <div
-                  id="kasbonInfo"
-                  class="kasbon-info d-none"
-                >
-
-                  <i class="bi bi-info-circle me-1"></i>
-
-                  Transaksi akan berstatus
-                  <strong>BELUM DIBAYAR</strong>
-                  dan dapat dilunasi melalui menu
-                  <strong>Pembayaran</strong>.
 
                 </div>
 
@@ -1659,6 +1485,110 @@
 
 
 <!-- =========================================================
+     MODAL PELANGGAN BARU / EDIT
+========================================================= -->
+
+<div
+  class="modal fade"
+  id="modalPelangganBaru"
+  tabindex="-1"
+  aria-labelledby="modalPelangganBaruLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalPelangganBaruLabel">
+          <i class="bi bi-person-plus me-2"></i>
+          Pelanggan Baru
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <form id="formPelangganBaru">
+
+        <input type="hidden" id="pelangganBaruId">
+
+        <div class="modal-body">
+
+          <div class="mb-3">
+            <label for="pelangganBaruNama" class="form-label">
+              Nama Pelanggan
+            </label>
+
+            <input
+              type="text"
+              class="form-control"
+              id="pelangganBaruNama"
+              placeholder="Masukkan nama pelanggan"
+              required
+            >
+          </div>
+
+          <div class="mb-3">
+            <label for="pelangganBaruTelepon" class="form-label">
+              No. Telepon
+            </label>
+
+            <input
+              type="text"
+              class="form-control"
+              id="pelangganBaruTelepon"
+              placeholder="Masukkan nomor telepon"
+              required
+            >
+          </div>
+
+          <div class="mb-3">
+            <label for="pelangganBaruAlamat" class="form-label">
+              Alamat
+            </label>
+
+            <textarea
+              class="form-control"
+              id="pelangganBaruAlamat"
+              rows="3"
+              placeholder="Masukkan alamat pelanggan"
+            ></textarea>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Batal
+          </button>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+          >
+            <i class="bi bi-check-lg me-1"></i>
+            Simpan Pelanggan
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- =========================================================
      SCRIPT
 ========================================================= -->
 
@@ -1916,47 +1846,16 @@
 
 
   function bukaPage(page) {
+    document.querySelectorAll(".page-section").forEach(section => {
+      section.classList.add("d-none");
+    });
 
-    document
-      .querySelectorAll(".page-section")
-      .forEach(section => {
+    const target = document.getElementById("page-" + page);
+    if (target) target.classList.remove("d-none");
 
-        section.classList.add("d-none");
-
-      });
-
-
-    const target =
-      document.getElementById(
-        "page-" + page
-      );
-
-    if (target) {
-      target.classList.remove("d-none");
-    }
-
-
-    document
-      .querySelectorAll(".menu-link[data-page]")
-      .forEach(link => {
-
-        link.classList.remove("active");
-
-        if (link.dataset.page === page) {
-          link.classList.add("active");
-        }
-
-      });
-
-
-    if (page === "dashboard") {
-      loadDashboard();
-    }
-
-    if (page === "transaksi") {
-      loadPelanggan();
-      loadLayanan();
-    }
+    document.querySelectorAll(".menu-link[data-page]").forEach(link => {
+      link.classList.toggle("active", link.dataset.page === page);
+    });
 
     if (page === "pembayaran") {
       loadPembayaran();
@@ -1965,114 +1864,222 @@
     if (page === "riwayat") {
       loadRiwayat();
     }
-
   }
 
+  async function loadPembayaran() {
+    const tbody = document.getElementById("tabelPembayaran");
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Memuat pembayaran...</div></td></tr>`;
 
-  /* =========================================================
-     PELANGGAN
-  ========================================================= */
+    try {
+      const [list, hasilPending] = await Promise.all([
+        loadTransaksi(),
+        apiRequest("/api/pembayaran/menunggu")
+      ]);
 
-  async function loadPelanggan() {
-
-    const select =
-      document.getElementById(
-        "selectPelanggan"
+      const pending = hasilPending.data || [];
+      const pendingByKode = new Map(
+        pending.map(p => [String(p.kode_transaksi), p])
       );
+
+      const sorted = [...list].sort(
+        (a, b) => Number(b.id_transaksi) - Number(a.id_transaksi)
+      );
+
+      if (!sorted.length && !pending.length) {
+        tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Belum ada pembayaran.</div></td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = sorted.map(item => {
+        const kode = String(item.kode_transaksi || "");
+        const nama = item.pelanggan?.nama || "-";
+        const lunas = String(item.status_pembayaran || "").toUpperCase() === "LUNAS";
+        const p = pendingByKode.get(kode);
+
+        if (p) {
+          return `
+            <tr>
+              <td><span class="fw-semibold">${escapeHtml(p.kode_transaksi || kode)}</span></td>
+              <td>${escapeHtml(p.nama_pelanggan || nama)}</td>
+              <td>${formatRupiah(p.total_harga)}</td>
+              <td><span class="badge bg-warning text-dark">Menunggu Verifikasi</span>
+                <div class="small mt-1">${escapeHtml(p.metode_pembayaran || "")}</div>
+              </td>
+              <td>
+                <a class="btn btn-sm btn-outline-primary mb-1"
+                   href="${escapeHtml(p.url_bukti)}" target="_blank" rel="noopener">
+                  <i class="bi bi-image"></i> Lihat Bukti
+                </a>
+                <button class="btn btn-sm btn-success mb-1"
+                  onclick="verifikasiPembayaran(${Number(p.id_pembayaran)})">
+                  <i class="bi bi-check-circle"></i> Verifikasi
+                </button>
+              </td>
+            </tr>`;
+        }
+
+        return `
+          <tr>
+            <td><span class="fw-semibold">${escapeHtml(kode)}</span></td>
+            <td>${escapeHtml(nama)}</td>
+            <td>${formatRupiah(item.total_harga)}</td>
+            <td>${badgePembayaran(item.status_pembayaran)}</td>
+            <td>${lunas
+              ? `<span class="text-muted small"><i class="bi bi-check-circle"></i> Sudah Lunas</span>`
+              : `<button class="btn btn-sm btn-primary" onclick="bukaModalBayar(${Number(item.id_transaksi)})"><i class="bi bi-wallet2"></i> Bayar</button>`
+            }</td>
+          </tr>`;
+      }).join("");
+
+      // Tampilkan bukti pending meskipun transaksinya tidak muncul di daftar transaksi.
+      const kodeTransaksi = new Set(sorted.map(t => String(t.kode_transaksi || "")));
+      const tambahan = pending.filter(p => !kodeTransaksi.has(String(p.kode_transaksi || "")));
+
+      if (tambahan.length) {
+        tbody.insertAdjacentHTML("afterbegin", tambahan.map(p => `
+          <tr>
+            <td><span class="fw-semibold">${escapeHtml(p.kode_transaksi || "-")}</span></td>
+            <td>${escapeHtml(p.nama_pelanggan || "-")}</td>
+            <td>${formatRupiah(p.total_harga)}</td>
+            <td><span class="badge bg-warning text-dark">Menunggu Verifikasi</span>
+              <div class="small mt-1">${escapeHtml(p.metode_pembayaran || "")}</div>
+            </td>
+            <td>
+              <a class="btn btn-sm btn-outline-primary mb-1" href="${escapeHtml(p.url_bukti)}" target="_blank" rel="noopener">Lihat Bukti</a>
+              <button class="btn btn-sm btn-success mb-1" onclick="verifikasiPembayaran(${Number(p.id_pembayaran)})">Verifikasi</button>
+            </td>
+          </tr>`).join(""));
+      }
+    } catch (error) {
+      console.error("Gagal memuat pembayaran:", error);
+      tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Gagal memuat pembayaran: ${escapeHtml(error.message || "Kesalahan server")}</div></td></tr>`;
+    }
+  }
+
+  async function verifikasiPembayaran(id) {
+    if (!confirm("Pastikan bukti sudah diperiksa dan pembayaran benar-benar diterima. Verifikasi pembayaran ini?")) return;
+
+    try {
+      const hasil = await apiRequest("/api/pembayaran/" + Number(id) + "/verifikasi", {
+        method: "POST",
+        body: JSON.stringify({
+          catatan_pelunasan: "Bukti pembayaran diverifikasi kasir."
+        })
+      });
+
+      if (hasil.success === false) {
+        throw new Error(hasil.message || "Verifikasi gagal.");
+      }
+
+      alert(hasil.message || "Pembayaran berhasil diverifikasi.");
+      await loadPembayaran();
+    } catch (error) {
+      console.error(error);
+      alert("Verifikasi gagal: " + (error.message || "Kesalahan server"));
+    }
+  }
+  function toggleCariPelangganKasir() {
+    const panel = document.getElementById("panelCariPelangganKasir");
+    const input = document.getElementById("cariPelangganKasir");
+    if (!panel || !input) return;
+
+    panel.classList.toggle("d-none");
+    if (panel.classList.contains("d-none")) {
+        input.value = "";
+        document.getElementById("hasilCariPelangganKasir").innerHTML = "";
+    } else {
+        input.focus();
+        filterPelangganKasir();
+    }
+}
+
+function labelPelangganKasir(p) {
+    if (!p) return "";
+    if (!String(p.no_telepon || "").startsWith("UMUM-")) return p.nama || "";
+    const daftarUmum = (Array.isArray(pelangganList) ? pelangganList : [])
+        .filter(x => String(x.no_telepon || "").startsWith("UMUM-"))
+        .sort((a, b) => Number(a.id_pelanggan) - Number(b.id_pelanggan));
+    const nomor = daftarUmum.findIndex(x => String(x.id_pelanggan) === String(p.id_pelanggan)) + 1;
+    return "Pelanggan Umum " + (nomor > 0 ? nomor : p.id_pelanggan);
+}
+function filterPelangganKasir() {
+    const input = document.getElementById("cariPelangganKasir");
+    const hasilBox = document.getElementById("hasilCariPelangganKasir");
+    if (!input || !hasilBox) return;
+
+    const keyword = input.value.trim().toLowerCase();
+    const daftar = Array.isArray(pelangganList) ? pelangganList : [];
+    hasilBox.innerHTML = "";
+
+    if (!keyword) {
+        hasilBox.innerHTML = '<div class="list-group-item text-muted small">Ketik nama atau nomor telepon.</div>';
+        return;
+    }
+
+    const hasil = daftar.filter(p =>
+        String(p.nama || "").toLowerCase().includes(keyword) ||
+        String(p.no_telepon || "").toLowerCase().includes(keyword)
+    ).slice(0, 8);
+
+    if (!hasil.length) {
+        hasilBox.innerHTML = '<div class="list-group-item text-muted small">Pelanggan tidak ditemukan.</div>';
+        return;
+    }
+
+    hasil.forEach(p => {
+        const item = document.createElement("button");
+        item.type = "button";
+        item.className = "list-group-item list-group-item-action";
+        item.textContent = labelPelangganKasir(p) + (p.no_telepon && !String(p.no_telepon).startsWith("UMUM-") ? " - " + p.no_telepon : "");
+        item.addEventListener("click", () => {
+            document.getElementById("selectPelanggan").value = String(p.id_pelanggan);
+            tampilPelangganTerpilih();
+            document.getElementById("panelCariPelangganKasir").classList.add("d-none");
+            input.value = "";
+            hasilBox.innerHTML = "";
+        });
+        hasilBox.appendChild(item);
+    });
+}
+async function loadPelanggan() {
+    const select = document.getElementById("selectPelanggan");
+
+    // simpan pilihan sebelumnya supaya tidak hilang saat reload
+    const pilihanSebelumnya = select.value;
 
     try {
 
-      const response =
-        await apiRequest(
-          "/api/pelanggan"
-        );
-
-      pelangganList =
-        response.data || [];
-
+      const response = await apiRequest("/api/pelanggan");
+      pelangganList = response.data || [];
 
       select.innerHTML = `
-        <option value="">
-          Pilih pelanggan...
-        </option>
+        <option value="">Pilih pelanggan...</option>
       `;
 
-
       pelangganList.forEach(pelanggan => {
-
         select.innerHTML += `
           <option value="${pelanggan.id_pelanggan}">
-            ${escapeHtml(pelanggan.nama)}
-            ${pelanggan.no_telepon
-              ? " - " + escapeHtml(pelanggan.no_telepon)
-              : ""}
+            ${escapeHtml(labelPelangganKasir(pelanggan))}
+            ${pelanggan.no_telepon && !String(pelanggan.no_telepon).startsWith("UMUM-") ? " - " + escapeHtml(pelanggan.no_telepon) : ""}
           </option>
         `;
-
       });
+
+      if (pilihanSebelumnya) {
+        select.value = pilihanSebelumnya;
+      }
 
     } catch (error) {
 
       console.error(error);
 
       select.innerHTML = `
-        <option value="">
-          Gagal memuat pelanggan
-        </option>
+        <option value="">Gagal memuat pelanggan</option>
       `;
 
     }
 
   }
-
-
-  document
-    .getElementById("selectPelanggan")
-    .addEventListener("change", function() {
-
-      const id =
-        Number(this.value);
-
-      const customer =
-        pelangganList.find(
-          item =>
-            Number(item.id_pelanggan) === id
-        );
-
-
-      const box =
-        document.getElementById(
-          "selectedCustomer"
-        );
-
-
-      if (!customer) {
-
-        box.classList.add("d-none");
-        box.innerHTML = "";
-
-        return;
-
-      }
-
-
-      box.classList.remove("d-none");
-
-      box.innerHTML = `
-        <div class="fw-semibold">
-          ${escapeHtml(customer.nama)}
-        </div>
-
-        <div class="small text-muted">
-          ${escapeHtml(customer.no_telepon || "-")}
-        </div>
-
-        <div class="small text-muted">
-          ${escapeHtml(customer.alamat || "-")}
-        </div>
-      `;
-
-    });
 
 
   /* =========================================================
@@ -2154,7 +2161,7 @@
                     type="button"
                     onclick="ubahJumlah(${id}, -1)"
                   >
-                    −
+                    <i class="bi bi-dash"></i>
                   </button>
 
                   <input
@@ -2363,7 +2370,7 @@
               <small class="text-muted">
                 ${item.berat_jumlah}
                 ${escapeHtml(item.jenis_satuan)}
-                ×
+                Ã—
                 ${formatRupiah(item.harga_satuan)}
               </small>
 
@@ -2412,65 +2419,6 @@
 
 
     hitungKembalian();
-
-  }
-
-
-  /* =========================================================
-     JENIS PEMBAYARAN
-  ========================================================= */
-
-  function pilihJenisPembayaran(jenis) {
-
-    jenisPembayaran =
-      jenis;
-
-
-    const now =
-      document.getElementById(
-        "paymentNowOption"
-      );
-
-    const kasbon =
-      document.getElementById(
-        "paymentKasbonOption"
-      );
-
-    const detail =
-      document.getElementById(
-        "paymentDetail"
-      );
-
-    const info =
-      document.getElementById(
-        "kasbonInfo"
-      );
-
-
-    if (jenis === "SEKARANG") {
-
-      now.classList.add("active");
-
-      kasbon.classList.remove("active");
-
-      detail.classList.remove("d-none");
-
-      info.classList.add("d-none");
-
-    } else {
-
-      now.classList.remove("active");
-
-      kasbon.classList.add("active");
-
-      detail.classList.add("d-none");
-
-      info.classList.remove("d-none");
-
-    }
-
-
-    updateSummary();
 
   }
 
@@ -2673,31 +2621,52 @@
         response.data;
 
 
-      const kode =
-        transaction?.kode_transaksi ||
-        "-";
+      const transactionId =
+        transaction?.id_transaksi ||
+        transaction?.id ||
+        transaction?.transaksi?.id_transaksi;
 
+      const kode =
+        transaction?.kode_transaksi || "-";
 
       const status =
         transaction?.status_pembayaran ||
-        (jenisPembayaran === "SEKARANG"
-          ? "LUNAS"
-          : "BELUM_DIBAYAR");
-
+        transaction?.status_bayar ||
+        "Belum diketahui";
 
       alert(
         "Transaksi berhasil dibuat!\n\n" +
-        "Kode Transaksi: " +
-        kode +
-        "\n" +
-        "Total: " +
-        formatRupiah(total) +
-        "\n" +
-        "Status Pembayaran: " +
-        status
+        "Kode Transaksi: " + kode + "\n" +
+        "Total: " + formatRupiah(total) + "\n" +
+        "Status Pembayaran: " + status
       );
 
+      if (transactionId && confirm(
+        "Mau cetak struk pelanggan sekarang?"
+      )) {
+        try {
+          await lihatDetail(transactionId);
 
+          if (currentDetailReceiptHTML) {
+            cetakStrukTransaksi();
+          } else {
+            alert(
+              "Transaksi berhasil, tetapi struk belum dapat ditampilkan. " +
+              "Silakan cetak ulang dari Riwayat Transaksi."
+            );
+          }
+        } catch (receiptError) {
+          console.error("GAGAL MEMBUKA STRUK:", receiptError);
+          alert(
+            "Transaksi tetap berhasil. Struk bisa dicoba lagi dari Riwayat Transaksi."
+          );
+        }
+      } else if (!transactionId) {
+        alert(
+          "Transaksi berhasil, tetapi ID transaksi tidak ditemukan untuk membuka struk. " +
+          "Silakan cek Riwayat Transaksi."
+        );
+      }
       resetTransaksi();
 
 
@@ -2739,50 +2708,16 @@
 
     selectedServices = {};
 
-    jenisPembayaran =
-      "SEKARANG";
+    document.getElementById("selectPelanggan").value = "";
 
+    const customerBox = document.getElementById("selectedCustomer");
+    customerBox.classList.add("d-none");
+    customerBox.innerHTML = "";
 
-    document.getElementById(
-      "selectPelanggan"
-    ).value = "";
-
-
-    document.getElementById(
-      "selectedCustomer"
-    ).classList.add("d-none");
-
-
-    document.getElementById(
-      "selectedCustomer"
-    ).innerHTML = "";
-
-
-    document.getElementById(
-      "catatanTransaksi"
-    ).value = "";
-
-
-    document.getElementById(
-      "metodePembayaran"
-    ).value = "TUNAI";
-
-
-    document.getElementById(
-      "jumlahBayar"
-    ).value = "";
-
-
-    pilihJenisPembayaran(
-      "SEKARANG"
-    );
-
-
-    document.getElementById(
-      "nilaiKembalian"
-    ).textContent =
-      "Rp 0";
-
+    document.getElementById("catatanTransaksi").value = "";
+    document.getElementById("metodePembayaran").value = "TUNAI";
+    document.getElementById("jumlahBayar").value = "";
+    document.getElementById("nilaiKembalian").textContent = "Rp 0";
 
     loadLayanan();
 
@@ -2793,51 +2728,51 @@
      TRANSAKSI API
   ========================================================= */
 
- async function loadTransaksi() {
+  async function loadTransaksi() {
 
-  try {
+    try {
 
-    const response = await apiRequest("/api/transaksi");
+      const response = await apiRequest("/api/transaksi");
 
-    console.log("HASIL API TRANSAKSI:", response);
+      console.log("HASIL API TRANSAKSI:", response);
 
-    let data = response.data;
+      let data = response.data;
 
-    // Antisipasi kalau API mengembalikan data langsung
-    if (Array.isArray(data)) {
-      transaksiList = data;
-    }
+      // Antisipasi kalau API mengembalikan data langsung
+      if (Array.isArray(data)) {
+        transaksiList = data;
+      }
 
-    // Antisipasi kalau API berbentuk { data: [...] }
-    else if (data && Array.isArray(data.data)) {
-      transaksiList = data.data;
-    }
+      // Antisipasi kalau API berbentuk { data: [...] }
+      else if (data && Array.isArray(data.data)) {
+        transaksiList = data.data;
+      }
 
-    else {
+      else {
+        transaksiList = [];
+      }
+
+      console.log("TRANSAKSI YANG DIBACA FRONTEND:", transaksiList);
+
+      return transaksiList;
+
+    } catch (error) {
+
+      console.error("GAGAL LOAD TRANSAKSI:", error);
+
+      // JANGAN diam-diam dianggap tidak ada data
+      alert(
+        "Gagal mengambil data transaksi dari server.\n\n" +
+        error.message
+      );
+
       transaksiList = [];
+
+      return [];
+
     }
-
-    console.log("TRANSAKSI YANG DIBACA FRONTEND:", transaksiList);
-
-    return transaksiList;
-
-  } catch (error) {
-
-    console.error("GAGAL LOAD TRANSAKSI:", error);
-
-    // JANGAN diam-diam dianggap tidak ada data
-    alert(
-      "Gagal mengambil data transaksi dari server.\n\n" +
-      error.message
-    );
-
-    transaksiList = [];
-
-    return [];
 
   }
-
-}
 
 
   /* =========================================================
@@ -3081,128 +3016,117 @@
   ========================================================= */
 
   async function loadPembayaran() {
+    const tbody = document.getElementById("tabelPembayaran");
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Memuat pembayaran...</div></td></tr>`;
 
-    const tbody =
-      document.getElementById(
-        "tabelPembayaran"
+    try {
+      const [list, hasilPending] = await Promise.all([
+        loadTransaksi(),
+        apiRequest("/api/pembayaran/menunggu")
+      ]);
+
+      const pending = hasilPending.data || [];
+      const pendingByKode = new Map(
+        pending.map(p => [String(p.kode_transaksi), p])
       );
 
-
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="5">
-          <div class="empty-state">
-            Memuat data...
-          </div>
-        </td>
-      </tr>
-    `;
-
-
-    const list =
-      await loadTransaksi();
-
-
-    const sorted =
-      [...list].sort(
-        (a, b) =>
-          Number(b.id_transaksi) -
-          Number(a.id_transaksi)
+      const sorted = [...list].sort(
+        (a, b) => Number(b.id_transaksi) - Number(a.id_transaksi)
       );
 
+      if (!sorted.length && !pending.length) {
+        tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Belum ada pembayaran.</div></td></tr>`;
+        return;
+      }
 
-    if (!sorted.length) {
+      tbody.innerHTML = sorted.map(item => {
+        const kode = String(item.kode_transaksi || "");
+        const nama = item.pelanggan?.nama || "-";
+        const lunas = String(item.status_pembayaran || "").toUpperCase() === "LUNAS";
+        const p = pendingByKode.get(kode);
 
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="5">
-            <div class="empty-state">
-              Belum ada transaksi.
-            </div>
-          </td>
-        </tr>
-      `;
-
-      return;
-
-    }
-
-
-    tbody.innerHTML =
-      sorted.map(item => {
-
-        const nama =
-          item.pelanggan?.nama ||
-          "-";
-
-
-        const lunas =
-          item.status_pembayaran ===
-          "LUNAS";
-
+        if (p) {
+          return `
+            <tr>
+              <td><span class="fw-semibold">${escapeHtml(p.kode_transaksi || kode)}</span></td>
+              <td>${escapeHtml(p.nama_pelanggan || nama)}</td>
+              <td>${formatRupiah(p.total_harga)}</td>
+              <td><span class="badge bg-warning text-dark">Menunggu Verifikasi</span>
+                <div class="small mt-1">${escapeHtml(p.metode_pembayaran || "")}</div>
+              </td>
+              <td>
+                <a class="btn btn-sm btn-outline-primary mb-1"
+                   href="${escapeHtml(p.url_bukti)}" target="_blank" rel="noopener">
+                  <i class="bi bi-image"></i> Lihat Bukti
+                </a>
+                <button class="btn btn-sm btn-success mb-1"
+                  onclick="verifikasiPembayaran(${Number(p.id_pembayaran)})">
+                  <i class="bi bi-check-circle"></i> Verifikasi
+                </button>
+              </td>
+            </tr>`;
+        }
 
         return `
-
           <tr>
-
-            <td>
-              <span class="fw-semibold">
-                ${escapeHtml(item.kode_transaksi)}
-              </span>
-            </td>
-
-            <td>
-              ${escapeHtml(nama)}
-            </td>
-
-            <td>
-              ${formatRupiah(item.total_harga)}
-            </td>
-
-            <td>
-              ${badgePembayaran(
-                item.status_pembayaran
-              )}
-            </td>
-
-            <td>
-
-              ${
-                lunas
-
-                ?
-
-                `
-                  <span class="text-muted small">
-                    <i class="bi bi-check-circle"></i>
-                    Sudah Lunas
-                  </span>
-                `
-
-                :
-
-                `
-                  <button
-                    class="btn btn-sm btn-primary"
-                    onclick="bukaModalBayar(${item.id_transaksi})"
-                  >
-                    <i class="bi bi-wallet2"></i>
-                    Bayar
-                  </button>
-                `
-              }
-
-            </td>
-
-          </tr>
-
-        `;
-
+            <td><span class="fw-semibold">${escapeHtml(kode)}</span></td>
+            <td>${escapeHtml(nama)}</td>
+            <td>${formatRupiah(item.total_harga)}</td>
+            <td>${badgePembayaran(item.status_pembayaran)}</td>
+            <td>${lunas
+              ? `<span class="text-muted small"><i class="bi bi-check-circle"></i> Sudah Lunas</span>`
+              : `<button class="btn btn-sm btn-primary" onclick="bukaModalBayar(${Number(item.id_transaksi)})"><i class="bi bi-wallet2"></i> Bayar</button>`
+            }</td>
+          </tr>`;
       }).join("");
 
+      // Tampilkan bukti pending meskipun transaksinya tidak muncul di daftar transaksi.
+      const kodeTransaksi = new Set(sorted.map(t => String(t.kode_transaksi || "")));
+      const tambahan = pending.filter(p => !kodeTransaksi.has(String(p.kode_transaksi || "")));
+
+      if (tambahan.length) {
+        tbody.insertAdjacentHTML("afterbegin", tambahan.map(p => `
+          <tr>
+            <td><span class="fw-semibold">${escapeHtml(p.kode_transaksi || "-")}</span></td>
+            <td>${escapeHtml(p.nama_pelanggan || "-")}</td>
+            <td>${formatRupiah(p.total_harga)}</td>
+            <td><span class="badge bg-warning text-dark">Menunggu Verifikasi</span>
+              <div class="small mt-1">${escapeHtml(p.metode_pembayaran || "")}</div>
+            </td>
+            <td>
+              <a class="btn btn-sm btn-outline-primary mb-1" href="${escapeHtml(p.url_bukti)}" target="_blank" rel="noopener">Lihat Bukti</a>
+              <button class="btn btn-sm btn-success mb-1" onclick="verifikasiPembayaran(${Number(p.id_pembayaran)})">Verifikasi</button>
+            </td>
+          </tr>`).join(""));
+      }
+    } catch (error) {
+      console.error("Gagal memuat pembayaran:", error);
+      tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Gagal memuat pembayaran: ${escapeHtml(error.message || "Kesalahan server")}</div></td></tr>`;
+    }
   }
 
+  async function verifikasiPembayaran(id) {
+    if (!confirm("Pastikan bukti sudah diperiksa dan pembayaran benar-benar diterima. Verifikasi pembayaran ini?")) return;
 
+    try {
+      const hasil = await apiRequest("/api/pembayaran/" + Number(id) + "/verifikasi", {
+        method: "POST",
+        body: JSON.stringify({
+          catatan_pelunasan: "Bukti pembayaran diverifikasi kasir."
+        })
+      });
+
+      if (hasil.success === false) {
+        throw new Error(hasil.message || "Verifikasi gagal.");
+      }
+
+      alert(hasil.message || "Pembayaran berhasil diverifikasi.");
+      await loadPembayaran();
+    } catch (error) {
+      console.error(error);
+      alert("Verifikasi gagal: " + (error.message || "Kesalahan server"));
+    }
+  }
   /* =========================================================
      MODAL BAYAR
   ========================================================= */
@@ -3571,352 +3495,318 @@
      DETAIL TRANSAKSI
   ========================================================= */
 
-  async function lihatDetail(id) {
-
-    const container =
-      document.getElementById(
-        "detailContent"
-      );
-
-
-    container.innerHTML = `
-      <div class="empty-state">
-        Memuat detail...
-      </div>
-    `;
-
-
-    const modal =
-      new bootstrap.Modal(
-        document.getElementById(
-          "modalDetail"
-        )
-      );
-
-
-    modal.show();
-
-
-    try {
-
-      const response =
-        await apiRequest(
-          "/api/transaksi/" + id
-        );
-
-
-      const trx =
-        response.data;
-
-
-      const details =
-        trx.detail ||
-        trx.detail_transaksi ||
-        [];
-
-
-      const payment =
-        trx.pembayaran;
-
-
-      const proses =
-        trx.proses_cucian ||
-        trx.prosesCucian ||
-        [];
-
-
-      const sortedProses =
-        [...proses].sort(
-          (a, b) =>
-            Number(a.id_proses) -
-            Number(b.id_proses)
-        );
-
-
-      container.innerHTML = `
-
-        <div class="row g-4">
-
-          <div class="col-md-6">
-
-            <div class="card-box">
-
-              <div class="card-title mb-3">
-                Informasi Transaksi
-              </div>
-
-              <div class="summary-row">
-                <span>Kode</span>
-                <strong>
-                  ${escapeHtml(
-                    trx.kode_transaksi
-                  )}
-                </strong>
-              </div>
-
-              <div class="summary-row">
-                <span>Pelanggan</span>
-                <span>
-                  ${escapeHtml(
-                    trx.pelanggan?.nama || "-"
-                  )}
-                </span>
-              </div>
-
-              <div class="summary-row">
-                <span>Total</span>
-                <strong>
-                  ${formatRupiah(
-                    trx.total_harga
-                  )}
-                </strong>
-              </div>
-
-              <div class="summary-row">
-                <span>Pembayaran</span>
-                ${badgePembayaran(
-                  trx.status_pembayaran
-                )}
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div class="col-md-6">
-
-            <div class="card-box">
-
-              <div class="card-title mb-3">
-                Pembayaran
-              </div>
-
-              ${
-                payment
-
-                ?
-
-                `
-
-                  <div class="summary-row">
-                    <span>Metode</span>
-                    <strong>
-                      ${escapeHtml(
-                        payment.metode_pembayaran ||
-                        "-"
-                      )}
-                    </strong>
-                  </div>
-
-                  <div class="summary-row">
-                    <span>Jumlah Bayar</span>
-                    <strong>
-                      ${formatRupiah(
-                        payment.jumlah_bayar
-                      )}
-                    </strong>
-                  </div>
-
-                  <div class="summary-row">
-                    <span>Kembalian</span>
-                    <strong>
-                      ${formatRupiah(
-                        payment.kembalian
-                      )}
-                    </strong>
-                  </div>
-
-                  <div class="summary-row">
-                    <span>Status</span>
-                    <span class="badge-pill badge-soft-success">
-                      CONFIRMED
-                    </span>
-                  </div>
-
-                `
-
-                :
-
-                `
-                  <div class="empty-state">
-                    Belum ada pembayaran.
-                  </div>
-                `
-              }
-
-            </div>
-
-          </div>
-
-
-          <div class="col-12">
-
-            <div class="card-box">
-
-              <div class="card-title mb-3">
-                Layanan
-              </div>
-
-              <div class="table-responsive">
-
-                <table class="table">
-
-                  <thead>
-
-                    <tr>
-                      <th>Layanan</th>
-                      <th>Jumlah</th>
-                      <th>Harga</th>
-                      <th>Subtotal</th>
-                    </tr>
-
-                  </thead>
-
-                  <tbody>
-
-                    ${
-                      details.length
-
-                      ?
-
-                      details.map(detail => {
-
-                        const layanan =
-                          detail.layanan || {};
-
-
-                        return `
-
-                          <tr>
-
-                            <td>
-                              ${escapeHtml(
-                                layanan.nama_layanan ||
-                                "-"
-                              )}
-                            </td>
-
-                            <td>
-                              ${detail.berat_jumlah || 0}
-                              ${escapeHtml(
-                                layanan.jenis_satuan ||
-                                ""
-                              )}
-                            </td>
-
-                            <td>
-                              ${formatRupiah(
-                                detail.harga_satuan
-                              )}
-                            </td>
-
-                            <td>
-                              ${formatRupiah(
-                                detail.subtotal
-                              )}
-                            </td>
-
-                          </tr>
-
-                        `;
-
-                      }).join("")
-
-                      :
-
-                      `
-                        <tr>
-                          <td colspan="4">
-                            <div class="empty-state">
-                              Tidak ada detail layanan.
-                            </div>
-                          </td>
-                        </tr>
-                      `
-                    }
-
-                  </tbody>
-
-                </table>
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div class="col-12">
-
-            <div class="card-box">
-
-              <div class="card-title mb-3">
-                Proses Cucian
-              </div>
-
-              ${
-                sortedProses.length
-
-                ?
-
-                sortedProses.map(item => `
-
-                  <div class="timeline-item">
-
-                    <div class="timeline-dot"></div>
-
-                    <div>
-
-                      <div class="timeline-title">
-                        ${escapeHtml(
-                          item.status_proses
-                        )}
-                      </div>
-
-                      <div class="timeline-subtitle">
-                        ${escapeHtml(
-                          item.catatan_proses ||
-                          "-"
-                        )}
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                `).join("")
-
-                :
-
-                `
-                  <div class="empty-state">
-                    Belum ada proses cucian.
-                  </div>
-                `
-              }
-
-            </div>
-
-          </div>
-
-        </div>
-
-      `;
-
-    } catch (error) {
-
-      container.innerHTML = `
-        <div class="alert alert-danger">
-          ${escapeHtml(error.message)}
-        </div>
-      `;
-
+  let currentDetailReceiptHTML = "";
+
+  function cetakStrukTransaksi() {
+    if (!currentDetailReceiptHTML) {
+      alert("Detail transaksi belum tersedia.");
+      return;
     }
 
+    const win = window.open("", "_blank", "width=420,height=800");
+    if (!win) {
+      alert("Izinkan pop-up browser untuk mencetak struk.");
+      return;
+    }
+
+    win.document.open();
+    win.document.write(`<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Struk Amih Laundry</title>
+  <style>
+    @page {
+      size: 80mm auto;
+      margin: 3mm;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      width: 74mm;
+      margin: 0 auto;
+      padding: 0;
+      background: #fff;
+      color: #000;
+      font-family: "Courier New", monospace;
+      font-size: 10px;
+      line-height: 1.45;
+    }
+    body {
+      padding: 2mm 0;
+      overflow-wrap: anywhere;
+    }
+    h2 {
+      font-size: 17px;
+      margin: 0 0 3px;
+      letter-spacing: 1px;
+    }
+    h3 {
+      font-size: 11px;
+      margin: 8px 0 4px;
+    }
+    p {
+      margin: 3px 0;
+    }
+    .center {
+      text-align: center;
+    }
+    .muted {
+      font-size: 9px;
+    }
+    .line {
+      border-top: 1px dashed #000;
+      margin: 7px 0;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 3px 0;
+      align-items: flex-start;
+    }
+    .row > :first-child {
+      flex: 1;
+      min-width: 0;
+    }
+    .row > :last-child {
+      text-align: right;
+      overflow-wrap: anywhere;
+    }
+    .total {
+      font-size: 12px;
+      font-weight: bold;
+    }
+    button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 12px 0;
+      border: 1px solid #000;
+      background: #fff;
+      color: #000;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    @media print {
+      button {
+        display: none !important;
+      }
+      html, body {
+        width: 74mm;
+        margin: 0;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  ${currentDetailReceiptHTML}
+  <button onclick="window.print()">CETAK STRUK</button>
+  <script>
+    window.onload = function () {
+      setTimeout(function () { window.print(); }, 300);
+    };
+  <\/script>
+</body>
+</html>`);
+    win.document.close();
   }
 
+  function urlBuktiPembayaran(value) {
+    const path = String(value || "").trim();
+    if (!path) return "#";
+    if (/^https?:\/\//i.test(path)) return path;
 
+    const clean = path.replace(/^\/+/, "").replace(/^storage\//i, "");
+    return "/storage/" + clean.split("/").map(encodeURIComponent).join("/");
+  }
+  async function lihatDetail(id) {
+    const container = document.getElementById("detailContent");
+    container.innerHTML = '<div class="empty-state">Memuat detail...</div>';
+
+    const modal = bootstrap.Modal.getOrCreateInstance(
+      document.getElementById("modalDetail")
+    );
+    modal.show();
+
+    try {
+      const response = await apiRequest("/api/transaksi/" + id);
+      const trx = response.data;
+
+      if (!trx) throw new Error("Data transaksi tidak ditemukan.");
+
+      const details = Array.isArray(trx.detail)
+        ? trx.detail
+        : Array.isArray(trx.detail_transaksi)
+          ? trx.detail_transaksi : [];
+
+      const rawPayments = trx.pembayaran ?? trx.pembayaran_transaksi ?? [];
+      const payments = (Array.isArray(rawPayments)
+        ? rawPayments
+        : rawPayments ? [rawPayments] : [])
+        .sort((a, b) =>
+          Number(b.id_pembayaran || 0) - Number(a.id_pembayaran || 0)
+        );
+
+      const payment = payments[0] || null;
+      const prosesRaw = trx.proses_cucian ?? trx.prosesCucian ?? [];
+      const proses = (Array.isArray(prosesRaw) ? prosesRaw : [])
+        .sort((a, b) => Number(a.id_proses || 0) - Number(b.id_proses || 0));
+
+      const rupiah = value => formatRupiah(Number(value || 0));
+      const safe = value => escapeHtml(String(value ?? "-"));
+      const metodeLabel = value => ({
+        TUNAI: "Tunai",
+        QRIS: "QRIS",
+        TRANSFER_BANK: "Transfer Bank"
+      }[String(value || "").toUpperCase()] || (value ? safe(value) : "Belum tercatat"));
+
+      const statusBayar = trx.status_pembayaran || "BELUM_DIBAYAR";
+      const statusKonfirmasi = payment?.status_konfirmasi || "-";
+      const tanggal = trx.created_at
+        ? new Date(trx.created_at).toLocaleString("id-ID", {
+            dateStyle: "long", timeStyle: "short"
+          })
+        : "-";
+
+      const layananRows = details.map(detail => {
+        const layanan = detail.layanan || {};
+        const nama = layanan.nama_layanan || "Layanan";
+        const satuan = layanan.jenis_satuan || "";
+        return `<tr>
+          <td>${safe(nama)}</td>
+          <td>${safe(detail.berat_jumlah)} ${safe(satuan)}</td>
+          <td>${rupiah(detail.harga_satuan)}</td>
+          <td>${rupiah(detail.subtotal)}</td>
+        </tr>`;
+      }).join("");
+
+      const paymentRows = payments.length
+        ? payments.map((p, index) => `
+          <div class="row">
+            <span>Pembayaran ${index + 1} - Metode</span>
+            <strong>${metodeLabel(p.metode_pembayaran)}</strong>
+          </div>
+          <div class="row">
+            <span>Jumlah dibayar</span>
+            <strong>${rupiah(p.jumlah_bayar)}</strong>
+          </div>
+          <div class="row">
+            <span>Kembalian</span>
+            <strong>${rupiah(p.kembalian)}</strong>
+          </div>
+          <div class="row">
+            <span>Verifikasi</span>
+            <strong>${safe(p.status_konfirmasi || "Belum tercatat")}</strong>
+          </div>
+          ${p.waktu_konfirmasi ? `<div class="row"><span>Waktu verifikasi</span><span>${safe(new Date(p.waktu_konfirmasi).toLocaleString("id-ID"))}</span></div>` : ""}
+          ${p.catatan_pelunasan ? `<div class="row"><span>Catatan pembayaran</span><span>${safe(p.catatan_pelunasan)}</span></div>` : ""}
+          ${p.bukti_pembayaran ? `<div class="row"><span>Bukti pembayaran</span><span>Tersimpan</span></div>` : ""}
+          ${index < payments.length - 1 ? '<hr>' : ''}
+        `).join("")
+        : '<div class="text-muted">Belum ada data pembayaran.</div>';
+
+      const namaPelanggan = trx.pelanggan?.nama || "-";
+      const telepon = trx.pelanggan?.no_telepon || "-";
+      const catatan = trx.catatan || "-";
+      const statusProses = proses.length
+        ? proses[proses.length - 1].status_proses
+        : "DITERIMA";
+
+      currentDetailReceiptHTML = `
+        <div class="center">
+          <img src="/logo-amih-laundry.png" alt="Logo Amih Laundry" style="display:block;width:64px;height:64px;object-fit:contain;margin:0 auto 5px">
+          <h2>AMIH LAUNDRY</h2>
+          <div class="muted">STRUK TRANSAKSI LAUNDRY</div>
+          <div class="line"></div>
+        </div>
+        <div class="row"><span>Kode transaksi</span><strong>${safe(trx.kode_transaksi)}</strong></div>
+        <div class="row"><span>Tanggal</span><span>${safe(tanggal)}</span></div>
+        <div class="row"><span>Pelanggan</span><strong>${safe(namaPelanggan)}</strong></div>
+        <div class="row"><span>No. telepon</span><span>${safe(telepon)}</span></div>
+        <div class="row"><span>Kasir</span><span>${safe(trx.kasir?.nama || "-")}</span></div>
+        <div class="row"><span>Catatan</span><span>${safe(catatan)}</span></div>
+        <div class="line"></div>
+        <div class="section">RINCIAN LAYANAN</div>
+        <table>
+          <thead><tr><th>Layanan</th><th>Jumlah</th><th>Harga</th><th>Subtotal</th></tr></thead>
+          <tbody>${layananRows || '<tr><td colspan="4">Rincian layanan tidak tersedia</td></tr>'}</tbody>
+        </table>
+        <div class="line"></div>
+        <div class="row total"><span>TOTAL TAGIHAN</span><span>${rupiah(trx.total_harga)}</span></div>
+        <div class="section">INFORMASI PEMBAYARAN</div>
+        ${paymentRows}
+        <div class="row"><span>Status pembayaran transaksi</span><strong>${safe(statusBayar)}</strong></div>
+        <div class="section">STATUS CUCIAN</div>
+        <div class="row"><span>Status terakhir</span><strong>${safe(statusProses)}</strong></div>
+        ${proses.map(p => `<div class="row"><span>${safe(p.status_proses)}${p.created_at ? " - " + safe(new Date(p.created_at).toLocaleString("id-ID")) : ""}</span><span>${safe(p.catatan_proses || "")}</span></div>`).join("")}
+        <div class="line"></div>
+        <div class="center muted">Terima kasih telah menggunakan Amih Laundry.</div>
+      `;
+
+      container.innerHTML = `
+        <div class="d-flex justify-content-end mb-3">
+          <button type="button" class="btn btn-primary" onclick="cetakStrukTransaksi()">
+            <i class="bi bi-printer"></i> Cetak Struk
+          </button>
+        </div>
+        <div class="card-box">
+          <div class="text-center mb-3">
+            <h4 class="fw-bold mb-1">AMIH LAUNDRY</h4>
+            <div class="text-muted small">DETAIL TRANSAKSI</div>
+            <div class="fw-bold mt-2">${safe(trx.kode_transaksi)}</div>
+          </div>
+          <hr>
+          <div class="summary-row"><span>Tanggal transaksi</span><strong>${safe(tanggal)}</strong></div>
+          <div class="summary-row"><span>Pelanggan</span><strong>${safe(namaPelanggan)}</strong></div>
+          <div class="summary-row"><span>No. telepon</span><span>${safe(telepon)}</span></div>
+          <div class="summary-row"><span>Kasir</span><span>${safe(trx.kasir?.nama || "-")}</span></div>
+          <div class="summary-row"><span>Catatan</span><span>${safe(catatan)}</span></div>
+        </div>
+        <div class="card-box mt-3">
+          <div class="card-title mb-3">Rincian Layanan</div>
+          <div class="table-responsive"><table class="table">
+            <thead><tr><th>Layanan</th><th>Jumlah</th><th>Harga</th><th>Subtotal</th></tr></thead>
+            <tbody>${layananRows || '<tr><td colspan="4">Rincian layanan tidak tersedia.</td></tr>'}</tbody>
+          </table></div>
+          <div class="summary-row fs-5"><strong>Total Tagihan</strong><strong>${rupiah(trx.total_harga)}</strong></div>
+        </div>
+        <div class="card-box mt-3">
+          <div class="card-title mb-3">Informasi Pembayaran</div>
+          ${payments.length ? payments.map((p, index) => `
+            <div class="border rounded p-3 mb-3">
+              <div class="fw-semibold mb-2">Pembayaran ${index + 1}</div>
+              <div class="summary-row"><span>Metode</span><strong>${metodeLabel(p.metode_pembayaran)}</strong></div>
+              <div class="summary-row"><span>Jumlah dibayar</span><strong>${rupiah(p.jumlah_bayar)}</strong></div>
+              <div class="summary-row"><span>Kembalian</span><strong>${rupiah(p.kembalian)}</strong></div>
+              <div class="summary-row"><span>Status verifikasi</span><strong>${safe(p.status_konfirmasi || "Belum tercatat")}</strong></div>
+              ${p.waktu_konfirmasi ? `<div class="summary-row"><span>Waktu verifikasi</span><span>${safe(new Date(p.waktu_konfirmasi).toLocaleString("id-ID"))}</span></div>` : ""}
+              ${p.catatan_pelunasan ? `<div class="summary-row"><span>Catatan</span><span>${safe(p.catatan_pelunasan)}</span></div>` : ""}
+              ${p.bukti_pembayaran ? `<div class="summary-row"><span>Bukti pembayaran</span><a href="${urlBuktiPembayaran(p.bukti_pembayaran)}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary">Lihat Bukti Pembayaran</a></div>` : ""}
+            </div>
+          `).join("") : '<div class="empty-state">Belum ada pembayaran.</div>'}
+          <div class="summary-row"><span>Status transaksi</span>${badgePembayaran(statusBayar)}</div>
+        </div>
+        <div class="card-box mt-3">
+          <div class="card-title mb-3">Proses Cucian</div>
+          ${proses.length ? proses.map(p => `
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div><div class="timeline-title">${safe(p.status_proses)}</div>
+              <div class="timeline-subtitle">${safe(p.catatan_proses || "-")}</div>
+              ${p.created_at ? `<div class="small text-muted">${safe(new Date(p.created_at).toLocaleString("id-ID"))}</div>` : ""}</div>
+            </div>
+          `).join("") : `<div class="summary-row"><span>Status awal</span><strong>${safe(statusProses)}</strong></div>`}
+        </div>
+      `;
+    } catch (error) {
+      currentDetailReceiptHTML = "";
+      container.innerHTML = `<div class="alert alert-danger">${escapeHtml(error.message)}</div>`;
+    }
+  }
   /* =========================================================
      SEARCH
   ========================================================= */
@@ -3990,122 +3880,165 @@
   );
 
 </script>
-<!-- MODAL PELANGGAN BARU -->
-<div
-  class="modal fade"
-  id="modalPelangganBaru"
-  tabindex="-1"
-  aria-labelledby="modalPelangganBaruLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
 
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalPelangganBaruLabel">
-          <i class="bi bi-person-plus me-2"></i>
-          Pelanggan Baru
-        </h5>
 
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
-      </div>
+<!-- =========================================================
+     SCRIPT PELANGGAN (baru / edit / hapus)
+========================================================= -->
 
-      <form id="formPelangganBaru">
-
-        <div class="modal-body">
-
-          <div class="mb-3">
-            <label for="pelangganBaruNama" class="form-label">
-              Nama Pelanggan
-            </label>
-
-            <input
-              type="text"
-              class="form-control"
-              id="pelangganBaruNama"
-              placeholder="Masukkan nama pelanggan"
-              required
-            >
-          </div>
-
-          <div class="mb-3">
-            <label for="pelangganBaruTelepon" class="form-label">
-              No. Telepon
-            </label>
-
-            <input
-              type="text"
-              class="form-control"
-              id="pelangganBaruTelepon"
-              placeholder="Masukkan nomor telepon"
-              required
-            >
-          </div>
-
-          <div class="mb-3">
-            <label for="pelangganBaruAlamat" class="form-label">
-              Alamat
-            </label>
-
-            <textarea
-              class="form-control"
-              id="pelangganBaruAlamat"
-              rows="3"
-              placeholder="Masukkan alamat pelanggan"
-            ></textarea>
-          </div>
-
-        </div>
-
-        <div class="modal-footer">
-
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal"
-          >
-            Batal
-          </button>
-
-          <button
-            type="submit"
-            class="btn btn-primary"
-          >
-            <i class="bi bi-check-lg me-1"></i>
-            Simpan Pelanggan
-          </button>
-
-        </div>
-
-      </form>
-
-    </div>
-  </div>
-</div>
 <script>
-function bukaModalPelangganBaru() {
-    const form = document.getElementById("formPelangganBaru");
 
-    if (form) {
-        form.reset();
-    }
+/* ---------- Tampilkan info pelanggan terpilih ---------- */
 
-    const modalElement = document.getElementById("modalPelangganBaru");
+function tampilPelangganTerpilih() {
 
-    if (!modalElement) {
-        alert("Form pelanggan baru tidak ditemukan.");
+    const id = document.getElementById("selectPelanggan").value;
+    const box = document.getElementById("selectedCustomer");
+
+    const p = pelangganList.find(
+        item => String(item.id_pelanggan) === String(id)
+    );
+
+    if (!p) {
+        box.classList.add("d-none");
+        box.innerHTML = "";
         return;
     }
 
-    const modal = new bootstrap.Modal(modalElement);
-    modal.show();
+    const pelangganUmum = String(p.no_telepon || "").startsWith("UMUM-");
+    const detailTelepon = p.no_telepon && !pelangganUmum ? `<div class="small text-muted">${escapeHtml(p.no_telepon)}</div>` : "";
+    const detailAlamat = p.alamat ? `<div class="small text-muted">${escapeHtml(p.alamat)}</div>` : "";
+    box.innerHTML = `<div class="fw-semibold">${escapeHtml(labelPelangganKasir(p))}</div>${detailTelepon}${detailAlamat}`;
+
+    box.classList.remove("d-none");
 }
 
+
+/* ---------- Buka modal: pelanggan baru ---------- */
+
+async function buatPelangganUmumKasir() {
+    try {
+        const response = await apiRequest("/api/pelanggan-umum", {
+            method: "POST"
+        });
+
+        const p = response.data;
+
+        if (!p || !p.id_pelanggan) {
+            throw new Error("Data pelanggan umum tidak diterima dari server.");
+        }
+
+        await loadPelanggan();
+
+        const select = document.getElementById("selectPelanggan");
+        select.value = String(p.id_pelanggan);
+
+        if (select.value !== String(p.id_pelanggan)) {
+            const option = document.createElement("option");
+            option.value = String(p.id_pelanggan);
+            option.textContent = p.nama;
+            select.appendChild(option);
+            select.value = String(p.id_pelanggan);
+        }
+
+        tampilPelangganTerpilih();
+        alert("Pelanggan umum berhasil dipilih. Silakan lanjutkan transaksi.");
+    } catch (error) {
+        console.error("Gagal menyiapkan pelanggan umum:", error);
+        alert(error.message || "Gagal menyiapkan pelanggan umum.");
+    }
+}
+function bukaModalPelangganBaru() {
+
+    document.getElementById("formPelangganBaru").reset();
+    document.getElementById("pelangganBaruId").value = "";
+
+    document.getElementById("modalPelangganBaruLabel").innerHTML =
+        '<i class="bi bi-person-plus me-2"></i> Pelanggan Baru';
+
+    new bootstrap.Modal(
+        document.getElementById("modalPelangganBaru")
+    ).show();
+}
+
+
+/* ---------- Buka modal: edit pelanggan ---------- */
+
+function bukaModalEditPelanggan() {
+
+    const id = document.getElementById("selectPelanggan").value;
+
+    if (!id) {
+        alert("Pilih pelanggan yang mau diedit terlebih dahulu.");
+        return;
+    }
+
+    const p = pelangganList.find(
+        item => String(item.id_pelanggan) === String(id)
+    );
+
+    if (!p) {
+        alert("Data pelanggan tidak ditemukan.");
+        return;
+    }
+
+    document.getElementById("pelangganBaruId").value = p.id_pelanggan;
+    document.getElementById("pelangganBaruNama").value = p.nama || "";
+    document.getElementById("pelangganBaruTelepon").value = p.no_telepon || "";
+    document.getElementById("pelangganBaruAlamat").value = p.alamat || "";
+
+    document.getElementById("modalPelangganBaruLabel").innerHTML =
+        '<i class="bi bi-pencil-square me-2"></i> Edit Pelanggan';
+
+    new bootstrap.Modal(
+        document.getElementById("modalPelangganBaru")
+    ).show();
+}
+
+
+/* ---------- Hapus pelanggan ---------- */
+
+async function hapusPelanggan() {
+
+    const id = document.getElementById("selectPelanggan").value;
+
+    if (!id) {
+        alert("Pilih pelanggan yang mau dihapus terlebih dahulu.");
+        return;
+    }
+
+    const p = pelangganList.find(
+        item => String(item.id_pelanggan) === String(id)
+    );
+
+    if (!confirm('Yakin ingin menghapus pelanggan "' + (p?.nama || "") + '"?')) {
+        return;
+    }
+
+    try {
+
+        await apiRequest("/api/pelanggan/" + id, {
+            method: "DELETE"
+        });
+
+        await loadPelanggan();
+        tampilPelangganTerpilih();
+
+        alert("Pelanggan berhasil dihapus.");
+
+    } catch (error) {
+
+        console.error("GAGAL HAPUS PELANGGAN:", error);
+
+        alert(
+            "Gagal menghapus pelanggan.\n\n" +
+            error.message
+        );
+    }
+}
+
+
+/* ---------- Simpan (tambah / edit) ---------- */
 
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -4119,20 +4052,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         event.preventDefault();
 
-        const nama = document
-            .getElementById("pelangganBaruNama")
-            .value
-            .trim();
+        const id = document.getElementById("pelangganBaruId").value;
 
-        const noTelepon = document
-            .getElementById("pelangganBaruTelepon")
-            .value
-            .trim();
-
-        const alamat = document
-            .getElementById("pelangganBaruAlamat")
-            .value
-            .trim();
+        const nama = document.getElementById("pelangganBaruNama").value.trim();
+        const noTelepon = document.getElementById("pelangganBaruTelepon").value.trim();
+        const alamat = document.getElementById("pelangganBaruAlamat").value.trim();
 
         if (!nama) {
             alert("Nama pelanggan wajib diisi.");
@@ -4144,80 +4068,62 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        const modeEdit = Boolean(id);
+
         try {
 
-            const response = await apiRequest("/api/pelanggan", {
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                },
-
-                body: JSON.stringify({
-                    nama: nama,
-                    no_telepon: noTelepon,
-                    alamat: alamat || null
-                })
-            });
-
-            console.log("HASIL TAMBAH PELANGGAN:", response);
-
-            if (!response.success) {
-                throw new Error(
-                    response.message || "Gagal menambahkan pelanggan."
-                );
-            }
-
-            const pelanggan = response.data;
-
-            if (!pelanggan || !pelanggan.id_pelanggan) {
-                throw new Error(
-                    "Data pelanggan berhasil disimpan tetapi ID pelanggan tidak diterima."
-                );
-            }
-
-            // Reload daftar pelanggan
-            await loadPelanggan();
-
-            // Pilih pelanggan yang baru dibuat
-            const select = document.getElementById("selectPelanggan");
-
-            if (select) {
-                select.value = pelanggan.id_pelanggan;
-
-                // Trigger event change jika ada listener
-                select.dispatchEvent(new Event("change"));
-            }
-
-            // Tutup modal
-            const modalElement = document.getElementById(
-                "modalPelangganBaru"
+            const response = await apiRequest(
+                modeEdit ? "/api/pelanggan/" + id : "/api/pelanggan",
+                {
+                    method: modeEdit ? "PUT" : "POST",
+                    body: JSON.stringify({
+                        nama: nama,
+                        no_telepon: noTelepon,
+                        alamat: alamat || null
+                    })
+                }
             );
 
-            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (response.success === false) {
+                throw new Error(response.message || "Gagal menyimpan pelanggan.");
+            }
+
+            const idTerpilih = modeEdit
+                ? id
+                : response.data?.id_pelanggan;
+
+            if (!idTerpilih) {
+                throw new Error("ID pelanggan tidak diterima dari server.");
+            }
+
+            await loadPelanggan();
+
+            const select = document.getElementById("selectPelanggan");
+            select.value = idTerpilih;
+            tampilPelangganTerpilih();
+
+            const modal = bootstrap.Modal.getInstance(
+                document.getElementById("modalPelangganBaru")
+            );
 
             if (modal) {
                 modal.hide();
             }
 
-            // Reset form
             form.reset();
 
             alert(
-                "Pelanggan berhasil ditambahkan!\n\n" +
-                "Nama: " + pelanggan.nama
+                modeEdit
+                    ? "Pelanggan berhasil diperbarui!"
+                    : "Pelanggan berhasil ditambahkan!"
             );
 
         } catch (error) {
 
-            console.error(
-                "GAGAL TAMBAH PELANGGAN:",
-                error
-            );
+            console.error("GAGAL SIMPAN PELANGGAN:", error);
 
             alert(
-                "Gagal menambahkan pelanggan.\n\n" +
+                "Gagal menyimpan pelanggan.\n\n" +
                 error.message
             );
         }
@@ -4225,6 +4131,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });
+
 </script>
 
 </body>

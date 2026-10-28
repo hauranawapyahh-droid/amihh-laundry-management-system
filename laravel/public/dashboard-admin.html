@@ -431,15 +431,38 @@
 
 <body>
 
+<script>
+(function () {
+  function banner(msg) {
+    var el = document.getElementById("__errBanner");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "__errBanner";
+      el.style.cssText = "position:fixed;left:0;right:0;bottom:0;z-index:99999;background:#b42318;color:#fff;padding:10px 16px;font:13px/1.4 Arial;white-space:pre-wrap;max-height:40vh;overflow:auto";
+      document.documentElement.appendChild(el);
+    }
+    el.textContent += msg + "\n";
+  }
+  window.addEventListener("error", function (e) {
+    if (e.target && e.target.tagName === "SCRIPT") {
+      banner("GAGAL MEMUAT FILE: " + e.target.src);
+    } else {
+      banner("ERROR JS: " + e.message + (e.lineno ? " (baris " + e.lineno + ")" : ""));
+    }
+  }, true);
+  window.addEventListener("unhandledrejection", function (e) {
+    banner("ERROR: " + (e.reason && e.reason.message ? e.reason.message : e.reason));
+  });
+})();
+</script>
+
+
 <div class="admin-layout">
 
   <aside class="sidebar">
 
     <div class="sidebar-brand">
-      <h4>
-        <i class="bi bi-droplet-fill"></i>
-        Amih Laundry
-      </h4>
+      <h4 style="display:flex;align-items:center;gap:9px"><img src="/logo-amih-laundry.png" alt="Logo Amih Laundry" style="width:42px;height:42px;object-fit:contain;background:white;border-radius:8px;padding:2px;flex-shrink:0"> Amih Laundry</h4>
       <small>Admin Panel</small>
     </div>
 
@@ -1153,6 +1176,7 @@
                   <th>Nama</th>
                   <th>Username</th>
                   <th>Role</th>
+                  <th>Status</th>
                   <th>Aksi</th>
                 </tr>
 
@@ -1162,7 +1186,7 @@
 
                 <tr>
 
-                  <td colspan="4">
+                  <td colspan="5">
 
                     <div class="empty-state">
                       Memuat data...
@@ -1569,6 +1593,11 @@
 
 </div>
 
+
+<!-- =========================================================
+     MODAL TAMBAH
+========================================================= -->
+
 <div
   class="modal fade"
   id="modalTambahPelanggan"
@@ -1666,6 +1695,7 @@
 
   </div>
 </div>
+
 <div
   class="modal fade"
   id="modalTambahLayanan"
@@ -1806,10 +1836,20 @@
               class="form-control"
               required
             />
+            <datalist id="saranNamaPelanggan"></datalist>
+            <small id="infoNamaPelanggan" class="text-muted"></small>
 
           </div>
 
-          <div class="mb-3">
+          <div class="mb-3 customer-only-field" style="display:none">
+  <label for="userNoTelepon" class="form-label">Nomor Telepon Customer</label>
+  <input type="tel" class="form-control" id="userNoTelepon" placeholder="08xxxxxxxxxx">
+</div>
+<div class="mb-3 customer-only-field" style="display:none">
+  <label for="userAlamat" class="form-label">Alamat Customer</label>
+  <textarea class="form-control" id="userAlamat" rows="2" placeholder="Alamat lengkap"></textarea>
+</div>
+<div class="mb-3">
 
             <label class="form-label">
               Username
@@ -1870,6 +1910,7 @@
               <option value="STAFF_LAUNDRY">
                 STAFF LAUNDRY
               </option>
+              <option value="CUSTOMER">CUSTOMER</option>
 
             </select>
 
@@ -2032,13 +2073,1364 @@
   </div>
 </div>
 
+
+<!-- =========================================================
+     MODAL EDIT
+========================================================= -->
+
+<!-- EDIT PELANGGAN -->
+<div
+  class="modal fade"
+  id="modalEditPelanggan"
+  tabindex="-1"
+>
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+
+      <form id="formEditPelanggan">
+
+        <input type="hidden" id="editPelangganId" />
+
+        <div class="modal-header">
+
+          <h5 class="modal-title">
+            <i class="bi bi-pencil-square me-2"></i>
+            Edit Pelanggan
+          </h5>
+
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
+
+        </div>
+
+        <div class="modal-body">
+
+          <div class="mb-3">
+            <label class="form-label">Nama</label>
+            <input
+              type="text"
+              id="editPelangganNama"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">No. Telepon</label>
+            <input
+              type="text"
+              id="editPelangganNoTelepon"
+              class="form-control"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Alamat</label>
+            <textarea
+              id="editPelangganAlamat"
+              class="form-control"
+              rows="3"
+            ></textarea>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Batal
+          </button>
+
+          <button type="submit" class="btn btn-primary">
+            Simpan Perubahan
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- EDIT LAYANAN -->
+<div
+  class="modal fade"
+  id="modalEditLayanan"
+  tabindex="-1"
+>
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+
+      <form id="formEditLayanan">
+
+        <input type="hidden" id="editLayananId" />
+
+        <div class="modal-header">
+
+          <h5 class="modal-title">
+            <i class="bi bi-pencil-square me-2"></i>
+            Edit Layanan
+          </h5>
+
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
+
+        </div>
+
+        <div class="modal-body">
+
+          <div class="mb-3">
+            <label class="form-label">Nama Layanan</label>
+            <input
+              type="text"
+              id="editLayananNama"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Jenis Satuan</label>
+            <input
+              type="text"
+              id="editLayananSatuan"
+              class="form-control"
+              placeholder="kg / pcs"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Harga per Satuan</label>
+            <input
+              type="number"
+              id="editLayananHarga"
+              class="form-control"
+              min="0"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select id="editLayananAktif" class="form-select">
+              <option value="1">Aktif</option>
+              <option value="0">Nonaktif</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Batal
+          </button>
+
+          <button type="submit" class="btn btn-primary">
+            Simpan Perubahan
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- EDIT PENGGUNA -->
+<div
+  class="modal fade"
+  id="modalEditUser"
+  tabindex="-1"
+>
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+
+      <form id="formEditUser">
+
+        <input type="hidden" id="editUserId" />
+
+        <div class="modal-header">
+
+          <h5 class="modal-title">
+            <i class="bi bi-pencil-square me-2"></i>
+            Edit Pengguna
+          </h5>
+
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
+
+        </div>
+
+        <div class="modal-body">
+
+          <div class="mb-3">
+            <label class="form-label">Nama</label>
+            <input
+              type="text"
+              id="editUserNama"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input
+              type="text"
+              id="editUserUsername"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Password Baru</label>
+            <input
+              type="password"
+              id="editUserPassword"
+              class="form-control"
+              placeholder="Kosongkan jika tidak ingin mengganti"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Role</label>
+            <select
+              id="editUserRole"
+              class="form-select"
+              required
+            >
+              <option value="ADMIN">ADMIN</option>
+              <option value="KASIR">KASIR</option>
+              <option value="OWNER">OWNER</option>
+              <option value="STAFF_LAUNDRY">STAFF LAUNDRY</option>
+              <option value="CUSTOMER">CUSTOMER</option>
+              
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select id="editUserAktif" class="form-select">
+              <option value="1">Aktif</option>
+              <option value="0">Nonaktif</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Batal
+          </button>
+
+          <button type="submit" class="btn btn-primary">
+            Simpan Perubahan
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- EDIT BIAYA OPERASIONAL -->
+<div
+  class="modal fade"
+  id="modalEditBiaya"
+  tabindex="-1"
+>
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+
+      <form id="formEditBiaya">
+
+        <input type="hidden" id="editBiayaId" />
+
+        <div class="modal-header">
+
+          <h5 class="modal-title">
+            <i class="bi bi-pencil-square me-2"></i>
+            Edit Biaya Operasional
+          </h5>
+
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
+
+        </div>
+
+        <div class="modal-body">
+
+          <div class="mb-3">
+            <label class="form-label">Nama Biaya</label>
+            <input
+              type="text"
+              id="editBiayaNama"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Kategori</label>
+            <input
+              type="text"
+              id="editBiayaKategori"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Jumlah Biaya</label>
+            <input
+              type="number"
+              id="editBiayaJumlah"
+              class="form-control"
+              min="0"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Tanggal</label>
+            <input
+              type="date"
+              id="editBiayaTanggal"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Keterangan</label>
+            <textarea
+              id="editBiayaKeterangan"
+              class="form-control"
+              rows="3"
+            ></textarea>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Batal
+          </button>
+
+          <button type="submit" class="btn btn-primary">
+            Simpan Perubahan
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+</div>
+
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script src="js/auth-guard.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<script src="js/dashboard-admin.js"></script>
+<script>
+(function () {
+// ---- Auth: dibuat aman supaya error di sini TIDAK mematikan seluruh halaman ----
+let auth = null;
+try {
+  if (typeof checkAuth === "function") {
+    auth = checkAuth("ADMIN");
+  } else {
+    const u = JSON.parse(localStorage.getItem("user") || "null");
+    if (u) auth = { user: u };
+  }
+} catch (err) {
+  console.error("checkAuth gagal:", err);
+}
+
+try {
+  let namaUser = auth && auth.user && auth.user.nama;
+  if (!namaUser) {
+    try { namaUser = (JSON.parse(localStorage.getItem("user") || "{}")).nama; } catch (e) {}
+  }
+  namaUser = namaUser || "Admin";
+  const inisial = namaUser.split(" ").map(w => w[0]).join("").substring(0, 2).toUpperCase();
+  document.getElementById("userName").textContent = namaUser;
+  document.getElementById("sidebarUserName").textContent = namaUser;
+  document.getElementById("dashboardUserName").textContent = namaUser;
+  document.getElementById("sidebarAvatarInitial").textContent = inisial;
+  document.getElementById("topAvatarInitial").textContent = inisial;
+} catch (err) {
+  console.error("Gagal mengisi nama user:", err);
+}
+
+// Cadangan kalau auth-guard.js tidak menyediakan apiFetch
+if (typeof window.apiFetch !== "function") {
+  window.apiFetch = function (url, options = {}) {
+    const token = localStorage.getItem("token");
+    return fetch(url, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        ...(token ? { Authorization: "Bearer " + token } : {}),
+        ...(options.headers || {}),
+      },
+    });
+  };
+}
+
+function formatRupiah(angka) {
+  return "Rp " + Number(angka).toLocaleString("id-ID");
+}
+
+// Data terakhir yang dimuat, dipakai untuk mengisi form edit
+let pelangganData = [];
+let layananData = [];
+let penggunaData = [];
+let biayaData = [];
+
+// Warna badge cycle buat avatar huruf inisial di tabel (Pelanggan, Pengguna)
+const AVATAR_COLORS = ["var(--color-primary)", "var(--color-accent)", "var(--color-danger)", "var(--color-secondary)"];
+function avatarLetter(nama, index) {
+  const color = AVATAR_COLORS[index % AVATAR_COLORS.length];
+  return `<span style="color:${color}; font-weight:700;">${nama.charAt(0).toUpperCase()}</span>`;
+}
+
+// Badge status generik (pill soft-color)
+const STATUS_BADGE_MAP = {
+  AKTIF: "badge-soft-success",
+  NONAKTIF: "badge-soft-muted",
+  LUNAS: "badge-soft-success",
+  SELESAI: "badge-soft-success",
+  DIPROSES: "badge-soft-secondary",
+  "BARU MASUK": "badge-soft-accent",
+  BARU_MASUK: "badge-soft-accent",
+  "PERLU DIPROSES": "badge-soft-accent",
+  PERLU_DIPROSES: "badge-soft-accent",
+  "BELUM BAYAR": "badge-soft-accent",
+  BELUM: "badge-soft-accent",
+};
+function badgeStatus(status) {
+  const key = (status || "").toUpperCase();
+  const cls = STATUS_BADGE_MAP[key] || "badge-soft-muted";
+  return `<span class="badge-pill ${cls}">${status || "-"}</span>`;
+}
+
+// Warna status buat chart, mengikuti token resmi S1-02
+const STATUS_COLOR_MAP = {
+  DIPROSES: "#14B8A6",
+  SELESAI: "#16A34A",
+  BARU_MASUK: "#F59E0B",
+  PERLU_DIPROSES: "#F59E0B",
+};
+function getStatusColor(status) {
+  const key = (status || "").toUpperCase().replace(/\s+/g, "_");
+  return STATUS_COLOR_MAP[key] || "#767C88";
+}
+
+// Cadangan kalau auth-guard.js tidak menyediakan logout
+if (typeof window.logout !== "function") {
+  window.logout = function () {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "/";
+  };
+}
+
+// NAVIGASI SIDEBAR
+const menuLinks = document.querySelectorAll(".menu-link");
+const pageSections = document.querySelectorAll(".page-section");
+
+menuLinks.forEach((link) => {
+  link.addEventListener("click", (e) => {
+    e.preventDefault();
+    const page = link.dataset.page;
+    menuLinks.forEach((l) => l.classList.remove("active"));
+    link.classList.add("active");
+    pageSections.forEach((s) => s.classList.add("d-none"));
+
+    const target = document.getElementById("page-" + page);
+    if (target) {
+      target.classList.remove("d-none");
+    } else {
+      document.getElementById("placeholderTitle").textContent = "Fitur";
+      document.getElementById("page-placeholder").classList.remove("d-none");
+    }
+  });
+});
+
+// TOPBAR TANGGAL
+document.getElementById("topbarDate").textContent = new Date().toLocaleDateString("id-ID", {
+  weekday: "short", day: "numeric", month: "short", year: "numeric",
+});
+
+// MENU CEPAT (dashboard) navigasi ke sidebar
+document.querySelectorAll(".quickmenu-item").forEach((item) => {
+  item.addEventListener("click", () => {
+    const link = document.querySelector(`.menu-link[data-page="${item.dataset.goto}"]`);
+    if (link) link.click();
+  });
+});
+
+// =========================
+// HELPER EDIT (dipakai semua modal edit)
+// =========================
+function bukaModal(idModal) {
+  bootstrap.Modal.getOrCreateInstance(document.getElementById(idModal)).show();
+}
+
+async function simpanEdit(url, body, idModal, pesanSukses, reload) {
+  try {
+    const res = await apiFetch(url, { method: "PUT", body: JSON.stringify(body) });
+    const data = await res.json();
+
+    if (!res.ok || data.success === false) {
+      let pesan = data.message || "Gagal menyimpan perubahan";
+      if (data.errors) {
+        pesan += "\n\n" + Object.values(data.errors).flat().join("\n");
+      }
+      alert(pesan);
+      return;
+    }
+
+    alert(pesanSukses);
+    bootstrap.Modal.getOrCreateInstance(document.getElementById(idModal)).hide();
+    reload();
+  } catch (error) {
+    console.error(error);
+    alert("Terjadi kesalahan saat menyimpan perubahan");
+  }
+}
+
+// =========================
+// STAT CARDS + CHARTS DASHBOARD
+// =========================
+async function loadDashboardStats() {
+  try {
+    const [resPelanggan, resTransaksi, resProses] = await Promise.all([
+      apiFetch("/api/pelanggan"),
+      apiFetch("/api/transaksi"),
+      apiFetch("/api/proses-cucian"),
+    ]);
+    const dataPelanggan = await resPelanggan.json();
+    const dataTransaksi = await resTransaksi.json();
+    const dataProses = await resProses.json();
+
+    const transaksiList = dataTransaksi.data || [];
+    const prosesList = dataProses.data || [];
+
+    document.getElementById("statTotalPelanggan").textContent = (dataPelanggan.data || []).length;
+    document.getElementById("statTotalTransaksi").textContent = transaksiList.length;
+    document.getElementById("statCucianDiproses").textContent =
+      prosesList.filter((p) => (p.status_proses || "").toUpperCase().includes("PROSES")).length;
+
+    const hariIni = new Date().toDateString();
+    const pendapatanHariIni = transaksiList
+      .filter((t) => new Date(t.created_at).toDateString() === hariIni && t.status_pembayaran === "LUNAS")
+      .reduce((sum, t) => sum + Number(t.total_harga), 0);
+    document.getElementById("statPendapatanHariIni").textContent = formatRupiah(pendapatanHariIni);
+
+    try { renderChartPendapatan(transaksiList); } catch (err) { console.error("Chart pendapatan gagal:", err); }
+    try { renderChartStatusCucian(prosesList); } catch (err) { console.error("Chart status gagal:", err); }
+    try { renderAktivitasTerbaru(transaksiList); } catch (err) { console.error("Aktivitas gagal:", err); }
+  } catch (error) {
+    console.error("Gagal memuat statistik dashboard:", error);
+  }
+}
+
+function renderChartPendapatan(transaksiList) {
+  const labels = [];
+  const totals = [];
+
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    labels.push(d.toLocaleDateString("id-ID", { weekday: "short" }));
+
+    const totalHariItu = transaksiList
+      .filter((t) => {
+        const tgl = new Date(t.created_at);
+        return tgl.toDateString() === d.toDateString() && t.status_pembayaran === "LUNAS";
+      })
+      .reduce((sum, t) => sum + Number(t.total_harga), 0);
+
+    totals.push(totalHariItu);
+  }
+
+  // Highlight hari ini (index terakhir) pakai warna accent, sisanya primary
+  const barColors = totals.map((_, i) => (i === totals.length - 1 ? "#F59E0B" : "#2F6FED"));
+
+  new Chart(document.getElementById("chartPendapatan7Hari"), {
+    type: "bar",
+    data: { labels, datasets: [{ label: "Pendapatan", data: totals, backgroundColor: barColors, borderRadius: 6 }] },
+    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } },
+  });
+}
+
+function renderChartStatusCucian(prosesList) {
+  const counts = {};
+  prosesList.forEach((p) => {
+    const status = p.status_proses || "Tidak diketahui";
+    counts[status] = (counts[status] || 0) + 1;
+  });
+
+  const labels = Object.keys(counts);
+  const values = Object.values(counts);
+  const colors = labels.map(getStatusColor);
+
+  new Chart(document.getElementById("chartStatusCucian"), {
+    type: "doughnut",
+    data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 0 }] },
+    options: { plugins: { legend: { display: false } } },
+  });
+
+  const legendBox = document.getElementById("legendStatusCucian");
+  legendBox.innerHTML = labels.length
+    ? labels.map((l, i) => `
+        <div class="legend-item">
+          <span class="legend-dot" style="background:${colors[i]}"></span>
+          <span class="flex-grow-1">${l}</span>
+          <strong>${values[i]}</strong>
+        </div>`).join("")
+    : `<div class="text-muted small">Belum ada data</div>`;
+}
+
+function renderAktivitasTerbaru(transaksiList) {
+  const box = document.getElementById("aktivitasTerbaru");
+  if (transaksiList.length === 0) {
+    box.innerHTML = `<div class="text-muted">Belum ada aktivitas</div>`;
+    return;
+  }
+  const terbaru = [...transaksiList].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 5);
+  box.innerHTML = terbaru.map((t) => `
+    <div class="activity-item">
+      <div class="activity-icon"><i class="bi bi-receipt"></i></div>
+      <div>
+        <div class="activity-title">Transaksi #${t.kode_transaksi}</div>
+        <div class="activity-subtitle">${formatRupiah(t.total_harga)}</div>
+      </div>
+      <div class="activity-time">${new Date(t.created_at).toLocaleDateString("id-ID")}</div>
+    </div>
+  `).join("");
+}
+
+// RINGKASAN (Laporan + Pendapatan + Keuntungan)
+async function loadRingkasan() {
+  try {
+    const [resPendapatan, resBiaya, resKeuntungan] = await Promise.all([
+      apiFetch("/api/laporan/pendapatan"),
+      apiFetch("/api/laporan/biaya"),
+      apiFetch("/api/laporan/keuntungan"),
+    ]);
+    const dp = await resPendapatan.json();
+    const db = await resBiaya.json();
+    const dk = await resKeuntungan.json();
+
+    const totalPendapatan = dp.data.total_pendapatan || 0;
+    const totalBiaya = db.data.total_biaya || 0;
+    const keuntungan = dk.data.keuntungan || 0;
+
+    document.getElementById("laporanPendapatan").textContent = formatRupiah(totalPendapatan);
+    document.getElementById("laporanBiaya").textContent = formatRupiah(totalBiaya);
+    document.getElementById("laporanKeuntungan").textContent = formatRupiah(keuntungan);
+    document.getElementById("pendapatanTotal").textContent = formatRupiah(totalPendapatan);
+    document.getElementById("pendapatanJumlahTrx").textContent = dp.data.jumlah_transaksi || 0;
+    document.getElementById("keuntunganNilai").textContent = formatRupiah(keuntungan);
+    document.getElementById("keuntunganPendapatan").textContent = formatRupiah(totalPendapatan);
+    document.getElementById("keuntunganBiaya").textContent = formatRupiah(totalBiaya);
+  } catch (error) {
+    console.error("Gagal memuat ringkasan:", error);
+  }
+}
+
+// =========================
+// DATA PELANGGAN
+// =========================
+async function loadPelanggan() {
+  const tbody = document.getElementById("tabelPelanggan");
+  try {
+    const res = await apiFetch("/api/pelanggan");
+    const data = await res.json();
+    pelangganData = data.data || [];
+    if (pelangganData.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">Belum ada data</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = pelangganData.map((p, i) => `
+      <tr>
+        <td>${avatarLetter(p.nama, i)} ${p.nama}</td>
+        <td>${p.no_telepon}</td>
+        <td>${p.alamat || "-"}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-primary" title="Edit" onclick="bukaEditPelanggan(${p.id_pelanggan})"><i class="bi bi-pencil-square"></i></button>
+          <button class="btn btn-sm btn-outline-danger" title="Hapus" onclick="hapusPelanggan(${p.id_pelanggan})"><i class="bi bi-trash"></i></button>
+        </td>
+      </tr>`).join("");
+  } catch (error) {
+    console.error(error);
+    tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Gagal memuat data</td></tr>`;
+  }
+}
+
+document.getElementById("formTambahPelanggan").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const body = {
+    nama: document.getElementById("pelangganNama").value,
+    no_telepon: document.getElementById("pelangganNoTelepon").value,
+    alamat: document.getElementById("pelangganAlamat").value,
+  };
+  try {
+    const res = await apiFetch("/api/pelanggan", { method: "POST", body: JSON.stringify(body) });
+    const data = await res.json();
+    if (!data.success) { alert(data.message || "Gagal menambah pelanggan"); return; }
+    alert("Pelanggan berhasil ditambahkan");
+    bootstrap.Modal.getInstance(document.getElementById("modalTambahPelanggan")).hide();
+    e.target.reset();
+    loadPelanggan();
+  } catch (error) {
+    console.error(error);
+    alert("Terjadi kesalahan saat menambah pelanggan");
+  }
+});
+
+function bukaEditPelanggan(id) {
+  const p = pelangganData.find((x) => String(x.id_pelanggan) === String(id));
+  if (!p) { alert("Data pelanggan tidak ditemukan"); return; }
+
+  document.getElementById("editPelangganId").value = p.id_pelanggan;
+  document.getElementById("editPelangganNama").value = p.nama || "";
+  document.getElementById("editPelangganNoTelepon").value = p.no_telepon || "";
+  document.getElementById("editPelangganAlamat").value = p.alamat || "";
+
+  bukaModal("modalEditPelanggan");
+}
+
+document.getElementById("formEditPelanggan").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const id = document.getElementById("editPelangganId").value;
+  simpanEdit(
+    `/api/pelanggan/${id}`,
+    {
+      nama: document.getElementById("editPelangganNama").value.trim(),
+      no_telepon: document.getElementById("editPelangganNoTelepon").value.trim(),
+      alamat: document.getElementById("editPelangganAlamat").value.trim(),
+    },
+    "modalEditPelanggan",
+    "Pelanggan berhasil diperbarui",
+    loadPelanggan
+  );
+});
+
+async function hapusPelanggan(id) {
+  if (!confirm("Yakin ingin menghapus pelanggan ini?")) return;
+  try {
+    const res = await apiFetch(`/api/pelanggan/${id}`, { method: "DELETE" });
+    const data = await res.json();
+    if (!data.success) { alert(data.message || "Gagal menghapus pelanggan"); return; }
+    alert("Pelanggan berhasil dihapus");
+    loadPelanggan();
+  } catch (error) {
+    console.error(error);
+    alert("Terjadi kesalahan saat menghapus pelanggan");
+  }
+}
+
+// =========================
+// LAYANAN & HARGA
+// =========================
+async function loadLayanan() {
+  const tbody = document.getElementById("tabelLayanan");
+  try {
+    const res = await apiFetch("/api/layanan");
+    const data = await res.json();
+    layananData = data.data || [];
+    if (layananData.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">Belum ada data</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = layananData.map((l) => `
+      <tr>
+        <td><strong>${l.nama_layanan}</strong></td>
+        <td>${l.jenis_satuan}</td>
+        <td>${formatRupiah(l.harga_per_satuan)}</td>
+        <td>${badgeStatus(l.is_active ? "Aktif" : "Nonaktif")}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-primary" title="Edit" onclick="bukaEditLayanan(${l.id_layanan})"><i class="bi bi-pencil-square"></i></button>
+          <button class="btn btn-sm btn-outline-danger" title="Hapus" onclick="hapusLayanan(${l.id_layanan})"><i class="bi bi-trash"></i></button>
+        </td>
+      </tr>`).join("");
+  } catch (error) {
+    console.error(error);
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Gagal memuat data</td></tr>`;
+  }
+}
+
+document.getElementById("formTambahLayanan").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const body = {
+    nama_layanan: document.getElementById("layananNama").value,
+    jenis_satuan: document.getElementById("layananSatuan").value,
+    harga_per_satuan: document.getElementById("layananHarga").value,
+  };
+  try {
+    const res = await apiFetch("/api/layanan", { method: "POST", body: JSON.stringify(body) });
+    const data = await res.json();
+    if (!data.success) { alert(data.message || "Gagal menambah layanan"); return; }
+    alert("Layanan berhasil ditambahkan");
+    bootstrap.Modal.getInstance(document.getElementById("modalTambahLayanan")).hide();
+    e.target.reset();
+    loadLayanan();
+  } catch (error) {
+    console.error(error);
+    alert("Terjadi kesalahan saat menambah layanan");
+  }
+});
+
+function bukaEditLayanan(id) {
+  const l = layananData.find((x) => String(x.id_layanan) === String(id));
+  if (!l) { alert("Data layanan tidak ditemukan"); return; }
+
+  document.getElementById("editLayananId").value = l.id_layanan;
+  document.getElementById("editLayananNama").value = l.nama_layanan || "";
+  document.getElementById("editLayananSatuan").value = l.jenis_satuan || "";
+  document.getElementById("editLayananHarga").value = l.harga_per_satuan || 0;
+  document.getElementById("editLayananAktif").value = Number(l.is_active) === 1 ? "1" : "0";
+
+  bukaModal("modalEditLayanan");
+}
+
+document.getElementById("formEditLayanan").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const id = document.getElementById("editLayananId").value;
+  simpanEdit(
+    `/api/layanan/${id}`,
+    {
+      nama_layanan: document.getElementById("editLayananNama").value.trim(),
+      jenis_satuan: document.getElementById("editLayananSatuan").value.trim(),
+      harga_per_satuan: document.getElementById("editLayananHarga").value,
+      is_active: Number(document.getElementById("editLayananAktif").value),
+    },
+    "modalEditLayanan",
+    "Layanan berhasil diperbarui",
+    loadLayanan
+  );
+});
+
+async function hapusLayanan(id) {
+  if (!confirm("Yakin ingin menghapus layanan ini?")) return;
+  try {
+    const res = await apiFetch(`/api/layanan/${id}`, { method: "DELETE" });
+    const data = await res.json();
+    if (!data.success) { alert(data.message || "Gagal menghapus layanan"); return; }
+    alert("Layanan berhasil dihapus");
+    loadLayanan();
+  } catch (error) {
+    console.error(error);
+    alert("Terjadi kesalahan saat menghapus layanan");
+  }
+}
+
+// DATA CUCIAN (read-only)
+async function loadCucian() {
+  const tbody = document.getElementById("tabelCucian");
+  try {
+    const res = await apiFetch("/api/transaksi");
+    const data = await res.json();
+    if (!data.data || data.data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">Belum ada data</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = data.data.map((t) => `
+      <tr>
+        <td class="text-primary fw-semibold">${t.kode_transaksi}</td>
+        <td>${formatRupiah(t.total_harga)}</td>
+        <td>${badgeStatus(t.status_pembayaran)}</td>
+        <td>${badgeStatus(t.status_pengambilan)}</td>
+        <td>${new Date(t.created_at).toLocaleDateString("id-ID")}</td>
+      </tr>`).join("");
+  } catch (error) {
+    console.error(error);
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Gagal memuat data</td></tr>`;
+  }
+}
+
+// PROSES CUCIAN (read-only)
+async function loadProses() {
+  const tbody = document.getElementById("tabelProses");
+  try {
+    const res = await apiFetch("/api/proses-cucian");
+    const data = await res.json();
+    if (!data.data || data.data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">Belum ada data</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = data.data.map((p) => `
+      <tr>
+        <td class="text-primary fw-semibold">${p.id_transaksi}</td>
+        <td>${badgeStatus(p.status_proses)}</td>
+        <td>${p.catatan_proses || "-"}</td>
+        <td>${new Date(p.created_at).toLocaleString("id-ID")}</td>
+      </tr>`).join("");
+  } catch (error) {
+    console.error(error);
+    tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Gagal memuat data</td></tr>`;
+  }
+}
+
+// =========================
+// MANAJEMEN PENGGUNA
+// =========================
+async function loadPengguna() {
+  const tbody = document.getElementById("tabelPengguna");
+
+  try {
+    const res = await apiFetch("/api/pengguna");
+    const data = await res.json();
+    penggunaData = data.data || [];
+
+    if (penggunaData.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">Belum ada data</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = penggunaData.map((u, i) => `
+      <tr>
+        <td>${avatarLetter(u.nama, i)} ${u.nama}</td>
+        <td>${u.username}</td>
+        <td>${u.role}</td>
+        <td>${badgeStatus(Number(u.is_active) === 1 ? "AKTIF" : "NONAKTIF")}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-warning" title="Reset Password" onclick="resetPassword(${u.id_user})">
+            <i class="bi bi-key"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-primary" title="Edit" onclick="bukaEditUser(${u.id_user})">
+            <i class="bi bi-pencil-square"></i>
+          </button>
+        </td>
+      </tr>
+    `).join("");
+
+  } catch (error) {
+    console.error(error);
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Gagal memuat data</td></tr>`;
+  }
+}
+
+function bukaEditUser(id) {
+  const u = penggunaData.find((x) => String(x.id_user) === String(id));
+  if (!u) { alert("Data pengguna tidak ditemukan"); return; }
+
+  document.getElementById("editUserId").value = u.id_user;
+  document.getElementById("editUserNama").value = u.nama || "";
+  document.getElementById("editUserUsername").value = u.username || "";
+  document.getElementById("editUserPassword").value = "";
+  document.getElementById("editUserRole").value = u.role || "KASIR";
+  document.getElementById("editUserAktif").value = Number(u.is_active) === 1 ? "1" : "0";
+
+  bukaModal("modalEditUser");
+}
+
+document.getElementById("formEditUser").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const id = document.getElementById("editUserId").value;
+
+  const body = {
+    nama: document.getElementById("editUserNama").value.trim(),
+    username: document.getElementById("editUserUsername").value.trim(),
+    role: document.getElementById("editUserRole").value,
+    is_active: Number(document.getElementById("editUserAktif").value),
+  };
+
+  // password hanya dikirim kalau diisi
+  const passwordBaru = document.getElementById("editUserPassword").value;
+  if (passwordBaru) {
+    body.password = passwordBaru;
+  }
+
+  simpanEdit(
+    `/api/pengguna/${id}`,
+    body,
+    "modalEditUser",
+    "Pengguna berhasil diperbarui",
+    loadPengguna
+  );
+});
+
+async function hapusUser(id) {
+  if (!confirm("Yakin ingin menghapus pengguna ini?")) return;
+
+  try {
+    const res = await apiFetch(`/api/pengguna/${id}`, {
+      method: "DELETE"
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      alert(data.message || "Gagal menghapus pengguna");
+      return;
+    }
+
+    alert("Pengguna berhasil dihapus");
+    loadPengguna();
+
+  } catch (error) {
+    console.error(error);
+    alert("Terjadi kesalahan saat menghapus pengguna");
+  }
+}
+
+// =========================
+// BIAYA OPERASIONAL
+// =========================
+async function loadBiaya() {
+  const tbody = document.getElementById("tabelBiaya");
+
+  try {
+    const res = await apiFetch("/api/biaya-operasional");
+    const data = await res.json();
+    biayaData = data.data || [];
+
+    if (biayaData.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">Belum ada data</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = biayaData.map((b) => `
+      <tr>
+        <td>${new Date(b.tanggal_biaya).toLocaleDateString("id-ID")}</td>
+        <td>${b.nama_biaya}</td>
+        <td>${b.kategori}</td>
+        <td>${formatRupiah(b.jumlah_biaya)}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-primary" title="Edit" onclick="bukaEditBiaya(${b.id_biaya})"><i class="bi bi-pencil-square"></i></button>
+          <button class="btn btn-sm btn-outline-danger" title="Hapus" onclick="hapusBiaya(${b.id_biaya})"><i class="bi bi-trash"></i></button>
+        </td>
+      </tr>
+    `).join("");
+
+  } catch (error) {
+    console.error(error);
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Gagal memuat data</td></tr>`;
+  }
+}
+
+function bukaEditBiaya(id) {
+  const b = biayaData.find((x) => String(x.id_biaya) === String(id));
+  if (!b) { alert("Data biaya tidak ditemukan"); return; }
+
+  document.getElementById("editBiayaId").value = b.id_biaya;
+  document.getElementById("editBiayaNama").value = b.nama_biaya || "";
+  document.getElementById("editBiayaKategori").value = b.kategori || "";
+  document.getElementById("editBiayaJumlah").value = b.jumlah_biaya || 0;
+  // input date butuh format YYYY-MM-DD
+  document.getElementById("editBiayaTanggal").value = String(b.tanggal_biaya || "").substring(0, 10);
+  document.getElementById("editBiayaKeterangan").value = b.keterangan || "";
+
+  bukaModal("modalEditBiaya");
+}
+
+document.getElementById("formEditBiaya").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const id = document.getElementById("editBiayaId").value;
+  simpanEdit(
+    `/api/biaya-operasional/${id}`,
+    {
+      nama_biaya: document.getElementById("editBiayaNama").value.trim(),
+      kategori: document.getElementById("editBiayaKategori").value.trim(),
+      jumlah_biaya: document.getElementById("editBiayaJumlah").value,
+      tanggal_biaya: document.getElementById("editBiayaTanggal").value,
+      keterangan: document.getElementById("editBiayaKeterangan").value.trim(),
+    },
+    "modalEditBiaya",
+    "Biaya operasional berhasil diperbarui",
+    loadBiaya
+  );
+});
+
+
+// =========================
+// HAPUS BIAYA
+// =========================
+async function hapusBiaya(id) {
+  if (!confirm("Yakin ingin menghapus biaya ini?")) return;
+  try {
+    const res = await apiFetch(`/api/biaya-operasional/${id}`, { method: "DELETE" });
+    const data = await res.json();
+    if (!res.ok || data.success === false) { alert(data.message || "Gagal menghapus biaya"); return; }
+    alert("Biaya berhasil dihapus");
+    loadBiaya();
+  } catch (error) {
+    console.error(error);
+    alert("Terjadi kesalahan saat menghapus biaya");
+  }
+}
+
+// =========================
+// RESET PASSWORD PENGGUNA
+// =========================
+async function resetPassword(id) {
+  const baru = prompt("Masukkan password baru untuk pengguna ini:");
+  if (!baru) return;
+  try {
+    const res = await apiFetch(`/api/pengguna/${id}/reset-password`, {
+      method: "PUT",
+      body: JSON.stringify({ password: baru, password_confirmation: baru, password_baru: baru }),
+    });
+    const data = await res.json();
+    if (!res.ok || data.success === false) {
+      let pesan = data.message || "Gagal mereset password";
+      if (data.errors) pesan += "\n\n" + Object.values(data.errors).flat().join("\n");
+      alert(pesan);
+      return;
+    }
+    alert("Password berhasil direset");
+  } catch (error) {
+    console.error(error);
+    alert("Terjadi kesalahan saat mereset password");
+  }
+}
+
+// =========================
+// TAMBAH PENGGUNA
+// =========================
+const userNamaInput = document.getElementById("userNama");
+const userUsernameInput = document.getElementById("userUsername");
+const userRoleSelect = document.getElementById("userRole");
+const saranNamaPelanggan = document.getElementById("saranNamaPelanggan");
+const infoNamaPelanggan = document.getElementById("infoNamaPelanggan");
+
+let daftarPelangganUntukAkun = [];
+
+async function muatSaranPelanggan() {
+  try {
+    const res = await apiFetch("/api/pelanggan");
+    const json = await res.json();
+    if (!res.ok || json.success === false) throw new Error(json.message || "Gagal memuat pelanggan");
+
+    daftarPelangganUntukAkun = json.data || [];
+    saranNamaPelanggan.replaceChildren();
+
+    daftarPelangganUntukAkun.forEach((p) => {
+      const option = document.createElement("option");
+      option.value = p.nama;
+      option.label = `${p.nama} — ${p.no_telepon}`;
+      saranNamaPelanggan.appendChild(option);
+    });
+  } catch (err) {
+    console.error(err);
+    infoNamaPelanggan.textContent = "Data pelanggan gagal dimuat. Coba pilih role Customer lagi.";
+  }
+}
+
+userRoleSelect.addEventListener("change", async () => {
+  const customer = userRoleSelect.value === "CUSTOMER";
+  if (customer) {
+    userNamaInput.setAttribute("list", "saranNamaPelanggan");
+    userUsernameInput.readOnly = true;
+    userUsernameInput.placeholder = "Otomatis dari nomor telepon";
+    infoNamaPelanggan.textContent = "Ketik nama pelanggan yang sudah terdaftar.";
+    await muatSaranPelanggan();
+  } else {
+    userNamaInput.removeAttribute("list");
+    userUsernameInput.readOnly = false;
+    userUsernameInput.placeholder = "";
+    infoNamaPelanggan.textContent = "";
+  }
+});
+
+userNamaInput.addEventListener("change", () => {
+  if (userRoleSelect.value !== "CUSTOMER") return;
+
+  const matches = daftarPelangganUntukAkun.filter(
+    p => p.nama.trim().toLowerCase() === userNamaInput.value.trim().toLowerCase()
+  );
+
+  if (matches.length === 1) {
+    userNamaInput.value = matches[0].nama;
+    userUsernameInput.value = matches[0].no_telepon;
+    infoNamaPelanggan.textContent = `Nomor telepon: ${matches[0].no_telepon}`;
+  } else {
+    userUsernameInput.value = "";
+    infoNamaPelanggan.textContent = matches.length > 1
+      ? "Nama sama ditemukan lebih dari satu. Nama perlu dibedakan."
+      : "Pilih nama pelanggan dari saran yang tersedia.";
+  }
+});
+
+document.getElementById("formTambahUser").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const nama = document.getElementById("userNama").value.trim();
+  const role = document.getElementById("userRole").value;
+  const telepon = document.getElementById("userNoTelepon")?.value.trim() || "";
+  const alamat = document.getElementById("userAlamat")?.value.trim() || "";
+  const usernameInput = document.getElementById("userUsername");
+  const username = role === "CUSTOMER" ? telepon : usernameInput.value.trim();
+  const password = document.getElementById("userPassword").value;
+
+  if (role === "CUSTOMER" && (!telepon || !alamat)) {
+    alert("Isi nomor telepon dan alamat Customer terlebih dahulu.");
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/pengguna", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Bearer " + (localStorage.getItem("token") || "")
+      },
+      body: JSON.stringify({ nama, username, password, role, no_telepon: telepon, alamat })
+    });
+
+    const result = await response.json();
+    if (!response.ok || result.success === false) {
+      throw new Error(result.message || Object.values(result.errors || {}).flat().join("\n") || "Gagal menyimpan pengguna.");
+    }
+
+    alert(role === "CUSTOMER"
+      ? "Customer dan akun login berhasil ditambahkan!"
+      : "Pengguna berhasil ditambahkan!");
+
+    location.reload();
+  } catch (error) {
+    alert(error.message || "Gagal menyimpan pengguna.");
+  }
+});
+
+const customerRoleLink = document.getElementById("userRole");
+const customerPhoneLink = document.getElementById("userNoTelepon");
+const customerUsernameLink = document.getElementById("userUsername");
+function updateCustomerFieldsLink() {
+  const isCustomer = customerRoleLink.value === "CUSTOMER";
+  document.querySelectorAll(".customer-only-field").forEach(el => {
+    el.style.display = isCustomer ? "" : "none";
+  });
+  customerUsernameLink.readOnly = isCustomer;
+  if (isCustomer && customerPhoneLink) {
+    customerUsernameLink.value = customerPhoneLink.value.trim();
+  }
+}
+customerRoleLink.addEventListener("change", updateCustomerFieldsLink);
+customerPhoneLink?.addEventListener("input", () => {
+  if (customerRoleLink.value === "CUSTOMER") {
+    customerUsernameLink.value = customerPhoneLink.value.trim();
+  }
+});
+updateCustomerFieldsLink();
+// TAMBAH BIAYA
+// =========================
+document.getElementById("formTambahBiaya").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const body = {
+    nama_biaya: document.getElementById("biayaNama").value,
+    kategori: document.getElementById("biayaKategori").value,
+    jumlah_biaya: document.getElementById("biayaJumlah").value,
+    tanggal_biaya: document.getElementById("biayaTanggal").value,
+    keterangan: document.getElementById("biayaKeterangan").value,
+  };
+  try {
+    const res = await apiFetch("/api/biaya-operasional", { method: "POST", body: JSON.stringify(body) });
+    const data = await res.json();
+    if (!res.ok || data.success === false) {
+      let pesan = data.message || "Gagal menambah biaya";
+      if (data.errors) pesan += "\n\n" + Object.values(data.errors).flat().join("\n");
+      alert(pesan);
+      return;
+    }
+    alert("Biaya berhasil ditambahkan");
+    bootstrap.Modal.getOrCreateInstance(document.getElementById("modalTambahBiaya")).hide();
+    e.target.reset();
+    loadBiaya();
+  } catch (error) {
+    console.error(error);
+    alert("Terjadi kesalahan saat menambah biaya");
+  }
+});
+
+// INIT: tiap loader dijalankan terpisah, satu gagal tidak menghentikan yang lain
+[
+  loadDashboardStats, loadRingkasan, loadPelanggan, loadLayanan,
+  loadCucian, loadProses, loadPengguna, loadBiaya,
+].forEach((fn) => {
+  try {
+    const hasil = fn();
+    if (hasil && typeof hasil.catch === "function") hasil.catch((err) => console.error(fn.name, err));
+  } catch (err) {
+    console.error(fn.name, err);
+  }
+});
+
+
+// Fungsi yang dipanggil dari atribut onclick / script lain
+window.hapusPelanggan = hapusPelanggan;
+window.hapusLayanan = hapusLayanan;
+window.hapusUser = hapusUser;
+window.hapusBiaya = hapusBiaya;
+window.resetPassword = resetPassword;
+window.bukaEditPelanggan = bukaEditPelanggan;
+window.bukaEditLayanan = bukaEditLayanan;
+window.bukaEditUser = bukaEditUser;
+window.bukaEditBiaya = bukaEditBiaya;
+window.loadPelanggan = loadPelanggan;
+window.loadLayanan = loadLayanan;
+window.loadPengguna = loadPengguna;
+window.loadBiaya = loadBiaya;
+
+})();
+
+</script>
 
 <script>
 /*

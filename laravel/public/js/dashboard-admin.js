@@ -405,12 +405,9 @@ async function loadPengguna() {
         <td>${u.username}</td>
         <td>${u.role}</td>
         <td>${badgeStatus(Number(u.is_active) === 1 ? "AKTIF" : "NONAKTIF")}</td>
-        <td>
-          <button class="btn btn-sm btn-outline-warning" onclick="resetPassword(${u.id_user})">
-            <i class="bi bi-key"></i>
-          </button>
+                <td>
           <button class="btn btn-sm btn-outline-danger" onclick="hapusUser(${u.id_user})">
-            <i class="bi bi-trash"></i>
+            <i class="bi bi-trash"></i> Hapus
           </button>
         </td>
       </tr>

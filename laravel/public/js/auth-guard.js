@@ -1,4 +1,4 @@
-// Cek token ada atau tidak, kalau tidak ada redirect ke login
+﻿// Cek token ada atau tidak, kalau tidak ada redirect ke login
 function checkAuth(requiredRole) {
   const token = localStorage.getItem("token");
   const userStr = localStorage.getItem("user");
@@ -31,13 +31,17 @@ async function apiFetch(url, options = {}) {
     ...(options.headers || {}),
     Authorization: `Bearer ${token}`,
   };
+
   if (options.body && !(options.body instanceof FormData)) {
     headers["Content-Type"] = "application/json";
   }
+
   const response = await fetch(url, { ...options, headers });
+
   if (response.status === 401 || response.status === 403) {
     logout();
     throw new Error("Sesi habis, silakan login ulang");
   }
+
   return response;
 }

@@ -1,175 +1,672 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Owner - Amih Laundry</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard Owner - Amih Laundry</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+
+<style>
+/* ===== CSS disalin dari dashboard-admin.html agar tampilan identik ===== */
+body{background:#f5f8fc;margin:0;font-family:Arial,sans-serif}
+.admin-layout{display:flex;min-height:100vh}
+.sidebar{width:250px;height:100vh;min-height:100vh;background:#123f78;color:white;position:fixed;left:0;top:0;bottom:0;z-index:1000;display:flex;flex-direction:column;overflow:hidden}
+.sidebar-brand{padding:24px 20px;border-bottom:1px solid rgba(255,255,255,.15);flex:0 0 auto}
+.sidebar-brand h4{margin:0;font-weight:700}
+.sidebar-brand small{opacity:.75}
+.sidebar-menu{padding:18px 12px;flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding-bottom:20px}
+.sidebar-menu::-webkit-scrollbar{width:6px}
+.sidebar-menu::-webkit-scrollbar-thumb{background:rgba(255,255,255,.25);border-radius:10px}
+.sidebar-menu::-webkit-scrollbar-track{background:transparent}
+.menu-title{font-size:11px;text-transform:uppercase;opacity:.6;padding:10px 14px;margin-top:5px}
+.menu-link{display:flex;align-items:center;gap:12px;color:rgba(255,255,255,.82);text-decoration:none;padding:11px 14px;border-radius:10px;margin-bottom:4px;cursor:pointer;transition:.2s}
+.menu-link:hover,.menu-link.active{background:rgba(255,255,255,.15);color:white}
+.menu-link i{width:20px;font-size:17px}
+.sidebar-user{position:relative;flex:0 0 auto;margin:10px 12px 15px;padding:12px;border-radius:12px;background:rgba(255,255,255,.1);z-index:10}
+.avatar{width:40px;height:40px;border-radius:50%;background:white;color:#123f78;display:flex;align-items:center;justify-content:center;font-weight:700}
+.main-content{margin-left:250px;width:calc(100% - 250px);min-height:100vh}
+.topbar{height:72px;background:white;border-bottom:1px solid #e8edf3;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:900}
+.topbar-search{width:320px}
+.topbar-search input{border-radius:10px;background:#f5f7fa;border:1px solid #e8edf3}
+.content{padding:28px}
+.page-section{display:block}
+.page-section.d-none{display:none !important}
+.page-header{margin-bottom:25px}
+.page-header h2{font-weight:700;margin-bottom:5px;color:#1f2937}
+.page-header p{color:#6b7280;margin:0}
+.stat-card{background:white;border:1px solid #e8edf3;border-radius:16px;padding:20px;height:100%;box-shadow:0 3px 12px rgba(0,0,0,.03)}
+.stat-icon{width:45px;height:45px;border-radius:12px;background:#eaf2ff;color:#2f6fed;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:15px}
+.stat-title{font-size:13px;color:#6b7280;margin-bottom:5px}
+.stat-value{font-size:25px;font-weight:700;color:#1f2937}
+.card-box{background:white;border:1px solid #e8edf3;border-radius:16px;padding:20px;box-shadow:0 3px 12px rgba(0,0,0,.03)}
+.card-title{font-weight:700;color:#1f2937;margin-bottom:4px}
+.card-subtitle{color:#8a94a6;font-size:13px}
+.table{margin-bottom:0}
+.table th{background:#f8fafc;color:#667085;font-size:13px;font-weight:600;white-space:nowrap}
+.table td{vertical-align:middle;font-size:14px}
+.badge-pill{display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:600}
+.badge-soft-success{background:#e7f7ee;color:#15803d}
+.badge-soft-muted{background:#eef1f5;color:#667085}
+.badge-soft-secondary{background:#e9eef5;color:#475467}
+.badge-soft-accent{background:#fff4dc;color:#b77900}
+.btn-primary{background:#2f6fed;border-color:#2f6fed}
+.btn-primary:hover{background:#245dcc;border-color:#245dcc}
+.btn-outline-primary{color:#2f6fed;border-color:#2f6fed}
+.btn-outline-primary:hover{background:#2f6fed;border-color:#2f6fed}
+.quickmenu-item{border:1px solid #e8edf3;background:white;border-radius:12px;padding:15px;text-align:center;cursor:pointer;transition:.2s}
+.quickmenu-item:hover{border-color:#2f6fed;transform:translateY(-2px)}
+.quickmenu-item i{display:block;font-size:22px;color:#2f6fed;margin-bottom:7px}
+.activity-item{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #edf0f4}
+.activity-item:last-child{border-bottom:none}
+.activity-icon{width:38px;height:38px;border-radius:10px;background:#eaf2ff;color:#2f6fed;display:flex;align-items:center;justify-content:center}
+.activity-title{font-weight:600;font-size:14px}
+.activity-subtitle{font-size:12px;color:#667085}
+.activity-time{margin-left:auto;font-size:12px;color:#98a2b3}
+.legend-item{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px}
+.legend-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.empty-state{padding:35px;text-align:center;color:#98a2b3}
+@media(max-width:900px){.sidebar{width:210px}.main-content{margin-left:210px;width:calc(100% - 210px)}.topbar-search{width:220px}}
+@media(max-width:700px){.sidebar{display:none}.main-content{margin-left:0;width:100%}.content{padding:15px}.topbar-search{display:none}}
+</style>
 </head>
+
 <body>
-<div class="app-shell">
+<div class="admin-layout">
 
-<aside class="sidebar">
-  <div>
+  <aside class="sidebar">
     <div class="sidebar-brand">
-      <div class="sidebar-brand-icon"><i class="bi bi-droplet-fill"></i></div>
-      Amih Laundry
+      <h4 style="display:flex;align-items:center;gap:9px"><img src="/logo-amih-laundry.png" alt="Logo Amih Laundry" style="width:42px;height:42px;object-fit:contain;background:white;border-radius:8px;padding:2px;flex-shrink:0"> Amih Laundry</h4>
+      <small>Owner Panel</small>
     </div>
 
-    <ul class="sidebar-menu">
-      <li><a href="#" class="menu-link active" data-page="dashboard"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a></li>
-      <li><a href="#" class="menu-link" data-page="laporan"><i class="bi bi-file-earmark-text"></i> Laporan</a></li>
-      <li><a href="#" class="menu-link" data-page="pendapatan"><i class="bi bi-graph-up-arrow"></i> Pendapatan</a></li>
-      <li><a href="#" class="menu-link" data-page="biaya"><i class="bi bi-wallet2"></i> Biaya Operasional</a></li>
-      <li><a href="#" class="menu-link" data-page="keuntungan"><i class="bi bi-pie-chart"></i> Keuntungan</a></li>
-      <li><a href="#" class="menu-link" data-page="riwayat"><i class="bi bi-clock-history"></i> Riwayat</a></li>
-    </ul>
-  </div>
+    <div class="sidebar-menu">
+      <div class="menu-title">Menu Utama</div>
 
-  <div class="sidebar-footer">
-    <div class="sidebar-avatar" id="sidebarAvatarInitial">OW</div>
-    <div class="footer-text">
-      <span id="userName">Owner</span>
-      <small>Owner</small>
+      <a class="menu-link active" data-page="dashboard"><i class="bi bi-grid-1x2-fill"></i><span>Dashboard</span></a>
+      <a class="menu-link" data-page="laporan"><i class="bi bi-file-earmark-bar-graph-fill"></i><span>Laporan</span></a>
+      <a class="menu-link" data-page="pendapatan"><i class="bi bi-cash-stack"></i><span>Pendapatan</span></a>
+      <a class="menu-link" data-page="biaya"><i class="bi bi-wallet2"></i><span>Biaya Operasional</span></a>
+      <a class="menu-link" data-page="keuntungan"><i class="bi bi-graph-up-arrow"></i><span>Keuntungan</span></a>
+      <a class="menu-link" data-page="riwayat"><i class="bi bi-clock-history"></i><span>Riwayat Transaksi</span></a>
+
+      <div class="menu-title">Lainnya</div>
+
+      <a class="menu-link" href="#" onclick="logout(); return false;"><i class="bi bi-box-arrow-right"></i><span>Logout</span></a>
     </div>
-    <button class="btn btn-sm btn-outline-light ms-auto" onclick="logout()">
-      <i class="bi bi-box-arrow-right"></i>
-    </button>
-  </div>
-</aside>
 
-<main class="main-content">
-  <div class="topbar">
-    <span class="topbar-date-badge" id="topbarDate">-</span>
-  </div>
-
-  <div class="page-content">
-
-    <div class="page-section" id="page-dashboard">
-      <div class="page-title">Dashboard Owner</div>
-      <div class="page-subtitle">Ringkasan keuangan Amih Laundry</div>
-
-      <div class="row g-3">
-        <div class="col-md-4">
-          <div class="card-stat border-primary-left">
-            <div class="stat-label">Pendapatan</div>
-            <div class="stat-value" id="pendapatan">-</div>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="card-stat border-danger-left">
-            <div class="stat-label">Biaya Operasional</div>
-            <div class="stat-value" id="biaya">-</div>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="card-stat border-success-left">
-            <div class="stat-label">Keuntungan</div>
-            <div class="stat-value" id="keuntungan">-</div>
-          </div>
+    <div class="sidebar-user">
+      <div class="d-flex align-items-center gap-2">
+        <div class="avatar" id="sidebarAvatarInitial">O</div>
+        <div>
+          <div id="sidebarUserName" class="fw-semibold">Owner</div>
+          <small style="opacity:.7;">Owner</small>
         </div>
       </div>
     </div>
+  </aside>
 
-    <div class="page-section d-none" id="page-laporan">
-      <div class="page-title">Laporan</div>
-      <div class="page-subtitle">Ringkasan laporan usaha</div>
-      <div class="placeholder-box">Data laporan diambil dari backend.</div>
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-search">
+        <div class="input-group">
+          <span class="input-group-text border-0 bg-light"><i class="bi bi-search"></i></span>
+          <input type="text" id="q" class="form-control border-0" placeholder="Cari kode transaksi, pelanggan, atau biaya..." />
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-4">
+        <div class="text-muted"><i class="bi bi-calendar3"></i> <span id="topbarDate"></span></div>
+        <div><i class="bi bi-bell fs-5"></i></div>
+        <div class="d-flex align-items-center gap-2">
+          <div class="avatar" style="width:36px;height:36px;"><span id="topAvatarInitial">O</span></div>
+          <div class="d-none d-md-block">
+            <div id="userName" class="fw-semibold">Owner</div>
+            <small class="text-muted">Owner</small>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="alert alert-danger d-none" id="err"></div>
+
+      <!-- DASHBOARD -->
+      <section id="page-dashboard" class="page-section">
+        <div class="page-header">
+          <h2>Dashboard Owner</h2>
+          <p>Selamat datang, <strong id="dashboardUserName">Owner</strong> 👋</p>
+          <p>Pantau kinerja bisnis dan keuangan Amih Laundry.</p>
+        </div>
+        <div class="row g-4 mb-4" id="d-stat"></div>
+        <div class="row g-4 mb-4">
+          <div class="col-lg-8">
+            <div class="card-box">
+              <div class="mb-3"><div class="card-title">Grafik Pendapatan</div><div class="card-subtitle">7 Hari Terakhir</div></div>
+              <div style="height:320px;"><canvas id="c-7"></canvas></div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card-box h-100">
+              <div class="mb-3"><div class="card-title">Ringkasan Keuntungan</div><div class="card-subtitle">Bulan ini</div></div>
+              <div style="height:230px;display:flex;align-items:center;justify-content:center;"><canvas id="c-ring"></canvas></div>
+              <div id="d-leg"></div>
+            </div>
+          </div>
+        </div>
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <div class="card-box">
+              <div class="card-title">Aktivitas Terbaru</div>
+              <div class="card-subtitle mb-2">Transaksi dan biaya terbaru</div>
+              <div id="d-act"><div class="empty-state">Belum ada aktivitas</div></div>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="card-box">
+              <div class="card-title mb-3">Laporan</div>
+              <div class="row g-3">
+                <div class="col-6 quickmenu-item" onclick="unduh('harian')"><i class="bi bi-calendar-day"></i><span>Laporan Harian</span></div>
+                <div class="col-6 quickmenu-item" onclick="unduh('mingguan')"><i class="bi bi-calendar-week"></i><span>Laporan Mingguan</span></div>
+                <div class="col-6 quickmenu-item" onclick="unduh('bulanan')"><i class="bi bi-calendar-month"></i><span>Laporan Bulanan</span></div>
+                <div class="col-6 quickmenu-item" onclick="unduh('tahunan')"><i class="bi bi-calendar3"></i><span>Laporan Tahunan</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LAPORAN -->
+      <section id="page-laporan" class="page-section d-none">
+        <div class="page-header"><h2>Laporan</h2><p>Unduh rekap performa bisnis dalam berbagai periode.</p></div>
+        <div class="row g-4" id="l-cards"></div>
+<!-- AMIH-OWNER-REKAP-PERIODE-V1 -->
+<div class="row g-3 mt-2" id="owner-rekap-periode">
+  <div class="col-12"><div class="card-box">
+    <div class="card-title mb-1">Rekap Otomatis Seluruh Periode</div>
+    <div class="text-muted small mb-3">Pilih jenis laporan untuk melihat ringkasan dan membuka rincian transaksi serta biaya.</div>
+    <div class="d-flex flex-wrap gap-2 mb-3">
+      <button class="btn btn-sm btn-primary" data-rekap="harian">Harian</button>
+      <button class="btn btn-sm btn-outline-primary" data-rekap="mingguan">Mingguan</button>
+      <button class="btn btn-sm btn-outline-primary" data-rekap="bulanan">Bulanan</button>
+      <button class="btn btn-sm btn-outline-primary" data-rekap="tahunan">Tahunan</button>
     </div>
+    <div id="owner-rekap-list">Memuat rekap...</div>
+  </div></div>
+</div>
+      </section>
 
-    <div class="page-section d-none" id="page-pendapatan">
-      <div class="page-title">Pendapatan</div>
-      <div class="placeholder-box">Data pendapatan tersedia melalui API laporan.</div>
+      <!-- PENDAPATAN -->
+      <section id="page-pendapatan" class="page-section d-none">
+        <div class="page-header"><h2>Pendapatan</h2><p>Rincian pemasukan dari seluruh transaksi laundry.</p></div>
+        <div class="row g-4 mb-4" id="p-stat"></div>
+        <div class="row g-4 mb-4">
+          <div class="col-lg-8">
+            <div class="card-box">
+              <div class="mb-3"><div class="card-title">Tren Pendapatan</div><div class="card-subtitle">30 Hari Terakhir</div></div>
+              <div style="height:300px;"><canvas id="c-30"></canvas></div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card-box h-100">
+              <div class="mb-3"><div class="card-title">Pendapatan per Layanan</div><div class="card-subtitle">Bulan ini</div></div>
+              <div style="height:230px;display:flex;align-items:center;justify-content:center;"><canvas id="c-lay"></canvas></div>
+              <div id="p-leg"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card-box">
+          <div class="card-title mb-3">Rincian Pendapatan Harian</div>
+          <div class="table-responsive"><table class="table table-hover">
+            <thead><tr><th>Tanggal</th><th>Jumlah Transaksi</th><th>Pendapatan</th><th>Rata-rata / Transaksi</th></tr></thead>
+            <tbody id="p-tbl"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- BIAYA -->
+      <section id="page-biaya" class="page-section d-none">
+        <div class="page-header d-flex justify-content-between align-items-center">
+          <div><h2>Biaya Operasional</h2><p>Pantau seluruh pengeluaran bisnis laundry (dicatat oleh admin).</p></div>
+          <div class="d-flex gap-2" id="b-f">
+            <button class="btn btn-sm btn-primary" data-p="ini">Bulan Ini</button>
+            <button class="btn btn-sm btn-outline-primary" data-p="lalu">Bulan Lalu</button>
+            <button class="btn btn-sm btn-outline-primary" data-p="semua">Semua</button>
+          </div>
+        </div>
+        <div class="row g-4 mb-4" id="b-stat"></div>
+        <div class="row g-4 mb-4">
+          <div class="col-lg-8">
+            <div class="card-box">
+              <div class="mb-3"><div class="card-title">Biaya per Kategori</div></div>
+              <div style="height:300px;"><canvas id="c-bk"></canvas></div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card-box h-100">
+              <div class="mb-3"><div class="card-title">Proporsi Biaya</div></div>
+              <div style="height:230px;display:flex;align-items:center;justify-content:center;"><canvas id="c-bp"></canvas></div>
+              <div id="b-leg"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card-box">
+          <div class="card-title mb-3">Daftar Pengeluaran</div>
+          <div class="table-responsive"><table class="table table-hover">
+            <thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th>Dicatat oleh</th><th>Jumlah</th></tr></thead>
+            <tbody id="b-tbl"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- KEUNTUNGAN -->
+      <section id="page-keuntungan" class="page-section d-none">
+        <div class="page-header"><h2>Keuntungan</h2><p>Perbandingan pendapatan, biaya, dan laba bersih bulan ini.</p></div>
+        <div class="row g-4 mb-4" id="k-stat"></div>
+        <div class="card-box mb-4 d-flex align-items-center gap-3">
+          <strong>Margin Keuntungan</strong>
+          <div class="progress flex-grow-1" style="height:10px;"><div class="progress-bar bg-success" id="k-bar" style="width:0"></div></div>
+          <strong id="k-pct">0%</strong>
+        </div>
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <div class="card-box">
+              <div class="mb-3"><div class="card-title">Tren Keuntungan</div><div class="card-subtitle">6 Bulan Terakhir</div></div>
+              <div style="height:300px;"><canvas id="c-kt"></canvas></div>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="card-box">
+              <div class="card-title mb-3">Keuntungan per Bulan</div>
+              <div class="table-responsive"><table class="table table-hover">
+                <thead><tr><th>Bulan</th><th>Pendapatan</th><th>Biaya</th><th>Untung</th><th>Margin</th></tr></thead>
+                <tbody id="k-tbl"></tbody></table></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIWAYAT -->
+      <section id="page-riwayat" class="page-section d-none">
+        <div class="page-header d-flex justify-content-between align-items-center">
+          <div><h2>Riwayat Transaksi</h2><p>Seluruh transaksi yang tercatat di sistem, lintas kasir.</p></div>
+          <button class="btn btn-primary" id="xls"><i class="bi bi-file-earmark-excel"></i> Ekspor Excel</button>
+        </div>
+        <div class="d-flex gap-2 mb-3" id="r-f">
+          <button class="btn btn-sm btn-primary" data-s="">Semua</button>
+          <button class="btn btn-sm btn-outline-primary" data-s="LUNAS">Lunas</button>
+          <button class="btn btn-sm btn-outline-primary" data-s="PROSES">Proses</button>
+        </div>
+        <div class="card-box">
+          <div class="table-responsive"><table class="table table-hover">
+            <thead><tr><th>Kode Transaksi</th><th>Pelanggan</th><th>Layanan</th><th>Kasir</th><th>Total</th><th>Status</th></tr></thead>
+            <tbody id="r-tbl"></tbody></table></div>
+        </div>
+        <div class="text-muted small mt-2" id="r-info"></div>
+      </section>
     </div>
-
-    <div class="page-section d-none" id="page-biaya">
-      <div class="page-title">Biaya Operasional</div>
-      <div class="placeholder-box">Data biaya operasional tersedia melalui API.</div>
-    </div>
-
-    <div class="page-section d-none" id="page-keuntungan">
-      <div class="page-title">Keuntungan</div>
-      <div class="placeholder-box">Keuntungan dihitung dari pendapatan dikurangi biaya.</div>
-    </div>
-
-    <div class="page-section d-none" id="page-riwayat">
-      <div class="page-title">Riwayat</div>
-      <div class="placeholder-box">Riwayat transaksi tersedia melalui sistem.</div>
-    </div>
-
-  </div>
-</main>
+  </main>
 </div>
 
-<script src="js/auth-guard.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js">/* AMIH-OWNER-REKAP-PERIODE-V1 */
+(function(){
+ const root=document.getElementById('owner-rekap-periode');
+ if(!root)return;
+ let jenis='harian';
+ const esc=s=>String(s??'-').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const money=n=>typeof rp==='function'?rp(Number(n)||0):'Rp '+(Number(n)||0).toLocaleString('id-ID');
+ const dateFmt=s=>{const d=new Date(s+'T12:00:00');return isNaN(d)?s:d.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});};
+ const keyFor=(s)=>{
+   if(jenis==='harian')return s;
+   if(jenis==='bulanan')return s.slice(0,7);
+   if(jenis==='tahunan')return s.slice(0,4);
+   const d=new Date(s+'T12:00:00');d.setDate(d.getDate()-((d.getDay()+6)%7));
+   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+ };
+ const label=k=>{
+   if(jenis==='harian')return dateFmt(k);
+   if(jenis==='mingguan'){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()+6);return dateFmt(k)+' – '+dateFmt(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
+   if(jenis==='bulanan'){const [y,m]=k.split('-').map(Number);return new Date(y,m-1,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});}
+   return 'Tahun '+k;
+ };
+ function render(){
+   root.querySelectorAll('[data-rekap]').forEach(b=>b.className='btn btn-sm '+(b.dataset.rekap===jenis?'btn-primary':'btn-outline-primary'));
+   const groups=new Map();
+   const add=(k,t,x)=>{if(!groups.has(k))groups.set(k,{trx:[],bia:[]});groups.get(k)[t].push(x);};
+   (Array.isArray(trx)?trx:[]).forEach(x=>{if(x.tgl)add(keyFor(x.tgl),'trx',x);});
+   (Array.isArray(bia)?bia:[]).forEach(x=>{if(x.tgl)add(keyFor(x.tgl),'bia',x);});
+   const list=[...groups.entries()].sort((a,b)=>b[0].localeCompare(a[0]));
+   if(!list.length){document.getElementById('owner-rekap-list').innerHTML='<p class="text-muted mb-0">Belum ada data periode yang bisa ditampilkan.</p>';return;}
+   document.getElementById('owner-rekap-list').innerHTML=list.map(([k,g])=>{
+     const paid=g.trx.filter(x=>x.lunas),rev=paid.reduce((s,x)=>s+(Number(x.total)||0),0),cost=g.bia.reduce((s,x)=>s+(Number(x.jumlah)||0),0);
+     const trxRows=g.trx.slice().sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kode)}</td><td>${esc(x.pel)}</td><td>${x.lunas?'Lunas':'Belum bayar'}</td><td class="text-end">${money(x.total)}</td></tr>`).join('')||'<tr><td colspan="5">Tidak ada transaksi</td></tr>';
+     const biaRows=g.bia.slice().sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kat)}</td><td>${esc(x.ket)}</td><td class="text-end">${money(x.jumlah)}</td></tr>`).join('')||'<tr><td colspan="4">Tidak ada biaya</td></tr>';
+     return `<details class="border rounded p-3 mb-2"><summary class="fw-semibold">${esc(label(k))} <span class="text-muted fw-normal">· ${g.trx.length} transaksi · Pendapatan ${money(rev)} · Biaya ${money(cost)} · Bersih ${money(rev-cost)}</span></summary><div class="table-responsive mt-3"><h6>Rincian Transaksi</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kode</th><th>Pelanggan</th><th>Status</th><th class="text-end">Total</th></tr></thead><tbody>${trxRows}</tbody></table><h6 class="mt-3">Biaya Operasional</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th class="text-end">Jumlah</th></tr></thead><tbody>${biaRows}</tbody></table></div></details>`;
+   }).join('');
+ }
+ root.addEventListener('click',e=>{const b=e.target.closest('[data-rekap]');if(b){jenis=b.dataset.rekap;render();}});
+ window.addEventListener('owner-data-loaded',render);
+ render();
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">/* AMIH-OWNER-REKAP-PERIODE-V1 */
+(function(){
+ const root=document.getElementById('owner-rekap-periode');
+ if(!root)return;
+ let jenis='harian';
+ const esc=s=>String(s??'-').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const money=n=>typeof rp==='function'?rp(Number(n)||0):'Rp '+(Number(n)||0).toLocaleString('id-ID');
+ const dateFmt=s=>{const d=new Date(s+'T12:00:00');return isNaN(d)?s:d.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});};
+ const keyFor=(s)=>{
+   if(jenis==='harian')return s;
+   if(jenis==='bulanan')return s.slice(0,7);
+   if(jenis==='tahunan')return s.slice(0,4);
+   const d=new Date(s+'T12:00:00');d.setDate(d.getDate()-((d.getDay()+6)%7));
+   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+ };
+ const label=k=>{
+   if(jenis==='harian')return dateFmt(k);
+   if(jenis==='mingguan'){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()+6);return dateFmt(k)+' – '+dateFmt(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
+   if(jenis==='bulanan'){const [y,m]=k.split('-').map(Number);return new Date(y,m-1,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});}
+   return 'Tahun '+k;
+ };
+ function render(){
+   root.querySelectorAll('[data-rekap]').forEach(b=>b.className='btn btn-sm '+(b.dataset.rekap===jenis?'btn-primary':'btn-outline-primary'));
+   const groups=new Map();
+   const add=(k,t,x)=>{if(!groups.has(k))groups.set(k,{trx:[],bia:[]});groups.get(k)[t].push(x);};
+   (Array.isArray(trx)?trx:[]).forEach(x=>{if(x.tgl)add(keyFor(x.tgl),'trx',x);});
+   (Array.isArray(bia)?bia:[]).forEach(x=>{if(x.tgl)add(keyFor(x.tgl),'bia',x);});
+   const list=[...groups.entries()].sort((a,b)=>b[0].localeCompare(a[0]));
+   if(!list.length){document.getElementById('owner-rekap-list').innerHTML='<p class="text-muted mb-0">Belum ada data periode yang bisa ditampilkan.</p>';return;}
+   document.getElementById('owner-rekap-list').innerHTML=list.map(([k,g])=>{
+     const paid=g.trx.filter(x=>x.lunas),rev=paid.reduce((s,x)=>s+(Number(x.total)||0),0),cost=g.bia.reduce((s,x)=>s+(Number(x.jumlah)||0),0);
+     const trxRows=g.trx.slice().sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kode)}</td><td>${esc(x.pel)}</td><td>${x.lunas?'Lunas':'Belum bayar'}</td><td class="text-end">${money(x.total)}</td></tr>`).join('')||'<tr><td colspan="5">Tidak ada transaksi</td></tr>';
+     const biaRows=g.bia.slice().sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kat)}</td><td>${esc(x.ket)}</td><td class="text-end">${money(x.jumlah)}</td></tr>`).join('')||'<tr><td colspan="4">Tidak ada biaya</td></tr>';
+     return `<details class="border rounded p-3 mb-2"><summary class="fw-semibold">${esc(label(k))} <span class="text-muted fw-normal">· ${g.trx.length} transaksi · Pendapatan ${money(rev)} · Biaya ${money(cost)} · Bersih ${money(rev-cost)}</span></summary><div class="table-responsive mt-3"><h6>Rincian Transaksi</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kode</th><th>Pelanggan</th><th>Status</th><th class="text-end">Total</th></tr></thead><tbody>${trxRows}</tbody></table><h6 class="mt-3">Biaya Operasional</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th class="text-end">Jumlah</th></tr></thead><tbody>${biaRows}</tbody></table></div></details>`;
+   }).join('');
+ }
+ root.addEventListener('click',e=>{const b=e.target.closest('[data-rekap]');if(b){jenis=b.dataset.rekap;render();}});
+ window.addEventListener('owner-data-loaded',render);
+ render();
+})();
+</script>
 <script>
-const auth = checkAuth("OWNER");
+/* ===== Auth ===== */
+const TOKEN=localStorage.getItem('token');
+let USER={};try{USER=JSON.parse(localStorage.getItem('user')||'{}')}catch(e){}
+if(!TOKEN||!['OWNER','ADMIN'].includes(USER.role))location.href='login.html';
+function logout(){localStorage.removeItem('token');localStorage.removeItem('user');location.href='login.html'}
 
-document.getElementById("userName").textContent = auth.user.nama;
-document.getElementById("sidebarAvatarInitial").textContent =
-  auth.user.nama.split(" ").map(w => w[0]).join("").substring(0, 2).toUpperCase();
-
-document.getElementById("topbarDate").textContent =
-  new Date().toLocaleDateString("id-ID", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "numeric"
-  });
-
-document.querySelectorAll(".menu-link").forEach(link => {
-  link.addEventListener("click", e => {
-    e.preventDefault();
-
-    document.querySelectorAll(".menu-link")
-      .forEach(x => x.classList.remove("active"));
-
-    link.classList.add("active");
-
-    document.querySelectorAll(".page-section")
-      .forEach(x => x.classList.add("d-none"));
-
-    document.getElementById("page-" + link.dataset.page)
-      ?.classList.remove("d-none");
-  });
-});
-
-function rupiah(x) {
-  return "Rp " + Number(x || 0).toLocaleString("id-ID");
+/* ===== Helper ===== */
+const $=id=>document.getElementById(id);
+const rp=n=>'Rp '+Math.round(Number(n)||0).toLocaleString('id-ID');
+const jt=n=>'Rp '+(n/1e6).toFixed(1).replace('.',',')+'jt';
+const pct=(a,b)=>b?Math.round((a-b)/b*100):0;
+const dk=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const lokal=v=>{const d=v?new Date(v):null;return d&&!isNaN(d)?dk(d):''};
+const first=(...v)=>v.find(x=>x!==undefined&&x!==null&&x!=='');
+const cap=s=>s.charAt(0)+s.slice(1).toLowerCase();
+const stat=(ic,k,v,s,c,cl)=>`<div class="${cl||'col-xl-3 col-md-6'}"><div class="stat-card"><div class="stat-icon"><i class="bi bi-${ic}"></i></div><div class="stat-title">${k}</div><div class="stat-value">${v}</div><div class="small ${c||'text-muted'}">${s||'&nbsp;'}</div></div></div>`;
+const col=['#2F6FED','#F59E0B','#16A34A','#E5483B','#8B5CF6','#14B8A6'];
+const charts={};
+function chart(id,type,labels,sets,legId){
+  if(charts[id])charts[id].destroy();
+  const cols=labels.map((_,i)=>col[i%col.length]);
+  charts[id]=new Chart($(id),{type,data:{labels,datasets:sets.map((s,i)=>({
+    borderColor:type==='doughnut'?'#fff':col[i],
+    backgroundColor:type==='doughnut'?cols:type==='bar'?'#2F6FED':col[i]+'22',
+    fill:type==='line'&&sets.length===1,tension:.35,borderRadius:6,borderWidth:type==='doughnut'?0:2,...s}))},
+    options:{maintainAspectRatio:false,plugins:{legend:{display:type==='line'&&sets.length>1,position:'bottom'}},scales:type==='doughnut'?{}:{y:{beginAtZero:true}}}});
+  if(legId){const v=sets[0].data;$(legId).innerHTML=labels.length?labels.map((l,i)=>`<div class="legend-item"><span class="legend-dot" style="background:${cols[i]}"></span><span class="flex-grow-1">${l}</span><strong>${rp(v[i])}</strong></div>`).join(''):'<div class="text-muted small">Belum ada data</div>'}
+}
+const arr=j=>Array.isArray(j)?j:Array.isArray(j?.data)?j.data:Array.isArray(j?.data?.data)?j.data.data:[];
+async function get(path){
+  const r=await fetch('/api'+path,{headers:{Authorization:'Bearer '+TOKEN,Accept:'application/json'}});
+  if(r.status===401)throw new Error('401: sesi habis, silakan login ulang');
+  if(r.status===403)throw new Error('403: akun ini tidak punya akses');
+  if(!r.ok)throw new Error(r.status+' pada '+path);
+  return r.json();
+}
+async function getAll(path){
+  const j=await get(path);let a=arr(j);
+  const lp=j?.data?.last_page||j?.meta?.last_page||1;
+  for(let p=2;p<=Math.min(lp,30);p++)a=a.concat(arr(await get(path+(path.includes('?')?'&':'?')+'page='+p)));
+  return a;
 }
 
-async function loadOwner() {
-  try {
-    const [p, b, k] = await Promise.all([
-      apiFetch("/api/laporan/pendapatan"),
-      apiFetch("/api/laporan/biaya"),
-      apiFetch("/api/laporan/keuntungan")
-    ]);
+/* ===== Normalisasi data ===== */
+const layOf=t=>{const s=new Set();
+  [t.layanan,...(t.detail_transaksi||t.detail||t.details||[]).map(d=>d.layanan||d)].forEach(l=>{const n=l&&(l.nama_layanan||l.nama);if(n)s.add(n)});
+  return [...s].join(', ')||'-'};
+function normTrx(t){
+  const sp=String(t.status_pembayaran||'').toUpperCase();
+  const ps=[...(t.proses_cucian||[])].sort((a,b)=>b.id_proses-a.id_proses)[0];
+  const pr=ps?String(ps.status_proses).toUpperCase():'DITERIMA';
+  return{raw:t,kode:t.kode_transaksi||'#'+t.id_transaksi,
+    pel:first(t.pelanggan?.nama_pelanggan,t.pelanggan?.nama,'-'),lay:layOf(t),kasir:t.kasir?.nama||'-',
+    total:Number(t.total_harga)||0,tgl:lokal(t.created_at),lunas:sp==='LUNAS',sp,pr};
+}
+const normBia=b=>({tgl:lokal(b.tanggal_biaya||b.created_at),kat:b.kategori||'Lainnya',
+  ket:[b.nama_biaya,b.keterangan].filter(Boolean).join(' - ')||'-',oleh:b.pencatat?.nama||'-',jumlah:Number(b.jumlah_biaya)||0});
 
-    const pendapatan = await p.json();
-    const biaya = await b.json();
-    const keuntungan = await k.json();
+let trx=[],bia=[];
+const sumT=f=>trx.filter(x=>x.lunas&&f(x)).reduce((a,x)=>a+x.total,0);
+const sumB=f=>bia.filter(f).reduce((a,x)=>a+x.jumlah,0);
+const badge=(t,c)=>`<span class="badge-pill badge-soft-${c}">${t}</span>`;
 
-    document.getElementById("pendapatan").textContent =
-      rupiah(pendapatan.data?.total_pendapatan);
+/* ===== Render ===== */
+function render(){
+  const now=new Date(),t0=dk(now),kmrn=dk(new Date(now.getTime()-864e5));
+  const ym=t0.slice(0,7),ymLalu=dk(new Date(now.getFullYear(),now.getMonth()-1,1)).slice(0,7);
+  const hari=sumT(x=>x.tgl===t0),kem=sumT(x=>x.tgl===kmrn);
+  const bln=sumT(x=>x.tgl.startsWith(ym)),lalu=sumT(x=>x.tgl.startsWith(ymLalu));
+  const biaya=sumB(b=>b.tgl.startsWith(ym)),untung=bln-biaya,margin=bln?Math.round(untung/bln*100):0;
+  const jmlTrx=trx.filter(x=>x.tgl.startsWith(ym)).length;
+  const hr=n=>Array.from({length:n},(_,i)=>{const d=dk(new Date(now.getTime()-(n-1-i)*864e5));
+    const l=trx.filter(x=>x.lunas&&x.tgl===d);return{tgl:d,jumlah:l.length,total:l.reduce((a,x)=>a+x.total,0)}});
+  const t30=hr(30),t7=t30.slice(-7);
 
-    document.getElementById("biaya").textContent =
-      rupiah(biaya.data?.total_biaya);
+  $('d-stat').innerHTML=stat('cash-stack','Pendapatan Hari Ini',rp(hari),pct(hari,kem)+'% dari kemarin',hari>=kem?'text-success':'text-danger')
+   +stat('calendar3','Pendapatan Bulan Ini',rp(bln),pct(bln,lalu)+'% dari bulan lalu',bln>=lalu?'text-success':'text-danger')
+   +stat('wallet2','Biaya Operasional',rp(biaya),'bulan ini')
+   +stat('graph-up-arrow','Keuntungan Bulan Ini',rp(untung),margin+'% margin',untung>=0?'text-success':'text-danger');
+  chart('c-7','bar',t7.map(x=>x.tgl.slice(5)),[{data:t7.map(x=>x.total)}]);
+  chart('c-ring','doughnut',['Pendapatan','Biaya Operasional','Keuntungan'],[{data:[bln,biaya,Math.max(untung,0)]}],'d-leg');
 
-    document.getElementById("keuntungan").textContent =
-      rupiah(keuntungan.data?.keuntungan);
+  const act=[...trx.map(x=>({tgl:x.tgl,ic:'receipt',j:'Transaksi #'+x.kode,n:x.total,o:x.kasir})),
+    ...bia.map(b=>({tgl:b.tgl,ic:'wallet2',j:'Biaya '+b.kat,n:b.jumlah,o:b.oleh}))].sort((a,b)=>b.tgl.localeCompare(a.tgl)).slice(0,6);
+  $('d-act').innerHTML=act.map(a=>`<div class="activity-item"><div class="activity-icon"><i class="bi bi-${a.ic}"></i></div><div><div class="activity-title">${a.j}</div><div class="activity-subtitle">${rp(a.n)} · ${a.o}</div></div><div class="activity-time">${a.tgl}</div></div>`).join('')||'<div class="empty-state">Belum ada aktivitas</div>';
 
-  } catch (err) {
-    console.error(err);
-  }
+  const L=[['Harian','Rekap transaksi & pendapatan per hari','harian','calendar-day'],['Mingguan','Ringkasan 7 hari terakhir','mingguan','calendar-week'],['Bulanan','Rekap pendapatan & biaya bulanan','bulanan','calendar-month'],['Tahunan','Ikhtisar kinerja satu tahun penuh','tahunan','calendar3']];
+  $('l-cards').innerHTML=L.map(l=>`<div class="col-xl-3 col-md-6"><div class="stat-card"><div class="stat-icon"><i class="bi bi-${l[3]}"></i></div><div class="card-title">Laporan ${l[0]}</div><div class="text-muted small mb-3">${l[1]}</div><button class="btn btn-sm btn-outline-primary" onclick="unduh('${l[2]}')"><i class="bi bi-download"></i> Unduh PDF</button></div></div>`).join('');
+
+  $('p-stat').innerHTML=stat('cash-stack','Pendapatan Hari Ini',rp(hari))+stat('calendar3','Pendapatan Bulan Ini',rp(bln))+stat('graph-up-arrow','Rata-rata / Hari',rp(bln/30),'dari 30 hari')+stat('receipt','Transaksi Bulan Ini',jmlTrx);
+  chart('c-30','line',t30.map(x=>x.tgl.slice(5)),[{data:t30.map(x=>x.total)}]);
+  const pl={};trx.filter(x=>x.lunas&&x.tgl.startsWith(ym)).forEach(x=>pl[x.lay]=(pl[x.lay]||0)+x.total);
+  chart('c-lay','doughnut',Object.keys(pl),[{data:Object.values(pl)}],'p-leg');
+  $('p-tbl').innerHTML=t30.slice(-10).reverse().map(x=>`<tr><td><strong>${x.tgl}</strong></td><td>${x.jumlah}</td><td><strong>${rp(x.total)}</strong></td><td>${rp(x.jumlah?x.total/x.jumlah:0)}</td></tr>`).join('');
+
+  renderBiayaStats();
+
+  const cl='col-md-4';
+  $('k-stat').innerHTML=stat('cash','Pendapatan',rp(bln),'bulan ini','',cl)+stat('wallet2','Biaya Operasional',rp(biaya),'bulan ini','',cl)+stat('graph-up-arrow','Keuntungan Bersih',rp(untung),'bulan ini',untung>=0?'text-success':'text-danger',cl);
+  $('k-bar').style.width=Math.max(margin,0)+'%';$('k-pct').textContent=margin+'%';
+  const m=Array.from({length:6},(_,i)=>{const d=new Date(now.getFullYear(),now.getMonth()-(5-i),1),k=dk(d).slice(0,7);
+    return{bulan:d.toLocaleDateString('id-ID',{month:'short',year:'numeric'}),p:sumT(x=>x.tgl.startsWith(k)),b:sumB(x=>x.tgl.startsWith(k))}});
+  chart('c-kt','line',m.map(x=>x.bulan),[{label:'Pendapatan',data:m.map(x=>x.p)},{label:'Biaya',data:m.map(x=>x.b)},{label:'Keuntungan',data:m.map(x=>x.p-x.b)}]);
+  $('k-tbl').innerHTML=m.slice().reverse().map(x=>`<tr><td><strong>${x.bulan}</strong></td><td>${jt(x.p)}</td><td>${jt(x.b)}</td><td><strong>${jt(x.p-x.b)}</strong></td><td>${badge((x.p?Math.round((x.p-x.b)/x.p*100):0)+'%','success')}</td></tr>`).join('');
+  renderTrx();
 }
 
-loadOwner();
+let bper='ini';
+const bFilter=()=>{const now=new Date(),ym=dk(now).slice(0,7),yl=dk(new Date(now.getFullYear(),now.getMonth()-1,1)).slice(0,7);
+  return{ini:b=>b.tgl.startsWith(ym),lalu:b=>b.tgl.startsWith(yl),semua:()=>true}[bper]};
+function renderBiayaStats(){
+  const L=bia.filter(bFilter()),tot=L.reduce((a,b)=>a+b.jumlah,0),bk={};
+  L.forEach(b=>bk[b.kat]=(bk[b.kat]||0)+b.jumlah);
+  const bkS=Object.entries(bk).sort((a,b)=>b[1]-a[1]);
+  const nm={ini:'bulan ini',lalu:'bulan lalu',semua:'semua waktu'}[bper];
+  const hari=bper==='semua'?Math.max(1,new Set(L.map(b=>b.tgl)).size):30;
+  $('b-stat').innerHTML=stat('wallet2',{ini:'Biaya Bulan Ini',lalu:'Biaya Bulan Lalu',semua:'Total Biaya'}[bper],rp(tot),nm)
+   +stat('tags','Kategori Terbesar',bkS[0]?bkS[0][0]:'-',bkS[0]?rp(bkS[0][1]):'')
+   +stat('receipt','Jumlah Transaksi Biaya',L.length,nm)
+   +stat('graph-up-arrow','Rata-rata / Hari',rp(tot/hari),bper==='semua'?'per hari tercatat':'dari 30 hari');
+  chart('c-bk','bar',bkS.map(x=>x[0]),[{data:bkS.map(x=>x[1])}]);
+  chart('c-bp','doughnut',bkS.map(x=>x[0]),[{data:bkS.map(x=>x[1])}],'b-leg');
+  renderBiaya();
+}
+function renderBiaya(){
+  const q=$('q').value.toLowerCase();
+  $('b-tbl').innerHTML=bia.filter(bFilter()).filter(b=>(b.kat+b.ket+b.oleh).toLowerCase().includes(q)).slice(0,50)
+   .map(b=>`<tr><td>${b.tgl}</td><td>${badge(b.kat,'secondary')}</td><td>${b.ket}</td><td>${b.oleh}</td><td><strong>${rp(b.jumlah)}</strong></td></tr>`).join('')
+   ||'<tr><td colspan="5" class="text-center text-muted">Belum ada data biaya pada periode ini</td></tr>';
+}
+let status='';
+const rows=()=>{const q=$('q').value.toLowerCase();
+  return trx.filter(x=>(!status||(status==='LUNAS'?x.lunas:x.pr!=='SELESAI'))&&(x.kode+x.pel).toLowerCase().includes(q))};
+function renderTrx(){
+  const r=rows();
+  $('r-tbl').innerHTML=r.slice(0,50).map(x=>`<tr><td class="text-primary fw-semibold">${x.kode}</td><td>${x.pel}</td><td>${x.lay}</td><td>${x.kasir}</td><td><strong>${rp(x.total)}</strong></td><td>${x.lunas?badge('LUNAS','success'):badge('BELUM BAYAR','accent')} ${badge(x.pr.replace('_',' '),x.pr==='SELESAI'?'success':'secondary')}</td></tr>`).join('')
+   ||'<tr><td colspan="6" class="text-center text-muted">Belum ada transaksi</td></tr>';
+  $('r-info').textContent=`Menampilkan ${Math.min(r.length,50)} dari ${r.length} transaksi`;
+}
+
+/* ===== Laporan PDF (dialog cetak) & Ekspor Excel (CSV) ===== */
+function unduh(j){
+  const pad=n=>String(n).padStart(2,'0');
+  const fmt=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const groups=new Map();
+
+  const keyOf=(date)=>{
+    if(j==='harian') return date;
+    if(j==='bulanan') return date.slice(0,7);
+    if(j==='tahunan') return date.slice(0,4);
+    const d=new Date(date+'T12:00:00');
+    d.setDate(d.getDate()-((d.getDay()+6)%7));
+    return fmt(d);
+  };
+
+  const labelOf=k=>{
+    if(j==='harian') return k;
+    if(j==='mingguan'){
+      const d=new Date(k+'T12:00:00');
+      d.setDate(d.getDate()+6);
+      return `${k} s.d. ${fmt(d)}`;
+    }
+    if(j==='bulanan'){
+      const [y,m]=k.split('-').map(Number);
+      return new Date(y,m-1,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});
+    }
+    return 'Tahun '+k;
+  };
+
+  const add=(k,type,x)=>{
+    if(!groups.has(k)) groups.set(k,{trx:[],bia:[]});
+    groups.get(k)[type].push(x);
+  };
+
+  trx.forEach(x=>{
+    if(!x.tgl) return;
+    add(keyOf(x.tgl),'trx',x);
+  });
+  bia.forEach(x=>{
+    if(!x.tgl) return;
+    add(keyOf(x.tgl),'bia',x);
+  });
+
+  const rows=[...groups.entries()].sort((a,b)=>b[0].localeCompare(a[0]));
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const total=(arr,field)=>arr.reduce((n,x)=>n+(Number(x[field])||0),0);
+  const html=rows.map(([k,g])=>{
+    const paid=g.trx.filter(x=>x.lunas);
+    const rev=total(paid,'total');
+    const cost=total(g.bia,'jumlah');
+    return `<h3>${esc(labelOf(k))}</h3>
+      <p>Jumlah transaksi: ${g.trx.length} · Lunas: ${paid.length}</p>
+      <p>Pendapatan: ${rp(rev)} · Biaya: ${rp(cost)} · Keuntungan bersih: ${rp(rev-cost)}</p>
+      <table><tr><th>Tanggal</th><th>Kode transaksi</th><th>Pelanggan</th><th>Status</th><th>Total</th></tr>
+      ${g.trx.map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kode)}</td><td>${esc(x.pel)}</td><td>${x.lunas?'LUNAS':'BELUM LUNAS'}</td><td>${rp(x.total)}</td></tr>`).join('')||'<tr><td colspan="5">Tidak ada transaksi</td></tr>'}</table>
+      <table><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th>Jumlah</th></tr>
+      ${g.bia.map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kat)}</td><td>${esc(x.ket)}</td><td>${rp(x.jumlah)}</td></tr>`).join('')||'<tr><td colspan="4">Tidak ada biaya operasional</td></tr>'}</table>`;
+  }).join('');
+
+  if(!rows.length){alert('Belum ada data untuk laporan ini.');return;}
+  const title=({harian:'Harian',mingguan:'Mingguan',bulanan:'Bulanan',tahunan:'Tahunan'})[j]||'Laporan';
+  const w=window.open('','_blank');
+  if(!w){alert('Izinkan pop-up agar laporan bisa dicetak atau disimpan sebagai PDF.');return;}
+  w.document.write(`<html><head><meta charset="UTF-8"><title>Laporan ${title} Amih Laundry</title>
+  <style>body{font-family:Arial,sans-serif;color:#1f2937;padding:24px}h2{color:#164e8b}h3{margin-top:28px;background:#eaf3ff;padding:10px}table{border-collapse:collapse;width:100%;margin:10px 0 20px;font-size:12px}td,th{border:1px solid #ccd;padding:7px;text-align:left}th{background:#f1f5f9}p{font-size:13px}@media print{body{padding:0}h3{break-after:avoid}table{break-inside:avoid}}</style>
+  </head><body><h2>Amih Laundry — Laporan ${title}</h2><p>Rekap otomatis dari seluruh data periode yang tersedia.</p>${html}</body></html>`);
+  w.document.close();w.focus();setTimeout(()=>w.print(),500);
+}
+$('xls').onclick=()=>{
+  const csv='\ufeffKode,Tanggal,Pelanggan,Layanan,Kasir,Total,Status\n'+rows().map(x=>[x.kode,x.tgl,x.pel,x.lay,x.kasir,x.total,(x.lunas?'Lunas':'Belum bayar')+' / '+cap(x.pr)].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='riwayat-transaksi.csv';a.click();
+};
+
+/* ===== Event & muat data ===== */
+function showErr(e){const b=$('err');b.classList.remove('d-none');b.textContent='Gagal memuat data: '+e.message}
+document.querySelectorAll('.menu-link[data-page]').forEach(l=>l.addEventListener('click',e=>{
+  e.preventDefault();
+  document.querySelectorAll('.menu-link').forEach(x=>x.classList.remove('active'));l.classList.add('active');
+  document.querySelectorAll('.page-section').forEach(s=>s.classList.add('d-none'));
+  $('page-'+l.dataset.page).classList.remove('d-none');
+}));
+const tog=(sel,btn)=>{document.querySelectorAll(sel+' button').forEach(x=>x.className='btn btn-sm btn-outline-primary');btn.className='btn btn-sm btn-primary'};
+document.querySelectorAll('#r-f button').forEach(b=>b.onclick=()=>{tog('#r-f',b);status=b.dataset.s;renderTrx()});
+document.querySelectorAll('#b-f button').forEach(b=>b.onclick=()=>{tog('#b-f',b);bper=b.dataset.p;renderBiayaStats()});
+$('q').addEventListener('input',()=>{renderTrx();renderBiaya()});
+
+const nama=USER.nama||'Owner',ini=nama.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+$('topbarDate').textContent=new Date().toLocaleDateString('id-ID',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+['userName','sidebarUserName','dashboardUserName'].forEach(i=>$(i).textContent=nama);
+['sidebarAvatarInitial','topAvatarInitial'].forEach(i=>$(i).textContent=ini);
+
+Promise.all([getAll('/transaksi'),getAll('/biaya-operasional')]).then(([t,b])=>{
+  trx=t.map(normTrx);bia=b.map(normBia);
+  console.log('Contoh transaksi dari API:',t[0]);
+  render();
+  if(trx.length&&trx.every(x=>!x.total))showErr(new Error('total transaksi terbaca 0. Buka Console (F12) dan kirim isi "Contoh transaksi dari API".'));
+}).catch(showErr);
+/* AMIH-OWNER-REKAP-PERIODE-V1 */
+(function(){
+ const root=document.getElementById('owner-rekap-periode');
+ if(!root)return;
+ let jenis='harian';
+ const esc=s=>String(s??'-').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const money=n=>typeof rp==='function'?rp(Number(n)||0):'Rp '+(Number(n)||0).toLocaleString('id-ID');
+ const dateFmt=s=>{const d=new Date(s+'T12:00:00');return isNaN(d)?s:d.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});};
+ const keyFor=(s)=>{
+   if(jenis==='harian')return s;
+   if(jenis==='bulanan')return s.slice(0,7);
+   if(jenis==='tahunan')return s.slice(0,4);
+   const d=new Date(s+'T12:00:00');d.setDate(d.getDate()-((d.getDay()+6)%7));
+   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+ };
+ const label=k=>{
+   if(jenis==='harian')return dateFmt(k);
+   if(jenis==='mingguan'){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()+6);return dateFmt(k)+' – '+dateFmt(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
+   if(jenis==='bulanan'){const [y,m]=k.split('-').map(Number);return new Date(y,m-1,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});}
+   return 'Tahun '+k;
+ };
+ function render(){
+   root.querySelectorAll('[data-rekap]').forEach(b=>b.className='btn btn-sm '+(b.dataset.rekap===jenis?'btn-primary':'btn-outline-primary'));
+   const groups=new Map();
+   const add=(k,t,x)=>{if(!groups.has(k))groups.set(k,{trx:[],bia:[]});groups.get(k)[t].push(x);};
+   (Array.isArray(trx)?trx:[]).forEach(x=>{if(x.tgl)add(keyFor(x.tgl),'trx',x);});
+   (Array.isArray(bia)?bia:[]).forEach(x=>{if(x.tgl)add(keyFor(x.tgl),'bia',x);});
+   const list=[...groups.entries()].sort((a,b)=>b[0].localeCompare(a[0]));
+   if(!list.length){document.getElementById('owner-rekap-list').innerHTML='<p class="text-muted mb-0">Belum ada data periode yang bisa ditampilkan.</p>';return;}
+   document.getElementById('owner-rekap-list').innerHTML=list.map(([k,g])=>{
+     const paid=g.trx.filter(x=>x.lunas),rev=paid.reduce((s,x)=>s+(Number(x.total)||0),0),cost=g.bia.reduce((s,x)=>s+(Number(x.jumlah)||0),0);
+     const trxRows=g.trx.slice().sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kode)}</td><td>${esc(x.pel)}</td><td>${x.lunas?'Lunas':'Belum bayar'}</td><td class="text-end">${money(x.total)}</td></tr>`).join('')||'<tr><td colspan="5">Tidak ada transaksi</td></tr>';
+     const biaRows=g.bia.slice().sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kat)}</td><td>${esc(x.ket)}</td><td class="text-end">${money(x.jumlah)}</td></tr>`).join('')||'<tr><td colspan="4">Tidak ada biaya</td></tr>';
+     return `<details class="border rounded p-3 mb-2"><summary class="fw-semibold">${esc(label(k))} <span class="text-muted fw-normal">· ${g.trx.length} transaksi · Pendapatan ${money(rev)} · Biaya ${money(cost)} · Bersih ${money(rev-cost)}</span></summary><div class="table-responsive mt-3"><h6>Rincian Transaksi</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kode</th><th>Pelanggan</th><th>Status</th><th class="text-end">Total</th></tr></thead><tbody>${trxRows}</tbody></table><h6 class="mt-3">Biaya Operasional</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th class="text-end">Jumlah</th></tr></thead><tbody>${biaRows}</tbody></table></div></details>`;
+   }).join('');
+ }
+ root.addEventListener('click',e=>{const b=e.target.closest('[data-rekap]');if(b){jenis=b.dataset.rekap;render();}});
+ window.addEventListener('owner-data-loaded',render);
+ render();
+})();
 </script>
 </body>
 </html>

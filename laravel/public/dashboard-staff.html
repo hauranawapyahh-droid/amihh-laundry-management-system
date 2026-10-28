@@ -1,1132 +1,296 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard Staff Laundry - Amih Laundry</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
 
-  <title>Dashboard Staff Laundry - Amih Laundry</title>
-
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  >
-
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-    rel="stylesheet"
-  >
-
-  <link rel="stylesheet" href="css/style.css">
-
-  <style>
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 6px 10px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .status-diterima {
-      background: #fff3cd;
-      color: #856404;
-    }
-
-    .status-dicuci {
-      background: #cff4fc;
-      color: #055160;
-    }
-
-    .status-dikeringkan {
-      background: #e2e3ff;
-      color: #383d8f;
-    }
-
-    .status-diserika {
-      background: #f8d7da;
-      color: #842029;
-    }
-
-    .status-selesai {
-      background: #d1e7dd;
-      color: #0f5132;
-    }
-
-    .empty-state {
-      padding: 40px 20px;
-      text-align: center;
-      color: #6c757d;
-    }
-
-    .empty-state i {
-      font-size: 40px;
-      display: block;
-      margin-bottom: 10px;
-    }
-
-    .table-custom {
-      overflow-x: auto;
-    }
-
-    .table-custom table {
-      min-width: 950px;
-    }
-
-    .btn-process {
-      white-space: nowrap;
-    }
-  </style>
+<style>
+/* ===== CSS disamakan dengan dashboard-admin.html ===== */
+body{background:#f5f8fc;margin:0;font-family:Arial,sans-serif}
+.admin-layout{display:flex;min-height:100vh}
+.sidebar{width:250px;height:100vh;min-height:100vh;background:#123f78;color:white;position:fixed;left:0;top:0;bottom:0;z-index:1000;display:flex;flex-direction:column;overflow:hidden}
+.sidebar-brand{padding:24px 20px;border-bottom:1px solid rgba(255,255,255,.15);flex:0 0 auto}
+.sidebar-brand h4{margin:0;font-weight:700}
+.sidebar-brand small{opacity:.75}
+.sidebar-menu{padding:18px 12px;flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding-bottom:20px}
+.menu-title{font-size:11px;text-transform:uppercase;opacity:.6;padding:10px 14px;margin-top:5px}
+.menu-link{display:flex;align-items:center;gap:12px;color:rgba(255,255,255,.82);text-decoration:none;padding:11px 14px;border-radius:10px;margin-bottom:4px;cursor:pointer;transition:.2s}
+.menu-link:hover,.menu-link.active{background:rgba(255,255,255,.15);color:white}
+.menu-link i{width:20px;font-size:17px}
+.sidebar-user{position:relative;flex:0 0 auto;margin:10px 12px 15px;padding:12px;border-radius:12px;background:rgba(255,255,255,.1);z-index:10}
+.avatar{width:40px;height:40px;border-radius:50%;background:white;color:#123f78;display:flex;align-items:center;justify-content:center;font-weight:700}
+.main-content{margin-left:250px;width:calc(100% - 250px);min-height:100vh}
+.topbar{height:72px;background:white;border-bottom:1px solid #e8edf3;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:900}
+.topbar-search{width:320px}
+.topbar-search input{border-radius:10px;background:#f5f7fa;border:1px solid #e8edf3}
+.content{padding:28px}
+.page-section{display:block}
+.page-section.d-none{display:none !important}
+.page-header{margin-bottom:25px}
+.page-header h2{font-weight:700;margin-bottom:5px;color:#1f2937}
+.page-header p{color:#6b7280;margin:0}
+.stat-card{background:white;border:1px solid #e8edf3;border-radius:16px;padding:20px;height:100%;box-shadow:0 3px 12px rgba(0,0,0,.03)}
+.stat-icon{width:45px;height:45px;border-radius:12px;background:#eaf2ff;color:#2f6fed;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:15px}
+.stat-title{font-size:13px;color:#6b7280;margin-bottom:5px}
+.stat-value{font-size:25px;font-weight:700;color:#1f2937}
+.card-box{background:white;border:1px solid #e8edf3;border-radius:16px;padding:20px;box-shadow:0 3px 12px rgba(0,0,0,.03)}
+.card-title{font-weight:700;color:#1f2937;margin-bottom:4px}
+.card-subtitle{color:#8a94a6;font-size:13px}
+.table{margin-bottom:0}
+.table th{background:#f8fafc;color:#667085;font-size:13px;font-weight:600;white-space:nowrap}
+.table td{vertical-align:middle;font-size:14px}
+.btn-primary{background:#2f6fed;border-color:#2f6fed}
+.btn-primary:hover{background:#245dcc;border-color:#245dcc}
+.badge-pill{display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.st-diterima{background:#fff4dc;color:#b77900}
+.st-dicuci{background:#e0f2fe;color:#0369a1}
+.st-dikeringkan{background:#ede9fe;color:#6d28d9}
+.st-disetrika{background:#fee2e2;color:#b42318}
+.st-selesai{background:#e7f7ee;color:#15803d}
+.empty-state{padding:35px;text-align:center;color:#98a2b3}
+.empty-state i{font-size:36px;display:block;margin-bottom:8px}
+.table-wrap{overflow-x:auto}
+.table-wrap table{min-width:900px}
+@media(max-width:900px){.sidebar{width:210px}.main-content{margin-left:210px;width:calc(100% - 210px)}.topbar-search{width:220px}}
+@media(max-width:700px){.sidebar{display:none}.main-content{margin-left:0;width:100%}.content{padding:15px}.topbar-search{display:none}}
+</style>
 </head>
 
 <body>
+<div class="admin-layout">
 
-<div class="app-shell">
-
-  <!-- SIDEBAR -->
   <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h4 style="display:flex;align-items:center;gap:9px"><img src="/logo-amih-laundry.png" alt="Logo Amih Laundry" style="width:42px;height:42px;object-fit:contain;background:white;border-radius:8px;padding:2px;flex-shrink:0"> Amih Laundry</h4>
+      <small>Staff Panel</small>
+    </div>
 
-    <div>
+    <div class="sidebar-menu">
+      <div class="menu-title">Menu Utama</div>
 
-      <div class="sidebar-brand">
-        <div class="sidebar-brand-icon">
-          <i class="bi bi-droplet-fill"></i>
+      <a class="menu-link active" data-page="dashboard"><i class="bi bi-grid-1x2-fill"></i><span>Dashboard</span></a>
+      <a class="menu-link" data-page="cucian"><i class="bi bi-basket-fill"></i><span>Daftar Cucian</span></a>
+      <a class="menu-link" data-page="proses"><i class="bi bi-arrow-repeat"></i><span>Proses Cucian</span></a>
+
+      <div class="menu-title">Lainnya</div>
+
+      <a class="menu-link" href="#" onclick="logout(); return false;"><i class="bi bi-box-arrow-right"></i><span>Logout</span></a>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="d-flex align-items-center gap-2">
+        <div class="avatar" id="sidebarAvatarInitial">ST</div>
+        <div>
+          <div id="sidebarUserName" class="fw-semibold">Staff</div>
+          <small style="opacity:.7;">Staff Laundry</small>
         </div>
-
-        Amih Laundry
       </div>
-
-      <ul class="sidebar-menu">
-
-        <li>
-          <a
-            href="#"
-            class="menu-link active"
-            data-page="dashboard"
-          >
-            <i class="bi bi-grid-1x2-fill"></i>
-            Dashboard
-          </a>
-        </li>
-
-        <li>
-          <a
-            href="#"
-            class="menu-link"
-            data-page="cucian"
-          >
-            <i class="bi bi-basket"></i>
-            Daftar Cucian
-          </a>
-        </li>
-
-        <li>
-          <a
-            href="#"
-            class="menu-link"
-            data-page="proses"
-          >
-            <i class="bi bi-kanban"></i>
-            Proses Cucian
-          </a>
-        </li>
-
-      </ul>
-
     </div>
-
-
-    <!-- USER -->
-    <div class="sidebar-footer">
-
-      <div
-        class="sidebar-avatar"
-        id="sidebarAvatarInitial"
-      >
-        ST
-      </div>
-
-      <div class="footer-text">
-
-        <span id="userName">
-          Staff
-        </span>
-
-        <small>
-          Staff Laundry
-        </small>
-
-      </div>
-
-      <button
-        class="btn btn-sm btn-outline-light ms-auto"
-        onclick="logout()"
-      >
-        <i class="bi bi-box-arrow-right"></i>
-      </button>
-
-    </div>
-
   </aside>
 
-
-  <!-- MAIN -->
   <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-search">
+        <div class="input-group">
+          <span class="input-group-text border-0 bg-light"><i class="bi bi-search"></i></span>
+          <input type="text" id="q" class="form-control border-0" placeholder="Cari kode transaksi atau pelanggan..." />
+        </div>
+      </div>
 
-    <!-- TOPBAR -->
-    <div class="topbar">
+      <div class="d-flex align-items-center gap-4">
+        <div class="text-muted"><i class="bi bi-calendar3"></i> <span id="topbarDate"></span></div>
+        <div><i class="bi bi-bell fs-5"></i></div>
+        <div class="d-flex align-items-center gap-2">
+          <div class="avatar" style="width:36px;height:36px;"><span id="topAvatarInitial">ST</span></div>
+          <div class="d-none d-md-block">
+            <div id="userName" class="fw-semibold">Staff</div>
+            <small class="text-muted">Staff Laundry</small>
+          </div>
+        </div>
+      </div>
+    </header>
 
-      <span
-        class="topbar-date-badge"
-        id="topbarDate"
-      >
-        -
-      </span>
+    <div class="content">
 
-    </div>
-
-
-    <div class="page-content">
-
-
-      <!-- ========================= -->
       <!-- DASHBOARD -->
-      <!-- ========================= -->
-
-      <div
-        class="page-section"
-        id="page-dashboard"
-      >
-
-        <div class="page-title">
-          Dashboard Staff Laundry
+      <section id="page-dashboard" class="page-section">
+        <div class="page-header">
+          <h2>Dashboard Staff Laundry</h2>
+          <p>Selamat datang, <strong id="dashboardUserName">Staff</strong> 👋</p>
+          <p>Pantau proses pengerjaan cucian.</p>
         </div>
 
-        <div class="page-subtitle">
-          Pantau proses pengerjaan cucian
+        <div class="row g-4">
+          <div class="col-xl-3 col-md-6"><div class="stat-card"><div class="stat-icon"><i class="bi bi-basket-fill"></i></div><div class="stat-title">Total Cucian</div><div class="stat-value" id="totalCucian">0</div></div></div>
+          <div class="col-xl-3 col-md-6"><div class="stat-card"><div class="stat-icon"><i class="bi bi-inbox-fill"></i></div><div class="stat-title">Diterima</div><div class="stat-value" id="diterima">0</div></div></div>
+          <div class="col-xl-3 col-md-6"><div class="stat-card"><div class="stat-icon"><i class="bi bi-arrow-repeat"></i></div><div class="stat-title">Sedang Diproses</div><div class="stat-value" id="diproses">0</div></div></div>
+          <div class="col-xl-3 col-md-6"><div class="stat-card"><div class="stat-icon"><i class="bi bi-check-circle-fill"></i></div><div class="stat-title">Selesai</div><div class="stat-value" id="selesai">0</div></div></div>
         </div>
+      </section>
 
-
-        <div class="row g-3">
-
-
-          <!-- TOTAL -->
-          <div class="col-md-3">
-
-            <div class="card-stat border-primary-left">
-
-              <div class="stat-label">
-                Total Cucian
-              </div>
-
-              <div
-                class="stat-value"
-                id="totalCucian"
-              >
-                -
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <!-- DITERIMA -->
-          <div class="col-md-3">
-
-            <div class="card-stat border-accent-left">
-
-              <div class="stat-label">
-                Diterima
-              </div>
-
-              <div
-                class="stat-value"
-                id="diterima"
-              >
-                -
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <!-- DIPROSES -->
-          <div class="col-md-3">
-
-            <div class="card-stat border-secondary-left">
-
-              <div class="stat-label">
-                Sedang Diproses
-              </div>
-
-              <div
-                class="stat-value"
-                id="diproses"
-              >
-                -
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <!-- SELESAI -->
-          <div class="col-md-3">
-
-            <div class="card-stat border-success-left">
-
-              <div class="stat-label">
-                Selesai
-              </div>
-
-              <div
-                class="stat-value"
-                id="selesai"
-              >
-                -
-              </div>
-
-            </div>
-
-          </div>
-
-
-        </div>
-
-      </div>
-
-
-
-      <!-- ========================= -->
       <!-- DAFTAR CUCIAN -->
-      <!-- ========================= -->
-
-      <div
-        class="page-section d-none"
-        id="page-cucian"
-      >
-
-        <div class="page-title">
-          Daftar Cucian
+      <section id="page-cucian" class="page-section d-none">
+        <div class="page-header">
+          <h2>Daftar Cucian</h2>
+          <p>Seluruh transaksi cucian yang masuk.</p>
         </div>
-
-        <div class="page-subtitle">
-          Daftar transaksi cucian yang masuk
+        <div class="card-box">
+          <div class="table-wrap">
+            <table class="table table-hover">
+              <thead><tr><th>Kode Transaksi</th><th>Pelanggan</th><th>Layanan</th><th>Status</th><th>Catatan</th><th>Waktu</th><th>Aksi</th></tr></thead>
+              <tbody id="tabelCucian"><tr><td colspan="7"><div class="empty-state">Memuat data...</div></td></tr></tbody>
+            </table>
+          </div>
         </div>
+      </section>
 
-
-        <div class="table-custom">
-
-          <table class="table mb-0">
-
-            <thead>
-
-              <tr>
-
-                <th>
-                  Kode Transaksi
-                </th>
-
-                <th>
-                  Pelanggan
-                </th>
-
-                <th>
-                  Layanan
-                </th>
-
-                <th>
-                  Status Proses
-                </th>
-
-                <th>
-                  Catatan
-                </th>
-
-                <th>
-                  Waktu
-                </th>
-
-                <th>
-                  Aksi
-                </th>
-
-              </tr>
-
-            </thead>
-
-
-            <tbody id="tabelCucian">
-
-              <tr>
-
-                <td
-                  colspan="7"
-                  class="text-center text-muted"
-                >
-                  Memuat data...
-                </td>
-
-              </tr>
-
-            </tbody>
-
-          </table>
-
-        </div>
-
-      </div>
-
-
-
-      <!-- ========================= -->
       <!-- PROSES CUCIAN -->
-      <!-- ========================= -->
-
-      <div
-        class="page-section d-none"
-        id="page-proses"
-      >
-
-        <div class="page-title">
-          Proses Cucian
+      <section id="page-proses" class="page-section d-none">
+        <div class="page-header">
+          <h2>Proses Cucian</h2>
+          <p>Cucian yang masih dikerjakan. Perbarui statusnya sesuai tahap pengerjaan.</p>
         </div>
-
-        <div class="page-subtitle">
-          Pantau dan perbarui proses pengerjaan laundry
+        <div class="card-box">
+          <div class="table-wrap">
+            <table class="table table-hover">
+              <thead><tr><th>Kode Transaksi</th><th>Pelanggan</th><th>Layanan</th><th>Status</th><th>Catatan</th><th>Waktu</th><th>Aksi</th></tr></thead>
+              <tbody id="tabelProses"><tr><td colspan="7"><div class="empty-state">Memuat data...</div></td></tr></tbody>
+            </table>
+          </div>
         </div>
-
-
-        <div class="table-custom">
-
-          <table class="table mb-0">
-
-            <thead>
-
-              <tr>
-
-                <th>
-                  Kode Transaksi
-                </th>
-
-                <th>
-                  Pelanggan
-                </th>
-
-                <th>
-                  Layanan
-                </th>
-
-                <th>
-                  Status
-                </th>
-
-                <th>
-                  Catatan
-                </th>
-
-                <th>
-                  Waktu
-                </th>
-
-                <th>
-                  Aksi
-                </th>
-
-              </tr>
-
-            </thead>
-
-
-            <tbody id="tabelProses">
-
-              <tr>
-
-                <td
-                  colspan="7"
-                  class="text-center text-muted"
-                >
-                  Memuat data...
-                </td>
-
-              </tr>
-
-            </tbody>
-
-          </table>
-
-        </div>
-
-      </div>
-
+      </section>
 
     </div>
-
   </main>
-
 </div>
 
-
-
-<!-- AUTH GUARD -->
 <script src="js/auth-guard.js"></script>
-
-
 <script>
+/* ===== Auth (aman: error di sini tidak mematikan halaman) ===== */
+let auth=null;
+try{
+  if(typeof checkAuth==='function')auth=checkAuth('STAFF_LAUNDRY');
+  else{const u=JSON.parse(localStorage.getItem('user')||'null');if(u)auth={user:u}}
+}catch(err){console.error('checkAuth gagal:',err)}
 
-  /* =====================================================
-     AUTH
-  ===================================================== */
+if(typeof window.apiFetch!=='function'){
+  window.apiFetch=function(url,options={}){
+    const token=localStorage.getItem('token');
+    return fetch(url,{...options,headers:{'Content-Type':'application/json','Accept':'application/json',...(token?{Authorization:'Bearer '+token}:{}),...(options.headers||{})}});
+  };
+}
+if(typeof window.logout!=='function'){
+  window.logout=function(){localStorage.removeItem('token');localStorage.removeItem('user');location.href='login.html'};
+}
 
-  const auth = checkAuth("STAFF_LAUNDRY");
+const $=id=>document.getElementById(id);
+let nama='Staff';
+try{nama=(auth&&auth.user&&auth.user.nama)||JSON.parse(localStorage.getItem('user')||'{}').nama||'Staff'}catch(e){}
+const inisial=nama.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+['userName','sidebarUserName','dashboardUserName'].forEach(i=>$(i).textContent=nama);
+['sidebarAvatarInitial','topAvatarInitial'].forEach(i=>$(i).textContent=inisial);
+$('topbarDate').textContent=new Date().toLocaleDateString('id-ID',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
 
+/* ===== Navigasi sidebar ===== */
+document.querySelectorAll('.menu-link[data-page]').forEach(link=>link.addEventListener('click',e=>{
+  e.preventDefault();
+  document.querySelectorAll('.menu-link').forEach(x=>x.classList.remove('active'));
+  link.classList.add('active');
+  document.querySelectorAll('.page-section').forEach(s=>s.classList.add('d-none'));
+  $('page-'+link.dataset.page).classList.remove('d-none');
+}));
 
-  if (auth && auth.user) {
+/* ===== Status ===== */
+const STATUS={
+  DITERIMA:['st-diterima','inbox','Diterima'],
+  DICUCI:['st-dicuci','droplet','Dicuci'],
+  DIKERINGKAN:['st-dikeringkan','sun','Dikeringkan'],
+  DISETRIKA:['st-disetrika','fire','Disetrika'],
+  SELESAI:['st-selesai','check-circle','Selesai']
+};
+const BERIKUTNYA={
+  DITERIMA:['DICUCI','Mulai Cuci','droplet','primary'],
+  DICUCI:['DIKERINGKAN','Keringkan','sun','primary'],
+  DIKERINGKAN:['DISETRIKA','Setrika','fire','primary'],
+  DISETRIKA:['SELESAI','Selesaikan','check-circle','success']
+};
+const badge=s=>{const [c,i,l]=STATUS[s]||['st-diterima','inbox',s||'-'];return `<span class="badge-pill ${c}"><i class="bi bi-${i}"></i>${l}</span>`};
+const tombol=(id,s)=>{const n=BERIKUTNYA[s];
+  return n?`<button class="btn btn-sm btn-${n[3]} text-nowrap" onclick="updateStatus(${id},'${n[0]}',this)"><i class="bi bi-${n[2]} me-1"></i>${n[1]}</button>`
+    :`<span class="badge-pill st-selesai"><i class="bi bi-check-circle"></i>Selesai</span>`};
 
-    document.getElementById("userName").textContent =
-      auth.user.nama || "Staff";
+/* ===== Data ===== */
+let dataProses=[];
 
-
-    document.getElementById("sidebarAvatarInitial").textContent =
-      (auth.user.nama || "Staff")
-        .split(" ")
-        .map(w => w[0])
-        .join("")
-        .substring(0, 2)
-        .toUpperCase();
-
+async function updateStatus(id,statusProses,btn){
+  if(btn)btn.disabled=true;
+  try{
+    const res=await apiFetch(`/api/transaksi/${id}/proses`,{method:'POST',body:JSON.stringify({status_proses:statusProses})});
+    const result=await res.json();
+    if(!res.ok||!result.success)throw new Error(result.message||'Gagal memperbarui status cucian.');
+    alert('Status berhasil diubah menjadi '+(STATUS[statusProses]?STATUS[statusProses][2]:statusProses));
+    await loadProses();
+  }catch(err){
+    console.error('Gagal update status:',err);
+    alert('Gagal memperbarui status cucian.\n\n'+err.message);
+    if(btn)btn.disabled=false;
   }
+}
 
+function baris(x){
+  const t=x.transaksi||{},p=t.pelanggan||{},s=String(x.status_proses||'').toUpperCase();
+  const lay=[...new Set((t.detail||[]).map(d=>d.layanan&&d.layanan.nama_layanan).filter(Boolean))].join(', ')||'-';
+  return `<tr>
+    <td><strong>${t.kode_transaksi||x.id_transaksi||'-'}</strong></td>
+    <td>${p.nama||'-'}</td>
+    <td>${lay}</td>
+    <td>${badge(s)}</td>
+    <td>${x.catatan_proses||'-'}</td>
+    <td>${x.created_at?new Date(x.created_at).toLocaleString('id-ID'):'-'}</td>
+    <td>${tombol(x.id_transaksi,s)}</td>
+  </tr>`;
+}
+const kosong=(ic,teks)=>`<tr><td colspan="7"><div class="empty-state"><i class="bi bi-${ic}"></i>${teks}</div></td></tr>`;
 
+function renderTabel(){
+  const q=$('q').value.toLowerCase();
+  const cocok=x=>{const t=x.transaksi||{};return ((t.kode_transaksi||'')+(t.pelanggan?t.pelanggan.nama||'':'')).toLowerCase().includes(q)};
+  const semua=dataProses.filter(cocok);
+  const antrian=semua.filter(x=>String(x.status_proses).toUpperCase()!=='SELESAI');
+  $('tabelCucian').innerHTML=semua.length?semua.map(baris).join(''):kosong('basket','Belum ada cucian yang masuk.');
+  $('tabelProses').innerHTML=antrian.length?antrian.map(baris).join(''):kosong('check2-circle','Tidak ada cucian yang sedang dikerjakan.');
+}
 
-  /* =====================================================
-     TANGGAL TOPBAR
-  ===================================================== */
+async function loadProses(){
+  try{
+    const res=await apiFetch('/api/proses-cucian');
+    const result=await res.json();
+    if(!res.ok||!result.success)throw new Error(result.message||'Gagal mengambil data cucian.');
 
-  document.getElementById("topbarDate").textContent =
-    new Date().toLocaleDateString(
-      "id-ID",
-      {
-        weekday: "short",
-        day: "numeric",
-        month: "short",
-        year: "numeric"
-      }
-    );
+    /* satu baris per transaksi, status terakhir saja */
+    const peta=new Map();
+    (result.data||[]).forEach(it=>{if(!peta.has(it.id_transaksi))peta.set(it.id_transaksi,it)});
+    dataProses=[...peta.values()];
 
-
-
-  /* =====================================================
-     MENU SIDEBAR
-  ===================================================== */
-
-  document
-    .querySelectorAll(".menu-link")
-    .forEach(link => {
-
-      link.addEventListener("click", function(e) {
-
-        e.preventDefault();
-
-
-        document
-          .querySelectorAll(".menu-link")
-          .forEach(item => {
-
-            item.classList.remove("active");
-
-          });
-
-
-        this.classList.add("active");
-
-
-        document
-          .querySelectorAll(".page-section")
-          .forEach(section => {
-
-            section.classList.add("d-none");
-
-          });
-
-
-        const page =
-          document.getElementById(
-            "page-" + this.dataset.page
-          );
-
-
-        if (page) {
-
-          page.classList.remove("d-none");
-
-        }
-
-      });
-
-    });
-
-
-
-  /* =====================================================
-     STATUS BADGE
-  ===================================================== */
-
-  function getStatusBadge(status) {
-
-    let className = "status-diterima";
-
-    let icon = "bi-inbox";
-
-    let label = status;
-
-
-    if (status === "DITERIMA") {
-
-      className = "status-diterima";
-      icon = "bi-inbox";
-      label = "Diterima";
-
-    }
-
-    else if (status === "DICUCI") {
-
-      className = "status-dicuci";
-      icon = "bi-droplet";
-      label = "Dicuci";
-
-    }
-
-    else if (status === "DIKERINGKAN") {
-
-      className = "status-dikeringkan";
-      icon = "bi-sun";
-      label = "Dikeringkan";
-
-    }
-
-    else if (status === "DISETRIKA") {
-
-      className = "status-diserika";
-      icon = "bi-fire";
-      label = "Disetrika";
-
-    }
-
-    else if (status === "SELESAI") {
-
-      className = "status-selesai";
-      icon = "bi-check-circle";
-      label = "Selesai";
-
-    }
-
-
-    return `
-      <span class="status-badge ${className}">
-        <i class="bi ${icon}"></i>
-        ${label}
-      </span>
-    `;
-
+    const st=x=>String(x.status_proses||'').toUpperCase();
+    $('totalCucian').textContent=dataProses.length;
+    $('diterima').textContent=dataProses.filter(x=>st(x)==='DITERIMA').length;
+    $('diproses').textContent=dataProses.filter(x=>['DICUCI','DIKERINGKAN','DISETRIKA'].includes(st(x))).length;
+    $('selesai').textContent=dataProses.filter(x=>st(x)==='SELESAI').length;
+    renderTabel();
+  }catch(err){
+    console.error('Gagal mengambil data proses:',err);
+    const e=`<tr><td colspan="7" class="text-center text-danger py-4"><i class="bi bi-exclamation-circle me-1"></i>Gagal mengambil data cucian. ${err.message}</td></tr>`;
+    $('tabelCucian').innerHTML=e;$('tabelProses').innerHTML=e;
   }
+}
 
-
-
-  /* =====================================================
-     TOMBOL STATUS BERIKUTNYA
-  ===================================================== */
-
-  function tombolStatus(
-    idTransaksi,
-    status
-  ) {
-
-    if (status === "DITERIMA") {
-
-      return `
-        <button
-          class="btn btn-sm btn-primary btn-process"
-          onclick="updateStatus(
-            ${idTransaksi},
-            'DICUCI'
-          )"
-        >
-          <i class="bi bi-droplet me-1"></i>
-          Mulai Cuci
-        </button>
-      `;
-
-    }
-
-
-    if (status === "DICUCI") {
-
-      return `
-        <button
-          class="btn btn-sm btn-primary btn-process"
-          onclick="updateStatus(
-            ${idTransaksi},
-            'DIKERINGKAN'
-          )"
-        >
-          <i class="bi bi-sun me-1"></i>
-          Keringkan
-        </button>
-      `;
-
-    }
-
-
-    if (status === "DIKERINGKAN") {
-
-      return `
-        <button
-          class="btn btn-sm btn-primary btn-process"
-          onclick="updateStatus(
-            ${idTransaksi},
-            'DISETRIKA'
-          )"
-        >
-          <i class="bi bi-fire me-1"></i>
-          Setrika
-        </button>
-      `;
-
-    }
-
-
-    if (status === "DISETRIKA") {
-
-      return `
-        <button
-          class="btn btn-sm btn-success btn-process"
-          onclick="updateStatus(
-            ${idTransaksi},
-            'SELESAI'
-          )"
-        >
-          <i class="bi bi-check-circle me-1"></i>
-          Selesaikan
-        </button>
-      `;
-
-    }
-
-
-    return `
-      <span class="badge bg-success">
-        <i class="bi bi-check-circle me-1"></i>
-        Selesai
-      </span>
-    `;
-
-  }
-
-
-
-  /* =====================================================
-     UPDATE STATUS PROSES
-  ===================================================== */
-
-  async function updateStatus(
-    idTransaksi,
-    statusProses
-  ) {
-
-    try {
-
-      const res = await apiFetch(
-        `/api/transaksi/${idTransaksi}/proses`,
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-
-          body: JSON.stringify({
-            status_proses: statusProses
-          })
-        }
-      );
-
-
-      const result = await res.json();
-
-
-      if (!res.ok || !result.success) {
-
-        throw new Error(
-          result.message ||
-          "Gagal memperbarui status cucian."
-        );
-
-      }
-
-
-      alert(
-        "Status berhasil diubah menjadi " +
-        statusProses
-      );
-
-
-      await loadProses();
-
-    }
-
-    catch (err) {
-
-      console.error(
-        "Gagal update status:",
-        err
-      );
-
-
-      alert(
-        "Gagal memperbarui status cucian.\n\n" +
-        err.message
-      );
-
-    }
-
-  }
-
-
-
-  /* =====================================================
-     LOAD DATA PROSES CUCIAN
-  ===================================================== */
-
-  async function loadProses() {
-
-    try {
-
-      const res =
-        await apiFetch(
-          "/api/proses-cucian"
-        );
-
-
-      const result =
-        await res.json();
-
-
-      if (!res.ok || !result.success) {
-
-        throw new Error(
-          result.message ||
-          "Gagal mengambil data cucian."
-        );
-
-      }
-
-
-      const data =
-        result.data || [];
-
-
-      /* =================================================
-         AMBIL STATUS TERAKHIR PER TRANSAKSI
-
-         Karena setiap update status membuat record proses
-         baru, kita hanya tampilkan status TERAKHIR.
-      ================================================= */
-
-      const latestMap = new Map();
-
-
-      data.forEach(item => {
-
-        const id =
-          item.id_transaksi;
-
-
-        if (!latestMap.has(id)) {
-
-          latestMap.set(
-            id,
-            item
-          );
-
-        }
-
-      });
-
-
-      const latestData =
-        Array.from(
-          latestMap.values()
-        );
-
-
-
-      /* =================================================
-         DASHBOARD STATISTIK
-      ================================================= */
-
-      document.getElementById(
-        "totalCucian"
-      ).textContent =
-        latestData.length;
-
-
-      document.getElementById(
-        "diterima"
-      ).textContent =
-        latestData.filter(
-          x =>
-            x.status_proses === "DITERIMA"
-        ).length;
-
-
-      document.getElementById(
-        "diproses"
-      ).textContent =
-        latestData.filter(
-          x =>
-            [
-              "DICUCI",
-              "DIKERINGKAN",
-              "DISETRIKA"
-            ].includes(
-              x.status_proses
-            )
-        ).length;
-
-
-      document.getElementById(
-        "selesai"
-      ).textContent =
-        latestData.filter(
-          x =>
-            x.status_proses === "SELESAI"
-        ).length;
-
-
-
-      /* =================================================
-         BUAT TABEL
-      ================================================= */
-
-      if (latestData.length === 0) {
-
-        const emptyHtml = `
-          <tr>
-            <td colspan="7">
-              <div class="empty-state">
-
-                <i class="bi bi-basket"></i>
-
-                Belum ada cucian yang masuk.
-
-              </div>
-            </td>
-          </tr>
-        `;
-
-
-        document.getElementById(
-          "tabelCucian"
-        ).innerHTML =
-          emptyHtml;
-
-
-        document.getElementById(
-          "tabelProses"
-        ).innerHTML =
-          emptyHtml;
-
-
-        return;
-
-      }
-
-
-
-      const html =
-        latestData.map(
-          x => {
-
-            const transaksi =
-              x.transaksi || {};
-
-
-            const pelanggan =
-              transaksi.pelanggan || {};
-
-
-            const detail =
-              transaksi.detail || [];
-
-
-            const layanan =
-              detail.length > 0 &&
-              detail[0].layanan
-                ? detail[0].layanan.nama_layanan
-                : "-";
-
-
-            return `
-
-              <tr>
-
-                <td>
-
-                  <strong>
-                    ${
-                      transaksi.kode_transaksi ||
-                      x.id_transaksi ||
-                      "-"
-                    }
-                  </strong>
-
-                </td>
-
-
-                <td>
-
-                  ${
-                    pelanggan.nama ||
-                    "-"
-                  }
-
-                </td>
-
-
-                <td>
-
-                  ${
-                    layanan
-                  }
-
-                </td>
-
-
-                <td>
-
-                  ${
-                    getStatusBadge(
-                      x.status_proses
-                    )
-                  }
-
-                </td>
-
-
-                <td>
-
-                  ${
-                    x.catatan_proses ||
-                    "-"
-                  }
-
-                </td>
-
-
-                <td>
-
-                  ${
-                    x.created_at
-                      ? new Date(
-                          x.created_at
-                        ).toLocaleString(
-                          "id-ID"
-                        )
-                      : "-"
-                  }
-
-                </td>
-
-
-                <td>
-
-                  ${
-                    tombolStatus(
-                      x.id_transaksi,
-                      x.status_proses
-                    )
-                  }
-
-                </td>
-
-              </tr>
-
-            `;
-
-          }
-        ).join("");
-
-
-      document.getElementById(
-        "tabelCucian"
-      ).innerHTML =
-        html;
-
-
-      document.getElementById(
-        "tabelProses"
-      ).innerHTML =
-        html;
-
-    }
-
-
-    catch (err) {
-
-      console.error(
-        "Gagal mengambil data proses:",
-        err
-      );
-
-
-      const errorHtml = `
-        <tr>
-
-          <td
-            colspan="7"
-            class="text-center text-danger py-4"
-          >
-
-            <i class="bi bi-exclamation-circle me-1"></i>
-
-            Gagal mengambil data cucian.
-
-          </td>
-
-        </tr>
-      `;
-
-
-      document.getElementById(
-        "tabelCucian"
-      ).innerHTML =
-        errorHtml;
-
-
-      document.getElementById(
-        "tabelProses"
-      ).innerHTML =
-        errorHtml;
-
-    }
-
-  }
-
-
-
-  /* =====================================================
-     LOAD AWAL
-  ===================================================== */
-
-  loadProses();
-
+$('q').addEventListener('input',renderTabel);
+loadProses();
 </script>
-
 </body>
 </html>

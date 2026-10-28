@@ -14,17 +14,17 @@ class Pembayaran extends Model
 
     const CREATED_AT = 'created_at';
     const UPDATED_AT = null;
-
-    protected $fillable = [
-        'id_transaksi',
-        'metode_pembayaran',
-        'jumlah_bayar',
-        'kembalian',
-        'status_konfirmasi',
-        'catatan_pelunasan',
-        'id_konfirmator',
-        'waktu_konfirmasi',
-    ];
+protected $fillable = [
+    'id_transaksi',
+    'metode_pembayaran',
+    'jumlah_bayar',
+    'kembalian',
+    'status_konfirmasi',
+    'catatan_pelunasan',
+    'id_konfirmator',
+    'waktu_konfirmasi',
+    'bukti_pembayaran',
+];
 
     protected $casts = [
         'jumlah_bayar' => 'decimal:2',
