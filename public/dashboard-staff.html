@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Staff Laundry - Amih Laundry</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-shell">
+
+<aside class="sidebar">
+  <div>
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon"><i class="bi bi-droplet-fill"></i></div>
+      Amih Laundry
+    </div>
+
+    <ul class="sidebar-menu">
+      <li><a href="#" class="menu-link active" data-page="dashboard"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a></li>
+      <li><a href="#" class="menu-link" data-page="cucian"><i class="bi bi-basket"></i> Daftar Cucian</a></li>
+      <li><a href="#" class="menu-link" data-page="proses"><i class="bi bi-kanban"></i> Proses Cucian</a></li>
+    </ul>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-avatar" id="sidebarAvatarInitial">ST</div>
+    <div class="footer-text">
+      <span id="userName">Staff</span>
+      <small>Staff Laundry</small>
+    </div>
+    <button class="btn btn-sm btn-outline-light ms-auto" onclick="logout()">
+      <i class="bi bi-box-arrow-right"></i>
+    </button>
+  </div>
+</aside>
+
+<main class="main-content">
+  <div class="topbar">
+    <span class="topbar-date-badge" id="topbarDate">-</span>
+  </div>
+
+  <div class="page-content">
+
+    <div class="page-section" id="page-dashboard">
+      <div class="page-title">Dashboard Staff Laundry</div>
+      <div class="page-subtitle">Pantau proses pengerjaan cucian</div>
+
+      <div class="row g-3">
+        <div class="col-md-3">
+          <div class="card-stat border-primary-left">
+            <div class="stat-label">Total Cucian</div>
+            <div class="stat-value" id="totalCucian">-</div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card-stat border-accent-left">
+            <div class="stat-label">Diterima</div>
+            <div class="stat-value" id="diterima">-</div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card-stat border-secondary-left">
+            <div class="stat-label">Sedang Diproses</div>
+            <div class="stat-value" id="diproses">-</div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card-stat border-success-left">
+            <div class="stat-label">Selesai</div>
+            <div class="stat-value" id="selesai">-</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-section d-none" id="page-cucian">
+      <div class="page-title">Daftar Cucian</div>
+      <div class="page-subtitle">Daftar transaksi cucian yang masuk</div>
+
+      <div class="table-custom">
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <th>ID Transaksi</th>
+              <th>Status Proses</th>
+              <th>Catatan</th>
+              <th>Waktu</th>
+            </tr>
+          </thead>
+          <tbody id="tabelCucian">
+            <tr>
+              <td colspan="4" class="text-center text-muted">Memuat data...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="page-section d-none" id="page-proses">
+      <div class="page-title">Proses Cucian</div>
+      <div class="page-subtitle">Pantau proses pengerjaan laundry</div>
+
+      <div class="table-custom">
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <th>ID Transaksi</th>
+              <th>Status</th>
+              <th>Catatan</th>
+              <th>Waktu</th>
+            </tr>
+          </thead>
+          <tbody id="tabelProses"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</main>
+</div>
+
+<script src="js/auth-guard.js"></script>
+
+<script>
+const auth = checkAuth("STAFF_LAUNDRY");
+
+document.getElementById("userName").textContent = auth.user.nama;
+document.getElementById("sidebarAvatarInitial").textContent =
+  auth.user.nama.split(" ").map(w => w[0]).join("").substring(0, 2).toUpperCase();
+
+document.getElementById("topbarDate").textContent =
+  new Date().toLocaleDateString("id-ID", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    year: "numeric"
+  });
+
+document.querySelectorAll(".menu-link").forEach(link => {
+  link.addEventListener("click", e => {
+    e.preventDefault();
+
+    document.querySelectorAll(".menu-link")
+      .forEach(x => x.classList.remove("active"));
+
+    link.classList.add("active");
+
+    document.querySelectorAll(".page-section")
+      .forEach(x => x.classList.add("d-none"));
+
+    document.getElementById("page-" + link.dataset.page)
+      ?.classList.remove("d-none");
+  });
+});
+
+async function loadProses() {
+  try {
+    const res = await apiFetch("/api/proses-cucian");
+    const result = await res.json();
+    const data = result.data || [];
+
+    document.getElementById("totalCucian").textContent = data.length;
+
+    document.getElementById("diterima").textContent =
+      data.filter(x => x.status_proses === "DITERIMA").length;
+
+    document.getElementById("diproses").textContent =
+      data.filter(x =>
+        ["DICUCI", "DIKERINGKAN", "DISETRIKA"].includes(x.status_proses)
+      ).length;
+
+    document.getElementById("selesai").textContent =
+      data.filter(x => x.status_proses === "SELESAI").length;
+
+    const html = data.map(x => `
+      <tr>
+        <td>${x.id_transaksi}</td>
+        <td>${x.status_proses}</td>
+        <td>${x.catatan_proses || "-"}</td>
+        <td>${new Date(x.created_at).toLocaleString("id-ID")}</td>
+      </tr>
+    `).join("");
+
+    document.getElementById("tabelCucian").innerHTML = html;
+    document.getElementById("tabelProses").innerHTML = html;
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+loadProses();
+</script>
+</body>
+</html>

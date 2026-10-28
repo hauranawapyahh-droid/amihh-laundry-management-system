@@ -1,0 +1,478 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Kasir - Amih Laundry</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-shell">
+
+  <aside class="sidebar">
+    <div>
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon"><i class="bi bi-droplet-fill"></i></div>
+        Amih Laundry
+      </div>
+
+      <ul class="sidebar-menu">
+        <li><a href="#" class="menu-link active" data-page="dashboard"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a></li>
+        <li><a href="#" class="menu-link" data-page="transaksi"><i class="bi bi-receipt"></i> Transaksi Laundry</a></li>
+        <li><a href="#" class="menu-link" data-page="pembayaran"><i class="bi bi-credit-card"></i> Pembayaran</a></li>
+        <li><a href="#" class="menu-link" data-page="riwayat"><i class="bi bi-clock-history"></i> Riwayat Transaksi</a></li>
+      </ul>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-avatar" id="sidebarAvatarInitial">KS</div>
+      <div class="footer-text">
+        <span id="userName">Kasir</span>
+        <small>Kasir</small>
+      </div>
+      <button class="btn btn-sm btn-outline-light ms-auto" onclick="logout()">
+        <i class="bi bi-box-arrow-right"></i>
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="topbar">
+      <span class="topbar-date-badge" id="topbarDate">-</span>
+    </div>
+
+    <div class="page-content">
+
+      <!-- DASHBOARD -->
+      <div class="page-section" id="page-dashboard">
+        <div class="page-title">Dashboard Kasir</div>
+        <div class="page-subtitle">Ringkasan transaksi laundry</div>
+
+        <div class="row g-3">
+          <div class="col-md-3">
+            <div class="card-stat border-primary-left">
+              <div class="stat-label">Total Transaksi</div>
+              <div class="stat-value" id="totalTransaksi">-</div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card-stat border-success-left">
+              <div class="stat-label">Sudah Dibayar</div>
+              <div class="stat-value" id="sudahBayar">-</div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card-stat border-accent-left">
+              <div class="stat-label">Belum Dibayar</div>
+              <div class="stat-value" id="belumBayar">-</div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card-stat border-secondary-left">
+              <div class="stat-label">Belum Diambil</div>
+              <div class="stat-value" id="siapDiambil">-</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRANSAKSI -->
+      <div class="page-section d-none" id="page-transaksi">
+        <div class="page-title">Transaksi Laundry</div>
+        <div class="page-subtitle">Kelola dan pantau transaksi pelanggan</div>
+
+        <div class="table-custom">
+          <div class="table-responsive">
+            <table class="table mb-0">
+              <thead>
+                <tr>
+                  <th>Kode Transaksi</th>
+                  <th>Pelanggan</th>
+                  <th>Total</th>
+                  <th>Status Bayar</th>
+                  <th>Status Ambil</th>
+                </tr>
+              </thead>
+              <tbody id="tabelTransaksi">
+                <tr><td colspan="5" class="text-center">Memuat data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PEMBAYARAN -->
+      <div class="page-section d-none" id="page-pembayaran">
+        <div class="page-title">Verifikasi Pembayaran</div>
+        <div class="page-subtitle">
+          Periksa bukti QRIS atau transfer pelanggan sebelum mengonfirmasi pembayaran.
+        </div>
+
+        <div class="card-stat mb-3">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <div>
+              <div class="stat-label">Menunggu Verifikasi</div>
+              <div class="stat-value" id="jumlahMenunggu">-</div>
+            </div>
+            <button class="btn btn-outline-primary" id="btnRefreshPembayaran"
+                    onclick="loadPembayaran()">
+              <i class="bi bi-arrow-clockwise"></i> Refresh
+            </button>
+          </div>
+        </div>
+
+        <div class="table-custom">
+          <div class="table-responsive">
+            <table class="table mb-0">
+              <thead>
+                <tr>
+                  <th>Kode Transaksi</th>
+                  <th>Pelanggan</th>
+                  <th>Metode</th>
+                  <th>Total</th>
+                  <th>Bukti Pembayaran</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tabelPembayaran">
+                <tr>
+                  <td colspan="6" class="text-center text-muted">
+                    Klik menu Pembayaran untuk memuat data.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="small text-muted mt-3">
+          <i class="bi bi-info-circle"></i>
+          Pastikan bukti dan jumlah pembayaran sesuai sebelum menekan Verifikasi.
+        </div>
+      </div>
+
+      <!-- RIWAYAT -->
+      <div class="page-section d-none" id="page-riwayat">
+        <div class="page-title">Riwayat Transaksi</div>
+        <div class="page-subtitle">Riwayat transaksi laundry</div>
+
+        <div class="table-custom">
+          <div class="table-responsive">
+            <table class="table mb-0">
+              <thead>
+                <tr>
+                  <th>Kode</th>
+                  <th>Total</th>
+                  <th>Status Bayar</th>
+                  <th>Status Ambil</th>
+                  <th>Tanggal</th>
+                </tr>
+              </thead>
+              <tbody id="tabelRiwayat">
+                <tr><td colspan="5" class="text-center">Memuat data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="js/auth-guard.js"></script>
+
+<script>
+const API_LARAVEL = "http://127.0.0.1:8000/api";
+
+const auth = checkAuth("KASIR");
+
+if (auth) {
+  document.getElementById("userName").textContent = auth.user.nama;
+
+  document.getElementById("sidebarAvatarInitial").textContent =
+    auth.user.nama.split(" ").map(w => w[0]).join("").substring(0, 2).toUpperCase();
+
+  document.getElementById("topbarDate").textContent =
+    new Date().toLocaleDateString("id-ID", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric"
+    });
+}
+
+function escapePembayaran(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+function rupiah(value) {
+  return "Rp " + Number(value || 0).toLocaleString("id-ID");
+}
+
+function tampilkanError(tbody, kolom, pesan) {
+  tbody.innerHTML = `
+    <tr>
+      <td colspan="${kolom}" class="text-center text-danger">
+        ${escapePembayaran(pesan)}
+      </td>
+    </tr>
+  `;
+}
+
+const menuLinks = document.querySelectorAll(".menu-link");
+const pages = document.querySelectorAll(".page-section");
+
+menuLinks.forEach(link => {
+  link.addEventListener("click", async e => {
+    e.preventDefault();
+
+    menuLinks.forEach(x => x.classList.remove("active"));
+    link.classList.add("active");
+
+    pages.forEach(x => x.classList.add("d-none"));
+
+    document.getElementById("page-" + link.dataset.page)
+      ?.classList.remove("d-none");
+
+    if (link.dataset.page === "pembayaran") {
+      await loadPembayaran();
+    }
+  });
+});
+
+// DATA TRANSAKSI
+async function loadTransaksi() {
+  try {
+    const res = await apiFetch(`${API_LARAVEL}/transaksi`);
+    const result = await res.json();
+
+    if (!res.ok) {
+      throw new Error(result.message || "Gagal memuat transaksi.");
+    }
+
+    const data = result.data || [];
+
+    document.getElementById("totalTransaksi").textContent = data.length;
+
+    document.getElementById("sudahBayar").textContent =
+      data.filter(x => x.status_pembayaran === "LUNAS").length;
+
+    document.getElementById("belumBayar").textContent =
+      data.filter(x => x.status_pembayaran === "BELUM_DIBAYAR").length;
+
+    document.getElementById("siapDiambil").textContent =
+      data.filter(x => x.status_pengambilan === "BELUM_DIAMBIL").length;
+
+    document.getElementById("tabelTransaksi").innerHTML =
+      data.map(x => `
+        <tr>
+          <td class="fw-semibold">${escapePembayaran(x.kode_transaksi)}</td>
+          <td>${escapePembayaran(x.nama_pelanggan || "-")}</td>
+          <td>${rupiah(x.total_harga)}</td>
+          <td>${escapePembayaran(x.status_pembayaran)}</td>
+          <td>${escapePembayaran(x.status_pengambilan)}</td>
+        </tr>
+      `).join("") ||
+      `<tr><td colspan="5" class="text-center text-muted">Belum ada transaksi.</td></tr>`;
+
+    document.getElementById("tabelRiwayat").innerHTML =
+      data.map(x => `
+        <tr>
+          <td>${escapePembayaran(x.kode_transaksi)}</td>
+          <td>${rupiah(x.total_harga)}</td>
+          <td>${escapePembayaran(x.status_pembayaran)}</td>
+          <td>${escapePembayaran(x.status_pengambilan)}</td>
+          <td>${x.created_at
+            ? escapePembayaran(new Date(x.created_at).toLocaleDateString("id-ID"))
+            : "-"}</td>
+        </tr>
+      `).join("") ||
+      `<tr><td colspan="5" class="text-center">Belum ada riwayat.</td></tr>`;
+
+  } catch (err) {
+    console.error("Gagal memuat transaksi:", err);
+    tampilkanError(
+      document.getElementById("tabelTransaksi"),
+      5,
+      err.message
+    );
+  }
+}
+
+// DAFTAR PEMBAYARAN MENUNGGU VERIFIKASI
+async function loadPembayaran() {
+  const tbody = document.getElementById("tabelPembayaran");
+  const jumlah = document.getElementById("jumlahMenunggu");
+  const refresh = document.getElementById("btnRefreshPembayaran");
+
+  tbody.innerHTML = `
+    <tr><td colspan="6" class="text-center">Memuat pembayaran...</td></tr>
+  `;
+
+  refresh.disabled = true;
+
+  try {
+    const res = await apiFetch(`${API_LARAVEL}/pembayaran/menunggu`);
+    const result = await res.json();
+
+    if (!res.ok) {
+      throw new Error(result.message || "Gagal mengambil data pembayaran.");
+    }
+
+    const data = result.data || [];
+
+    jumlah.textContent = data.length;
+
+    if (data.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6" class="text-center text-muted py-4">
+            <i class="bi bi-check-circle fs-4 d-block mb-2"></i>
+            Belum ada bukti pembayaran yang menunggu verifikasi.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = data.map(p => {
+      const id = Number(p.id_pembayaran);
+      const urlBukti = String(p.url_bukti || "");
+
+      // Link bukti hanya menerima URL HTTP/HTTPS.
+      let linkBukti = "-";
+
+      try {
+        const url = new URL(urlBukti);
+        if (url.protocol === "http:" || url.protocol === "https:") {
+          linkBukti = `
+            <a href="${escapePembayaran(url.href)}"
+               target="_blank" rel="noopener noreferrer">
+              <i class="bi bi-image"></i> Lihat bukti
+            </a>
+          `;
+        }
+      } catch (_) {}
+
+      return `
+        <tr>
+          <td class="fw-semibold">${escapePembayaran(p.kode_transaksi)}</td>
+          <td>${escapePembayaran(p.nama_pelanggan || "-")}</td>
+          <td>${escapePembayaran(p.metode_pembayaran)}</td>
+          <td class="text-nowrap">${rupiah(p.total_harga)}</td>
+          <td>${linkBukti}</td>
+          <td>
+            <button
+              class="btn btn-success btn-sm"
+              onclick="konfirmasiPembayaran(${id}, this)"
+              ${Number.isInteger(id) && id > 0 ? "" : "disabled"}>
+              <i class="bi bi-check-lg"></i> Verifikasi
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join("");
+
+  } catch (err) {
+    console.error("Gagal memuat pembayaran:", err);
+
+    tampilkanError(
+      tbody,
+      6,
+      err.message || "Gagal memuat pembayaran. Periksa koneksi Laravel."
+    );
+  } finally {
+    refresh.disabled = false;
+  }
+}
+
+// VERIFIKASI BUKTI OLEH KASIR
+async function konfirmasiPembayaran(id, tombol) {
+  if (!Number.isInteger(id) || id <= 0) {
+    alert("ID pembayaran tidak valid.");
+    return;
+  }
+
+  const setuju = confirm(
+    "Pastikan bukti pembayaran sudah diperiksa dan jumlahnya sesuai. " +
+    "Konfirmasi pembayaran ini sebagai LUNAS?"
+  );
+
+  if (!setuju) return;
+
+  tombol.disabled = true;
+  tombol.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Memproses';
+
+  try {
+    const res = await apiFetch(
+      `${API_LARAVEL}/pembayaran/${id}/verifikasi`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          catatan_pelunasan: "Bukti pembayaran diverifikasi kasir."
+        })
+      }
+    );
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      throw new Error(result.message || "Verifikasi pembayaran gagal.");
+    }
+
+    alert(result.message || "Pembayaran berhasil diverifikasi.");
+
+    await loadPembayaran();
+    await loadTransaksi();
+
+  } catch (err) {
+    console.error("Verifikasi pembayaran gagal:", err);
+    alert(err.message || "Terjadi kesalahan saat memverifikasi pembayaran.");
+
+    tombol.disabled = false;
+    tombol.innerHTML = '<i class="bi bi-check-lg"></i> Verifikasi';
+  }
+}
+
+loadTransaksi();
+</script>
+<script>
+/* FIX_MENU_KASIR_FALLBACK */
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".menu-link").forEach(function (link) {
+    link.addEventListener("click", function (event) {
+      event.preventDefault();
+      var target = document.getElementById("page-" + link.dataset.page);
+      if (!target) return;
+
+      document.querySelectorAll(".menu-link").forEach(function (item) {
+        item.classList.toggle("active", item === link);
+      });
+
+      document.querySelectorAll(".page-section").forEach(function (page) {
+        page.classList.toggle("d-none", page !== target);
+      });
+
+      if (link.dataset.page === "pembayaran" &&
+          typeof window.loadPembayaran === "function") {
+        window.loadPembayaran();
+      }
+    });
+  });
+});
+</script>
+</body>
+</html>

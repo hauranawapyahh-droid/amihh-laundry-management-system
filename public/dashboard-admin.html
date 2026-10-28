@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Admin - Amih Laundry</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+
+  <style>
+    body { background: #f5f8fc; margin: 0; font-family: Arial, sans-serif; }
+    .admin-layout { display: flex; min-height: 100vh; }
+    .sidebar { width: 250px; height: 100vh; background: #123f78; color: white; position: fixed; left: 0; top: 0; bottom: 0; z-index: 1000; display: flex; flex-direction: column; overflow: hidden; }
+    .sidebar-brand { padding: 24px 20px; border-bottom: 1px solid rgba(255,255,255,.15); flex: 0 0 auto; }
+    .sidebar-brand h4 { margin: 0; font-weight: 700; }
+    .sidebar-brand small { opacity: .75; }
+    .sidebar-menu { padding: 18px 12px; flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+    .sidebar-menu::-webkit-scrollbar { width: 6px; }
+    .sidebar-menu::-webkit-scrollbar-thumb { background: rgba(255,255,255,.25); border-radius: 10px; }
+    .menu-title { font-size: 11px; text-transform: uppercase; opacity: .6; padding: 10px 14px; margin-top: 5px; }
+    .menu-link { display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,.82); text-decoration: none; padding: 11px 14px; border-radius: 10px; margin-bottom: 4px; cursor: pointer; transition: .2s; }
+    .menu-link:hover, .menu-link.active { background: rgba(255,255,255,.15); color: white; }
+    .menu-link i { width: 20px; font-size: 17px; }
+    .sidebar-user { flex: 0 0 auto; margin: 10px 12px 15px; padding: 12px; border-radius: 12px; background: rgba(255,255,255,.1); }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; background: white; color: #123f78; display: flex; align-items: center; justify-content: center; font-weight: 700; flex: 0 0 auto; }
+    .main-content { margin-left: 250px; width: calc(100% - 250px); min-height: 100vh; }
+    .topbar { height: 72px; background: white; border-bottom: 1px solid #e8edf3; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; position: sticky; top: 0; z-index: 900; }
+    .topbar-search { width: 320px; }
+    .topbar-search input { border-radius: 10px; background: #f5f7fa; border: 1px solid #e8edf3; }
+    .content { padding: 28px; }
+    .page-section { display: block; }
+    .page-section.d-none { display: none !important; }
+    .page-header { margin-bottom: 25px; }
+    .page-header h2 { font-weight: 700; margin-bottom: 5px; color: #1f2937; }
+    .page-header p { color: #6b7280; margin: 0; }
+    .stat-card { background: white; border: 1px solid #e8edf3; border-radius: 16px; padding: 20px; height: 100%; box-shadow: 0 3px 12px rgba(0,0,0,.03); }
+    .stat-icon { width: 45px; height: 45px; border-radius: 12px; background: #eaf2ff; color: #2f6fed; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 15px; }
+    .stat-title { font-size: 13px; color: #6b7280; margin-bottom: 5px; }
+    .stat-value { font-size: 25px; font-weight: 700; color: #1f2937; }
+    .card-box { background: white; border: 1px solid #e8edf3; border-radius: 16px; padding: 20px; box-shadow: 0 3px 12px rgba(0,0,0,.03); }
+    .card-title { font-weight: 700; color: #1f2937; margin-bottom: 4px; }
+    .card-subtitle { color: #8a94a6; font-size: 13px; }
+    .table { margin-bottom: 0; }
+    .table th { background: #f8fafc; color: #667085; font-size: 13px; font-weight: 600; white-space: nowrap; }
+    .table td { vertical-align: middle; font-size: 14px; }
+    .badge-pill { display: inline-block; padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+    .badge-soft-success { background: #e7f7ee; color: #15803d; }
+    .badge-soft-muted { background: #eef1f5; color: #667085; }
+    .badge-soft-secondary { background: #e9eef5; color: #475467; }
+    .badge-soft-accent { background: #fff4dc; color: #b77900; }
+    .btn-primary { background: #2f6fed; border-color: #2f6fed; }
+    .btn-primary:hover { background: #245dcc; border-color: #245dcc; }
+    .quickmenu-item { border: 1px solid #e8edf3; background: white; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: .2s; }
+    .quickmenu-item:hover { border-color: #2f6fed; transform: translateY(-2px); }
+    .quickmenu-item i { display: block; font-size: 22px; color: #2f6fed; margin-bottom: 7px; }
+    .activity-item { display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 1px solid #edf0f4; }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-icon { width: 38px; height: 38px; border-radius: 10px; background: #eaf2ff; color: #2f6fed; display: flex; align-items: center; justify-content: center; }
+    .activity-title { font-weight: 600; font-size: 14px; }
+    .activity-subtitle { font-size: 12px; color: #667085; }
+    .activity-time { margin-left: auto; font-size: 12px; color: #98a2b3; }
+    .legend-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 13px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .empty-state { padding: 35px; text-align: center; color: #98a2b3; }
+    .page-title-small { font-weight: 700; font-size: 18px; }
+    @media (max-width: 900px) {
+      .sidebar { width: 210px; }
+      .main-content { margin-left: 210px; width: calc(100% - 210px); }
+      .topbar-search { width: 220px; }
+    }
+    @media (max-width: 700px) {
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; width: 100%; }
+      .content { padding: 15px; }
+      .topbar-search { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h4><i class="bi bi-droplet-fill"></i> Amih Laundry</h4>
+      <small>Admin Panel</small>
+    </div>
+
+    <div class="sidebar-menu">
+      <div class="menu-title">Menu Utama</div>
+
+      <a class="menu-link active" data-page="dashboard"><i class="bi bi-grid-1x2-fill"></i><span>Dashboard</span></a>
+      <a class="menu-link" data-page="pelanggan"><i class="bi bi-people-fill"></i><span>Data Pelanggan</span></a>
+      <a class="menu-link" data-page="layanan"><i class="bi bi-tags-fill"></i><span>Layanan & Harga</span></a>
+      <a class="menu-link" data-page="cucian"><i class="bi bi-basket-fill"></i><span>Data Cucian</span></a>
+      <a class="menu-link" data-page="proses"><i class="bi bi-arrow-repeat"></i><span>Proses Cucian</span></a>
+      <a class="menu-link" data-page="pengguna"><i class="bi bi-person-gear"></i><span>Manajemen Pengguna</span></a>
+
+      <div class="menu-title">Keuangan</div>
+
+      <a class="menu-link" data-page="biaya"><i class="bi bi-wallet2"></i><span>Biaya Operasional</span></a>
+      <a class="menu-link" data-page="laporan"><i class="bi bi-file-earmark-bar-graph-fill"></i><span>Laporan</span></a>
+      <a class="menu-link" data-page="pendapatan"><i class="bi bi-cash-stack"></i><span>Pendapatan</span></a>
+      <a class="menu-link" data-page="keuntungan"><i class="bi bi-graph-up-arrow"></i><span>Keuntungan</span></a>
+
+      <div class="menu-title">Lainnya</div>
+
+      <a class="menu-link" data-page="aktivitas"><i class="bi bi-clock-history"></i><span>Aktivitas Terbaru</span></a>
+      <a class="menu-link" data-page="pengaturan"><i class="bi bi-gear-fill"></i><span>Pengaturan</span></a>
+      <a class="menu-link" href="#" onclick="logout(); return false;"><i class="bi bi-box-arrow-right"></i><span>Logout</span></a>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="d-flex align-items-center gap-2">
+        <div class="avatar" id="sidebarAvatarInitial">A</div>
+        <div>
+          <div id="sidebarUserName" class="fw-semibold">Admin</div>
+          <small style="opacity:.7;">Administrator</small>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <main class="main-content">
+
+    <header class="topbar">
+      <div class="topbar-search">
+        <div class="input-group">
+          <span class="input-group-text border-0 bg-light"><i class="bi bi-search"></i></span>
+          <input type="text" class="form-control border-0" placeholder="Cari menu atau transaksi..." />
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-4">
+        <div class="text-muted"><i class="bi bi-calendar3"></i> <span id="topbarDate"></span></div>
+        <div><i class="bi bi-bell fs-5"></i></div>
+        <div class="d-flex align-items-center gap-2">
+          <div class="avatar" style="width:36px;height:36px;"><span id="topAvatarInitial">A</span></div>
+          <div class="d-none d-md-block">
+            <div id="userName" class="fw-semibold">Admin</div>
+            <small class="text-muted">Administrator</small>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ===== DASHBOARD ===== -->
+      <section id="page-dashboard" class="page-section">
+        <div class="page-header">
+          <h2>Dashboard</h2>
+          <p>Selamat datang, <strong id="dashboardUserName">Admin</strong> 👋</p>
+          <p>Kelola seluruh data dan aktivitas Amih Laundry.</p>
+        </div>
+
+        <div class="row g-4 mb-4">
+          <div class="col-xl-3 col-md-6"><div class="stat-card"><div class="stat-icon"><i class="bi bi-people-fill"></i></div><div class="stat-title">Total Pelanggan</div><div class="stat-value" id="statTotalPelanggan">0</div></div></div>
+          <div class="col-xl-3 col-md-6"><div class="stat-card"><div class="stat-icon"><i class="bi bi-receipt"></i></div><div class="stat-title">Total Transaksi</div><div class="stat-value" id="statTotalTransaksi">0</div></div></div>
+          <div class="col-xl-3 col-md-6"><div class="stat-card"><div class="stat-icon"><i class="bi bi-cash-stack"></i></div><div class="stat-title">Pendapatan Hari Ini</div><div class="stat-value" id="statPendapatanHariIni">Rp 0</div></div></div>
+          <div class="col-xl-3 col-md-6"><div class="stat-card"><div class="stat-icon"><i class="bi bi-arrow-repeat"></i></div><div class="stat-title">Cucian Dalam Proses</div><div class="stat-value" id="statCucianDiproses">0</div></div></div>
+        </div>
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-8">
+            <div class="card-box">
+              <div class="mb-3"><div class="card-title">Grafik Pendapatan</div><div class="card-subtitle">7 Hari Terakhir</div></div>
+              <div style="height:320px;"><canvas id="chartPendapatan7Hari"></canvas></div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card-box h-100">
+              <div class="mb-3"><div class="card-title">Status Cucian</div><div class="card-subtitle">Status proses laundry</div></div>
+              <div style="height:230px;display:flex;align-items:center;justify-content:center;"><canvas id="chartStatusCucian"></canvas></div>
+              <div id="legendStatusCucian"><div class="text-muted small">Belum ada data</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <div class="card-box">
+              <div class="card-title">Aktivitas Terbaru</div>
+              <div class="card-subtitle mb-2">Aktivitas transaksi terbaru</div>
+              <div class="aktivitas-box"><div class="empty-state">Belum ada aktivitas</div></div>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="card-box">
+              <div class="card-title mb-3">Menu Cepat</div>
+              <div class="row g-3">
+                <div class="col-6 quickmenu-item" data-goto="pelanggan"><i class="bi bi-people-fill"></i><span>Data Pelanggan</span></div>
+                <div class="col-6 quickmenu-item" data-goto="layanan"><i class="bi bi-tags-fill"></i><span>Layanan & Harga</span></div>
+                <div class="col-6 quickmenu-item" data-goto="pengguna"><i class="bi bi-person-plus-fill"></i><span>Tambah Pengguna</span></div>
+                <div class="col-6 quickmenu-item" data-goto="laporan"><i class="bi bi-file-earmark-bar-graph"></i><span>Laporan</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== DATA PELANGGAN ===== -->
+      <section id="page-pelanggan" class="page-section d-none">
+        <div class="page-header d-flex justify-content-between align-items-center">
+          <div><h2>Data Pelanggan</h2><p>Kelola data pelanggan Amih Laundry.</p></div>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahPelanggan"><i class="bi bi-plus-lg"></i> Tambah Pelanggan</button>
+        </div>
+        <div class="card-box">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead><tr><th>Nama</th><th>No. Telepon</th><th>Alamat</th><th>Aksi</th></tr></thead>
+              <tbody id="tabelPelanggan"><tr><td colspan="4"><div class="empty-state">Memuat data...</div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== LAYANAN ===== -->
+      <section id="page-layanan" class="page-section d-none">
+        <div class="page-header d-flex justify-content-between align-items-center">
+          <div><h2>Layanan & Harga</h2><p>Kelola layanan dan harga laundry.</p></div>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahLayanan"><i class="bi bi-plus-lg"></i> Tambah Layanan</button>
+        </div>
+        <div class="card-box">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead><tr><th>Nama Layanan</th><th>Satuan</th><th>Harga</th><th>Status</th><th>Aksi</th></tr></thead>
+              <tbody id="tabelLayanan"><tr><td colspan="5"><div class="empty-state">Memuat data...</div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== DATA CUCIAN ===== -->
+      <section id="page-cucian" class="page-section d-none">
+        <div class="page-header"><h2>Data Cucian</h2><p>Data transaksi cucian laundry.</p></div>
+        <div class="card-box">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead><tr><th>Kode Transaksi</th><th>Total</th><th>Pembayaran</th><th>Pengambilan</th><th>Tanggal</th></tr></thead>
+              <tbody id="tabelCucian"><tr><td colspan="5"><div class="empty-state">Memuat data...</div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== PROSES CUCIAN ===== -->
+      <section id="page-proses" class="page-section d-none">
+        <div class="page-header"><h2>Proses Cucian</h2><p>Riwayat proses cucian laundry.</p></div>
+        <div class="card-box">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead><tr><th>Kode Transaksi</th><th>Status</th><th>Catatan</th><th>Waktu</th></tr></thead>
+              <tbody id="tabelProses"><tr><td colspan="4"><div class="empty-state">Memuat data...</div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== PENGGUNA ===== -->
+      <section id="page-pengguna" class="page-section d-none">
+        <div class="page-header d-flex justify-content-between align-items-center">
+          <div><h2>Manajemen Pengguna</h2><p>Kelola akun pekerja, owner, dan pelanggan (role CUSTOMER).</p></div>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahUser"><i class="bi bi-person-plus"></i> Tambah Pengguna</button>
+        </div>
+        <div class="card-box">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead><tr><th>Nama</th><th>Username</th><th>Role</th><th>Status</th><th>Aksi</th></tr></thead>
+              <tbody id="tabelPengguna"><tr><td colspan="5"><div class="empty-state">Memuat data...</div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== BIAYA ===== -->
+      <section id="page-biaya" class="page-section d-none">
+        <div class="page-header d-flex justify-content-between align-items-center">
+          <div><h2>Biaya Operasional</h2><p>Kelola biaya operasional laundry.</p></div>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahBiaya"><i class="bi bi-plus-lg"></i> Tambah Biaya</button>
+        </div>
+        <div class="card-box">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead><tr><th>Tanggal</th><th>Nama Biaya</th><th>Kategori</th><th>Jumlah</th><th>Aksi</th></tr></thead>
+              <tbody id="tabelBiaya"><tr><td colspan="5"><div class="empty-state">Memuat data...</div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== LAPORAN ===== -->
+      <section id="page-laporan" class="page-section d-none">
+        <div class="page-header"><h2>Laporan</h2><p>Ringkasan laporan keuangan Amih Laundry.</p></div>
+        <div class="row g-4">
+          <div class="col-md-4"><div class="stat-card"><div class="stat-icon"><i class="bi bi-cash-stack"></i></div><div class="stat-title">Total Pendapatan</div><div class="stat-value" id="laporanPendapatan">Rp 0</div></div></div>
+          <div class="col-md-4"><div class="stat-card"><div class="stat-icon"><i class="bi bi-wallet2"></i></div><div class="stat-title">Total Biaya</div><div class="stat-value" id="laporanBiaya">Rp 0</div></div></div>
+          <div class="col-md-4"><div class="stat-card"><div class="stat-icon"><i class="bi bi-graph-up-arrow"></i></div><div class="stat-title">Keuntungan</div><div class="stat-value" id="laporanKeuntungan">Rp 0</div></div></div>
+        </div>
+      </section>
+
+      <!-- ===== PENDAPATAN ===== -->
+      <section id="page-pendapatan" class="page-section d-none">
+        <div class="page-header"><h2>Pendapatan</h2><p>Ringkasan pendapatan dari transaksi laundry.</p></div>
+        <div class="row g-4">
+          <div class="col-md-6"><div class="stat-card"><div class="stat-icon"><i class="bi bi-cash-stack"></i></div><div class="stat-title">Total Pendapatan</div><div class="stat-value" id="pendapatanTotal">Rp 0</div></div></div>
+          <div class="col-md-6"><div class="stat-card"><div class="stat-icon"><i class="bi bi-receipt"></i></div><div class="stat-title">Jumlah Transaksi</div><div class="stat-value" id="pendapatanJumlahTrx">0</div></div></div>
+        </div>
+      </section>
+
+      <!-- ===== KEUNTUNGAN ===== -->
+      <section id="page-keuntungan" class="page-section d-none">
+        <div class="page-header"><h2>Keuntungan</h2><p>Perhitungan keuntungan laundry.</p></div>
+        <div class="row g-4">
+          <div class="col-md-4"><div class="stat-card"><div class="stat-icon"><i class="bi bi-graph-up-arrow"></i></div><div class="stat-title">Keuntungan</div><div class="stat-value" id="keuntunganNilai">Rp 0</div></div></div>
+          <div class="col-md-4"><div class="stat-card"><div class="stat-icon"><i class="bi bi-cash"></i></div><div class="stat-title">Pendapatan</div><div class="stat-value" id="keuntunganPendapatan">Rp 0</div></div></div>
+          <div class="col-md-4"><div class="stat-card"><div class="stat-icon"><i class="bi bi-wallet2"></i></div><div class="stat-title">Biaya Operasional</div><div class="stat-value" id="keuntunganBiaya">Rp 0</div></div></div>
+        </div>
+      </section>
+
+      <!-- ===== AKTIVITAS ===== -->
+      <section id="page-aktivitas" class="page-section d-none">
+        <div class="page-header"><h2>Aktivitas Terbaru</h2><p>Aktivitas transaksi terbaru.</p></div>
+        <div class="card-box">
+          <div class="aktivitas-box"><div class="empty-state">Belum ada aktivitas</div></div>
+        </div>
+      </section>
+
+      <!-- ===== PENGATURAN ===== -->
+      <section id="page-pengaturan" class="page-section d-none">
+        <div class="page-header"><h2>Pengaturan</h2><p>Pengaturan sistem Amih Laundry.</p></div>
+        <div class="card-box">
+          <div class="d-flex align-items-center gap-3">
+            <div class="stat-icon mb-0"><i class="bi bi-gear-fill"></i></div>
+            <div>
+              <div class="page-title-small">Pengaturan Sistem</div>
+              <div class="text-muted">Pengaturan sistem dapat dikelola melalui konfigurasi aplikasi.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+
+<!-- ================= MODAL TAMBAH PELANGGAN ================= -->
+<div class="modal fade" id="modalTambahPelanggan" tabindex="-1">
+  <div class="modal-dialog"><div class="modal-content">
+    <form id="formTambahPelanggan">
+      <div class="modal-header"><h5 class="modal-title">Tambah Pelanggan</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="mb-3"><label class="form-label">Nama</label><input type="text" id="pelangganNama" class="form-control" required /></div>
+        <div class="mb-3"><label class="form-label">No. Telepon</label><input type="text" id="pelangganNoTelepon" class="form-control" /></div>
+        <div class="mb-3"><label class="form-label">Alamat</label><textarea id="pelangganAlamat" class="form-control" rows="3"></textarea></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="submit" class="btn btn-primary">Simpan</button></div>
+    </form>
+  </div></div>
+</div>
+
+<!-- ================= MODAL EDIT PELANGGAN ================= -->
+<div class="modal fade" id="modalEditPelanggan" tabindex="-1">
+  <div class="modal-dialog"><div class="modal-content">
+    <form id="formEditPelanggan">
+      <input type="hidden" id="editPelangganId" />
+      <div class="modal-header"><h5 class="modal-title">Edit Pelanggan</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="mb-3"><label class="form-label">Nama</label><input type="text" id="editPelangganNama" class="form-control" required /></div>
+        <div class="mb-3">
+          <label class="form-label">No. Telepon</label>
+          <input type="text" id="editPelangganNoTelepon" class="form-control" />
+          <div class="form-text">Kalau pelanggan ini punya akun login, username akunnya juga harus diubah ke nomor baru.</div>
+        </div>
+        <div class="mb-3"><label class="form-label">Alamat</label><textarea id="editPelangganAlamat" class="form-control" rows="3"></textarea></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="submit" class="btn btn-primary">Simpan Perubahan</button></div>
+    </form>
+  </div></div>
+</div>
+
+<!-- ================= MODAL TAMBAH LAYANAN ================= -->
+<div class="modal fade" id="modalTambahLayanan" tabindex="-1">
+  <div class="modal-dialog"><div class="modal-content">
+    <form id="formTambahLayanan">
+      <div class="modal-header"><h5 class="modal-title">Tambah Layanan</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="mb-3"><label class="form-label">Nama Layanan</label><input type="text" id="layananNama" class="form-control" required /></div>
+        <div class="mb-3"><label class="form-label">Jenis Satuan</label><input type="text" id="layananSatuan" class="form-control" placeholder="kg / pcs" required /></div>
+        <div class="mb-3"><label class="form-label">Harga per Satuan</label><input type="number" id="layananHarga" class="form-control" required /></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="submit" class="btn btn-primary">Simpan</button></div>
+    </form>
+  </div></div>
+</div>
+
+<!-- ================= MODAL EDIT LAYANAN ================= -->
+<div class="modal fade" id="modalEditLayanan" tabindex="-1">
+  <div class="modal-dialog"><div class="modal-content">
+    <form id="formEditLayanan">
+      <input type="hidden" id="editLayananId" />
+      <div class="modal-header"><h5 class="modal-title">Edit Layanan</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="mb-3"><label class="form-label">Nama Layanan</label><input type="text" id="editLayananNama" class="form-control" required /></div>
+        <div class="mb-3"><label class="form-label">Jenis Satuan</label><input type="text" id="editLayananSatuan" class="form-control" required /></div>
+        <div class="mb-3"><label class="form-label">Harga per Satuan</label><input type="number" id="editLayananHarga" class="form-control" required /></div>
+        <div class="mb-3">
+          <label class="form-label">Status</label>
+          <select id="editLayananAktif" class="form-select"><option value="1">Aktif</option><option value="0">Nonaktif</option></select>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="submit" class="btn btn-primary">Simpan Perubahan</button></div>
+    </form>
+  </div></div>
+</div>
+
+<!-- ================= MODAL TAMBAH USER ================= -->
+<div class="modal fade" id="modalTambahUser" tabindex="-1">
+  <div class="modal-dialog"><div class="modal-content">
+    <form id="formTambahUser">
+      <div class="modal-header"><h5 class="modal-title">Tambah Pengguna</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="mb-3"><label class="form-label">Nama</label><input type="text" id="userNama" class="form-control" required /></div>
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input type="text" id="userUsername" class="form-control" required />
+          <div class="form-text">Untuk role CUSTOMER, isi dengan nomor telepon pelanggan (sama persis dengan Data Pelanggan).</div>
+        </div>
+        <div class="mb-3"><label class="form-label">Password</label><input type="password" id="userPassword" class="form-control" minlength="6" required autocomplete="new-password" /></div>
+        <div class="mb-3">
+          <label class="form-label">Role</label>
+          <select id="userRole" class="form-select" required>
+            <option value="">Pilih Role</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="KASIR">KASIR</option>
+            <option value="OWNER">OWNER</option>
+            <option value="STAFF_LAUNDRY">STAFF LAUNDRY</option>
+            <option value="CUSTOMER">CUSTOMER</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="submit" class="btn btn-primary">Simpan</button></div>
+    </form>
+  </div></div>
+</div>
+
+<!-- ================= MODAL EDIT USER ================= -->
+<div class="modal fade" id="modalEditUser" tabindex="-1">
+  <div class="modal-dialog"><div class="modal-content">
+    <form id="formEditUser">
+      <input type="hidden" id="editUserId" />
+      <div class="modal-header"><h5 class="modal-title">Edit Pengguna</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="mb-3"><label class="form-label">Nama</label><input type="text" id="editUserNama" class="form-control" required /></div>
+        <div class="mb-3"><label class="form-label">Username</label><input type="text" id="editUserUsername" class="form-control" required /></div>
+        <div class="mb-3">
+          <label class="form-label">Role</label>
+          <select id="editUserRole" class="form-select" required>
+            <option value="ADMIN">ADMIN</option>
+            <option value="KASIR">KASIR</option>
+            <option value="OWNER">OWNER</option>
+            <option value="STAFF_LAUNDRY">STAFF LAUNDRY</option>
+            <option value="CUSTOMER">CUSTOMER</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Status</label>
+          <select id="editUserAktif" class="form-select"><option value="1">Aktif</option><option value="0">Nonaktif</option></select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password baru (opsional)</label>
+          <input type="password" id="editUserPassword" class="form-control" minlength="6" autocomplete="new-password" />
+          <div class="form-text">Kosongkan kalau password tidak ingin diubah. Pakai ini untuk membantu pelanggan yang lupa password.</div>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="submit" class="btn btn-primary">Simpan Perubahan</button></div>
+    </form>
+  </div></div>
+</div>
+
+<!-- ================= MODAL TAMBAH BIAYA ================= -->
+<div class="modal fade" id="modalTambahBiaya" tabindex="-1">
+  <div class="modal-dialog"><div class="modal-content">
+    <form id="formTambahBiaya">
+      <div class="modal-header"><h5 class="modal-title">Tambah Biaya Operasional</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="mb-3"><label class="form-label">Nama Biaya</label><input type="text" id="biayaNama" class="form-control" required /></div>
+        <div class="mb-3"><label class="form-label">Kategori</label><input type="text" id="biayaKategori" class="form-control" required /></div>
+        <div class="mb-3"><label class="form-label">Jumlah Biaya</label><input type="number" id="biayaJumlah" class="form-control" required /></div>
+        <div class="mb-3"><label class="form-label">Tanggal</label><input type="date" id="biayaTanggal" class="form-control" required /></div>
+        <div class="mb-3"><label class="form-label">Keterangan</label><textarea id="biayaKeterangan" class="form-control" rows="3"></textarea></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="submit" class="btn btn-primary">Simpan</button></div>
+    </form>
+  </div></div>
+</div>
+
+<!-- ================= MODAL EDIT BIAYA ================= -->
+<div class="modal fade" id="modalEditBiaya" tabindex="-1">
+  <div class="modal-dialog"><div class="modal-content">
+    <form id="formEditBiaya">
+      <input type="hidden" id="editBiayaId" />
+      <div class="modal-header"><h5 class="modal-title">Edit Biaya Operasional</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="mb-3"><label class="form-label">Nama Biaya</label><input type="text" id="editBiayaNama" class="form-control" required /></div>
+        <div class="mb-3"><label class="form-label">Kategori</label><input type="text" id="editBiayaKategori" class="form-control" required /></div>
+        <div class="mb-3"><label class="form-label">Jumlah Biaya</label><input type="number" id="editBiayaJumlah" class="form-control" required /></div>
+        <div class="mb-3"><label class="form-label">Tanggal</label><input type="date" id="editBiayaTanggal" class="form-control" required /></div>
+        <div class="mb-3"><label class="form-label">Keterangan</label><textarea id="editBiayaKeterangan" class="form-control" rows="3"></textarea></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="submit" class="btn btn-primary">Simpan Perubahan</button></div>
+    </form>
+  </div></div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="js/auth-guard.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/dashboard-admin.js"></script>
+
+</body>
+</html>

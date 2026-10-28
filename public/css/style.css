@@ -1,0 +1,472 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+  background-color: #F3F4F7;
+  color: #101B33;
+}
+
+/* =====================================================
+   LOGIN PAGE
+   ===================================================== */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #101B33 0%, #2F6FED 100%);
+}
+
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+}
+
+.login-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 40px 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.login-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #101B33;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.login-subtitle {
+  text-align: center;
+  color: #767C88;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.btn-teal {
+  background-color: #2F6FED;
+  color: #ffffff;
+  border: none;
+  font-weight: 600;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.btn-teal:hover {
+  background-color: #1d54c9;
+  color: #ffffff;
+}
+
+/* =====================================================
+   NAVBAR
+   ===================================================== */
+
+.navbar-custom {
+  background-color: #101B33;
+}
+
+/* =====================================================
+   DASHBOARD LAYOUT
+   ===================================================== */
+
+.dashboard-container {
+  padding: 24px;
+}
+
+.card-stat {
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #E2E4E9;
+}
+
+.card-stat .stat-label {
+  font-size: 13px;
+  color: #767C88;
+  margin-bottom: 4px;
+}
+
+.card-stat .stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #101B33;
+}
+
+.table-custom {
+  background: #FFFFFF;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #E2E4E9;
+}
+
+/* =====================================================
+   STATUS BADGES
+   ===================================================== */
+
+.badge-status {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.badge-lunas,
+.badge-selesai {
+  background-color: #16A34A;
+  color: #fff;
+}
+
+.badge-diproses {
+  background-color: #14B8A6;
+  color: #fff;
+}
+
+.badge-pending,
+.badge-belum {
+  background-color: #F59E0B;
+  color: #fff;
+}
+
+.badge-batal,
+.badge-danger {
+  background-color: #E5484D;
+  color: #fff;
+}
+
+/* =====================================================
+   SIDEBAR LAYOUT
+   ===================================================== */
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.sidebar {
+  width: 250px;
+  min-width: 250px;
+  background-color: #101B33;
+  flex-shrink: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  position: sticky;
+  top: 0;
+
+  height: 100vh;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* =====================================================
+   SIDEBAR BRAND
+   ===================================================== */
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 20px;
+
+  color: #fff;
+  font-weight: 700;
+  font-size: 18px;
+
+  flex-shrink: 0;
+}
+
+.sidebar-brand-icon {
+  width: 32px;
+  height: 32px;
+
+  background: #2F6FED;
+  border-radius: 8px;
+
+  flex-shrink: 0;
+}
+
+/* =====================================================
+   SIDEBAR MENU
+   ===================================================== */
+
+.sidebar-menu {
+  list-style: none;
+
+  padding: 0 12px;
+  margin: 0;
+
+  flex: 0 0 auto;
+}
+
+.sidebar-menu li {
+  margin-bottom: 2px;
+}
+
+.sidebar-menu a {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 10px 12px;
+
+  border-radius: 8px;
+
+  color: #B9C2D6;
+
+  text-decoration: none;
+
+  font-size: 14px;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.sidebar-menu a:hover {
+  background: #303B4F;
+  color: #fff;
+}
+
+.sidebar-menu a.active {
+  background: #2F6FED;
+  color: #fff;
+  font-weight: 600;
+}
+
+.sidebar-menu a.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* =====================================================
+   SIDEBAR FOOTER / ADMIN PROFILE
+   ===================================================== */
+
+.sidebar-footer {
+  flex-shrink: 0;
+
+  margin-top: auto;
+
+  padding: 16px 20px;
+
+  border-top: 1px solid #303B4F;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  color: #fff;
+
+  background-color: #101B33;
+
+  position: sticky;
+  bottom: 0;
+
+  z-index: 20;
+}
+
+.sidebar-avatar {
+  width: 36px;
+  height: 36px;
+
+  min-width: 36px;
+
+  border-radius: 50%;
+
+  background: #303B4F;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-footer .footer-text {
+  font-size: 13px;
+  line-height: 1.3;
+
+  min-width: 0;
+}
+
+.sidebar-footer .footer-text small {
+  color: #B9C2D6;
+  display: block;
+}
+
+/* =====================================================
+   MAIN CONTENT
+   ===================================================== */
+
+.main-content {
+  flex: 1;
+
+  background: #F3F4F7;
+
+  min-width: 0;
+}
+
+/* =====================================================
+   TOPBAR
+   ===================================================== */
+
+.topbar {
+  background: #fff;
+
+  border-bottom: 1px solid #E2E4E9;
+
+  padding: 14px 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.topbar input {
+  max-width: 400px;
+
+  border: 1px solid #E2E4E9;
+
+  border-radius: 999px;
+
+  padding: 8px 16px;
+
+  width: 100%;
+}
+
+/* =====================================================
+   PAGE CONTENT
+   ===================================================== */
+
+.page-content {
+  padding: 24px;
+}
+
+.page-title {
+  font-size: 22px;
+
+  font-weight: 700;
+
+  color: #101B33;
+
+  margin-bottom: 2px;
+}
+
+.page-subtitle {
+  color: #767C88;
+
+  font-size: 14px;
+
+  margin-bottom: 20px;
+}
+
+.placeholder-box {
+  background: #fff;
+
+  border: 1px dashed #E2E4E9;
+
+  border-radius: 12px;
+
+  padding: 60px 20px;
+
+  text-align: center;
+
+  color: #767C88;
+}
+
+/* =====================================================
+   SIDEBAR SCROLLBAR
+   ===================================================== */
+
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: #101B33;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #303B4F;
+  border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #46536b;
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+
+  .sidebar {
+    width: 220px;
+    min-width: 220px;
+  }
+
+  .sidebar-brand {
+    padding: 16px;
+  }
+
+  .sidebar-menu {
+    padding: 0 8px;
+  }
+
+  .sidebar-footer {
+    padding: 14px 16px;
+  }
+
+  .topbar {
+    padding: 12px 16px;
+  }
+
+  .page-content {
+    padding: 16px;
+  }
+}
+
+/* =====================================================
+   GLOBAL HORIZONTAL OVERFLOW FIX
+   ===================================================== */
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* FIX AMIH LAUNDRY - SIDEBAR KASIR */
+.sidebar {
+  position: relative;
+  z-index: 1055 !important;
+  pointer-events: auto !important;
+}
+.sidebar .sidebar-menu,
+.sidebar .sidebar-menu li,
+.sidebar .sidebar-menu .menu-link,
+.sidebar .sidebar-footer,
+.sidebar .sidebar-footer button {
+  pointer-events: auto !important;
+}
+.sidebar .menu-link {
+  cursor: pointer !important;
+  position: relative;
+  z-index: 1056;
+}
