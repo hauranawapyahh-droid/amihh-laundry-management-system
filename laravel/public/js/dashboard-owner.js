@@ -271,4 +271,3 @@
 
     window.refreshOwnerDashboard = loadOwnerDashboard;
 
-```

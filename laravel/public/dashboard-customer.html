@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
@@ -662,12 +662,6 @@
       margin: 12px 0;
     }
 
-    @media print {
-      body * { visibility: hidden; }
-      #strukPrint, #strukPrint * { visibility: visible; }
-      #strukPrint { position: absolute; left: 0; top: 0; width: 100%; padding: 16px; }
-    }
-
     @media (max-width: 900px) {
       .topbar-search {
         width: 220px;
@@ -726,7 +720,230 @@
         font-size: 11px;
       }
     }
-  </style>
+  
+    .sidebar-brand h4 {
+      min-width: 0;
+      font-size: 17px;
+      line-height: 1.25;
+      letter-spacing: -0.35px;
+      white-space: nowrap;
+    }
+
+    .sidebar-brand {
+      padding: 20px 14px;
+      overflow: hidden;
+    }
+
+    .sidebar-brand small {
+      display: block;
+      margin-top: 5px;
+      padding-left: 51px;
+    }
+
+/* FIX FINAL: identitas sidebar Customer tidak bertumpuk */
+.sidebar .sidebar-brand {
+  display: block !important;
+  position: relative !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 18px 14px !important;
+  overflow: visible !important;
+}
+
+.sidebar .sidebar-brand h4 {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 16px !important;
+  line-height: 1.3 !important;
+  letter-spacing: 0 !important;
+  white-space: nowrap !important;
+}
+
+.sidebar .sidebar-brand h4 img {
+  display: block !important;
+  position: static !important;
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  flex: 0 0 38px !important;
+  margin: 0 !important;
+}
+
+.sidebar .sidebar-brand .customer-role-label {
+  display: block !important;
+  position: static !important;
+  margin: 7px 0 0 46px !important;
+  padding: 0 !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+  white-space: normal !important;
+  clear: both !important;
+}
+/* Perapihan struk Customer */
+#strukPrint {
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+  padding: 18px 16px;
+  background: #fff;
+  color: #111;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font: 12px/1.5 "Courier New", monospace !important;
+  overflow-wrap: normal;
+}
+#strukPrint * {
+  box-sizing: border-box;
+  font-family: "Courier New", monospace !important;
+  letter-spacing: 0 !important;
+}
+#strukPrint hr {
+  border: 0 !important;
+  border-top: 1px dashed #333 !important;
+  margin: 10px 0 !important;
+  opacity: 1 !important;
+}
+#strukPrint .struk-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 4px 0;
+  padding: 0;
+}
+#strukPrint .struk-row > :first-child {
+  flex: 0 1 48%;
+  min-width: 0;
+}
+#strukPrint .struk-row > :last-child {
+  flex: 0 1 52%;
+  min-width: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+#strukPrint .badge {
+  display: inline !important;
+  padding: 0 !important;
+  color: #111 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  font-size: inherit !important;
+  font-weight: 700 !important;
+}
+#strukPrint .table-responsive {
+  overflow: visible !important;
+}
+#strukPrint table {
+  width: 100%;
+  border: 0 !important;
+  border-collapse: collapse;
+  table-layout: auto;
+  margin: 6px 0;
+  font-size: 10px;
+}
+#strukPrint table th,
+#strukPrint table td {
+  border: 0 !important;
+  padding: 4px 2px;
+  background: transparent !important;
+  color: #111 !important;
+  vertical-align: top;
+}
+#strukPrint table thead {
+  border-bottom: 1px dashed #333;
+}
+#strukPrint img {
+  margin: 0 auto 5px !important;
+}
+/* Perapihan struk Customer */
+#strukPrint {
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+  padding: 18px 16px;
+  background: #fff;
+  color: #111;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font: 12px/1.5 "Courier New", monospace !important;
+  overflow-wrap: normal;
+}
+#strukPrint * {
+  box-sizing: border-box;
+  font-family: "Courier New", monospace !important;
+  letter-spacing: 0 !important;
+}
+#strukPrint hr {
+  border: 0 !important;
+  border-top: 1px dashed #333 !important;
+  margin: 10px 0 !important;
+  opacity: 1 !important;
+}
+#strukPrint .struk-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 4px 0;
+  padding: 0;
+}
+#strukPrint .struk-row > :first-child {
+  flex: 0 1 48%;
+  min-width: 0;
+}
+#strukPrint .struk-row > :last-child {
+  flex: 0 1 52%;
+  min-width: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+#strukPrint .badge {
+  display: inline !important;
+  padding: 0 !important;
+  color: #111 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  font-size: inherit !important;
+  font-weight: 700 !important;
+}
+#strukPrint .table-responsive {
+  overflow: visible !important;
+}
+#strukPrint table {
+  width: 100%;
+  border: 0 !important;
+  border-collapse: collapse;
+  table-layout: auto;
+  margin: 6px 0;
+  font-size: 10px;
+}
+#strukPrint table th,
+#strukPrint table td {
+  border: 0 !important;
+  padding: 4px 2px;
+  background: transparent !important;
+  color: #111 !important;
+  vertical-align: top;
+}
+#strukPrint table thead {
+  border-bottom: 1px dashed #333;
+}
+#strukPrint img {
+  margin: 0 auto 5px !important;
+}
+</style>
 </head>
 
 <body>
@@ -764,7 +981,7 @@
 
     <div class="sidebar-brand">
       <h4 style="display:flex;align-items:center;gap:9px"><img src="/logo-amih-laundry.png" alt="Logo Amih Laundry" style="width:42px;height:42px;object-fit:contain;background:white;border-radius:8px;padding:2px;flex-shrink:0"> Amih Laundry</h4>
-      <small>Pelanggan</small>
+      <small class="customer-role-label">Pelanggan</small>
     </div>
 
     <div class="sidebar-menu">
@@ -1142,33 +1359,7 @@
           </div>
         </div>
 
-        <div class="card-box mb-4">
-          <div class="card-title mb-3">Ubah Password</div>
-
-          <form id="formPassword" autocomplete="off">
-            <div class="row g-3">
-              <div class="col-md-4">
-                <div class="field-label">Password lama</div>
-                <input type="password" id="pwLama" class="form-control" required autocomplete="current-password" />
-              </div>
-              <div class="col-md-4">
-                <div class="field-label">Password baru (minimal 6 karakter)</div>
-                <input type="password" id="pwBaru" class="form-control" minlength="6" required autocomplete="new-password" />
-              </div>
-              <div class="col-md-4">
-                <div class="field-label">Ulangi password baru</div>
-                <input type="password" id="pwUlang" class="form-control" minlength="6" required autocomplete="new-password" />
-              </div>
-            </div>
-
-            <div class="alert d-none mt-3 mb-0" id="pwPesan" role="alert"></div>
-
-            <button type="submit" class="btn btn-primary mt-3" id="btnPw">
-              <i class="bi bi-key"></i>
-              Simpan password
-            </button>
-          </form>
-        </div>
+        
 
         <div class="card-box d-flex justify-content-between align-items-center flex-wrap gap-2">
           <span class="text-muted">Keluar dari akun ini di perangkat ini</span>
@@ -1252,10 +1443,6 @@
 
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-        <button type="button" class="btn btn-primary" onclick="window.print()">
-          <i class="bi bi-printer"></i>
-          Cetak
-        </button>
       </div>
 
     </div>
@@ -1610,7 +1797,7 @@ function renderBeranda() {
   $("berandaLayanan").innerHTML = layanan.length
     ? layanan.map((l) => `
         <div class="mini-item clickable" onclick="goPage('layanan')">
-          <div class="mini-icon"><i class="bi bi-droplet"></i></div>
+          <div class="mini-icon"><i class="${ikonLayanan(l.nama_layanan)}"></i></div>
           <div class="flex-grow-1">
             <div class="mini-title">${esc(l.nama_layanan)}</div>
             <div class="mini-sub">${rp(l.harga_per_satuan)} /${esc(l.jenis_satuan)}</div>
@@ -1633,6 +1820,17 @@ function renderBeranda() {
     : kosong("Belum ada transaksi.");
 }
 
+function ikonLayanan(nama) {
+  const n = String(nama || "").toLowerCase();
+  if (n.includes("sepatu")) return "bi bi-handbag";
+  if (n.includes("karpet")) return "bi bi-grid";
+  if (n.includes("selimut") || n.includes("bed cover")) return "bi bi-house";
+  if (n.includes("setrika")) return "bi bi-fire";
+  if (n.includes("express") || n.includes("kilat")) return "bi bi-lightning-charge";
+  if (n.includes("kering")) return "bi bi-wind";
+  if (n.includes("reguler") || n.includes("regular")) return "bi bi-clock";
+  return "bi bi-stars";
+}
 function renderLayanan() {
   const q = $("cariLayanan").value.trim().toLowerCase();
   const list = DATA.layanan.filter((l) => !q || String(l.nama_layanan || "").toLowerCase().includes(q));
@@ -1641,7 +1839,7 @@ function renderLayanan() {
     ? list.map((l) => `
         <div class="col-xl-3 col-lg-4 col-md-6">
           <div class="svc-card">
-            <div class="stat-icon"><i class="bi bi-droplet-fill"></i></div>
+            <div class="stat-icon"><i class="${ikonLayanan(l.nama_layanan)}"></i></div>
             <div class="fw-bold mb-1">${esc(l.nama_layanan)}</div>
             <div class="svc-price">${rp(l.harga_per_satuan)}</div>
             <div class="text-muted small">per ${esc(l.jenis_satuan)}</div>
@@ -1685,7 +1883,7 @@ function timelineEvents(t) {
     ev.push({
       s: (terakhir && k !== "SELESAI" && info.key !== "batal") ? "current" : "done",
       judul: LABEL[k] || p.status_proses || "Proses cucian",
-      ket: waktu(p.created_at) + (p.catatan_proses ? " â€” " + p.catatan_proses : ""),
+      ket: waktu(p.created_at) + (p.catatan_proses ? " Ã¢â‚¬â€ " + p.catatan_proses : ""),
     });
   });
 
@@ -1741,7 +1939,7 @@ function renderDetailPerjalanan() {
   $("detailPerjalanan").innerHTML = `
     <div class="mb-3">
       <span class="fw-semibold">${teksLayanan(t)}</span>
-      <span class="text-muted"> Â· ${rp(t.total_harga)}</span>
+      <span class="text-muted"> Ã‚Â· ${rp(t.total_harga)}</span>
     </div>
     <div class="tl">
       ${timelineEvents(t).map((e) => `
@@ -1780,7 +1978,7 @@ function renderProfil() {
   $("profilNamaLengkap").textContent = nama;
   $("profilTelepon").textContent = p.no_telepon || "-";
   $("profilAlamat").textContent = p.alamat || "-";
-  $("profilSub").textContent = (p.created_at ? "Pelanggan sejak " + tgl(p.created_at) + " â€¢ " : "") + DATA.transaksi.length + " transaksi";
+  $("profilSub").textContent = (p.created_at ? "Pelanggan sejak " + tgl(p.created_at) + " - " : "") + DATA.transaksi.length + " transaksi";
 }
 
 function renderHeader() {
@@ -1918,36 +2116,88 @@ function lihatStruk(kode) {
   if (!t) return;
 
   const p = DATA.pelanggan || {};
-  const items = t.items || [];
+  const items = Array.isArray(t.items) ? t.items : [];
+  const pembayaran = Array.isArray(t.pembayaran)
+    ? t.pembayaran
+    : (t.pembayaran ? [t.pembayaran] : []);
+  const proses = Array.isArray(t.proses) ? t.proses : [];
+
+  const nama = p.nama || $("userName").textContent || "-";
+  const telepon = p.no_telepon || "-";
+
+  const rincian = items.length ? items.map(i => {
+    const q = qtyItem(i);
+    const jumlah = q === ""
+      ? "-"
+      : `${q.toLocaleString("id-ID")} ${esc(i.jenis_satuan || "")}`.trim();
+
+    return `
+      <tr>
+        <td>${esc(i.nama_layanan || "Layanan")}<br>${jumlah}</td>
+        <td class="text-end">${rp(subtotalItem(i))}</td>
+      </tr>`;
+  }).join("") : `
+      <tr><td colspan="2">Rincian layanan tidak tersedia.</td></tr>`;
+
+  const pembayaranHTML = pembayaran.length ? pembayaran.map(b => {
+    const nominal = b.jumlah_bayar ?? b.nominal ?? b.jumlah;
+    return `
+      <div class="struk-row"><span>Metode</span><span>${esc(b.metode_pembayaran || "-")}</span></div>
+      ${nominal != null && nominal !== "" ? `<div class="struk-row"><span>Jumlah dibayar</span><span>${rp(nominal)}</span></div>` : ""}
+      <div class="struk-row"><span>Verifikasi</span><span>${esc(b.status_konfirmasi || "-")}</span></div>
+      ${b.waktu_konfirmasi ? `<div class="struk-row"><span>Waktu verifikasi</span><span>${waktu(b.waktu_konfirmasi)}</span></div>` : ""}
+      ${b.catatan_pelunasan ? `<div class="struk-row"><span>Catatan</span><span>${esc(b.catatan_pelunasan)}</span></div>` : ""}
+      ${b.bukti_pembayaran ? `<div class="struk-row"><span>Bukti pembayaran</span><span>Tersimpan</span></div>` : ""}
+    `;
+  }).join('<hr>') : `
+      <div class="struk-row"><span>Metode</span><span>${esc(t.metode_pembayaran || "-")}</span></div>
+      ${t.bukti_pembayaran ? `<div class="struk-row"><span>Bukti pembayaran</span><span>Tersimpan</span></div>` : ""}
+    `;
+
+  const statusBayar = String(t.status_pembayaran || t.status_bayar || t.status_transaksi || "-").toUpperCase();
+  const statusCucian = proses.length
+    ? proses.map(pr => `<div class="struk-row"><span>${esc(pr.status_proses || "-")}</span><span>${waktu(pr.created_at)}</span></div>`).join("")
+    : "";
 
   $("strukPrint").innerHTML = `
     <div class="text-center mb-2">
-      <img src="/logo-amih-laundry.png" alt="Logo Amih Laundry" style="display:block;width:76px;height:76px;object-fit:contain;margin:0 auto 8px"><div class="fw-bold fs-5">Amih Laundry</div>
-      <div class="text-muted small">Bukti Transaksi</div>
+      <img src="/logo-amih-laundry.png" alt="Logo Amih Laundry" style="display:block;width:64px;height:64px;object-fit:contain;margin:0 auto 5px">
+      <div class="fw-bold fs-5">AMIH LAUNDRY</div>
+<div class="alamat-laundry" style="font-size:10px;line-height:1.4;text-align:center;margin:4px auto 6px;max-width:270px;">
+  Kp. Simpang, RT.01/RW.16, Panundaan,<br>
+  Kec. Ciwidey, Kabupaten Bandung,<br>
+  Jawa Barat 40973
+</div>
+      <div class="small">STRUK TRANSAKSI LAUNDRY</div>
     </div>
     <hr>
-    <div class="struk-row"><span class="text-muted">Kode</span><strong>${esc(t.kode_transaksi)}</strong></div>
-    <div class="struk-row"><span class="text-muted">Tanggal</span><span>${waktu(t.created_at)}</span></div>
-    <div class="struk-row"><span class="text-muted">Pelanggan</span><span>${esc(p.nama || $("userName").textContent)}</span></div>
+    <div class="struk-row"><span>Kode transaksi</span><strong>${esc(t.kode_transaksi)}</strong></div>
+    <div class="struk-row"><span>Tanggal</span><span>${waktu(t.created_at)}</span></div>
+    <div class="struk-row"><span>Pelanggan</span><span>${esc(nama)}</span></div>
+    <div class="struk-row"><span>No. telepon</span><span>${esc(telepon)}</span></div>
+    <div class="struk-row"><span>Catatan</span><span>${esc(t.catatan || "-")}</span></div>
     <hr>
-    ${items.length ? items.map((i) => {
-      const q = qtyItem(i);
-      return `
-      <div class="struk-row">
-        <span>${esc(i.nama_layanan || "Layanan")}${q !== "" ? `<br><small class="text-muted">${q.toLocaleString("id-ID")} ${esc(i.jenis_satuan || "")} Ã— ${rp(i.harga_per_satuan)}</small>` : ""}</span>
-        <span>${rp(subtotalItem(i))}</span>
-      </div>`;
-    }).join("") : `<div class="text-muted small">Rincian layanan tidak tersedia.</div>`}
+    <strong>RINCIAN LAYANAN</strong>
+    <table>
+      <thead><tr><th>Layanan / Jumlah</th><th class="text-end">Subtotal</th></tr></thead>
+      <tbody>${rincian}</tbody>
+    </table>
     <hr>
-    <div class="struk-row"><strong>Total</strong><strong>${rp(t.total_harga)}</strong></div>
-    <div class="struk-row"><span class="text-muted">Pembayaran</span><span>${pillBayar(t)}</span></div>
-    <div class="struk-row"><span class="text-muted">Status</span><span>${pillStatus(t)}</span></div>
+    <div class="struk-row"><strong>TOTAL TAGIHAN</strong><strong>${rp(t.total_harga)}</strong></div>
     <hr>
-    <div class="text-center text-muted small">Terima kasih sudah mencuci di Amih Laundry.</div>`;
+    <strong>INFORMASI PEMBAYARAN</strong>
+    ${pembayaranHTML}
+    <div class="struk-row"><span>Status pembayaran</span><strong>${esc(statusBayar)}</strong></div>
+    <hr>
+    <strong>STATUS CUCIAN</strong>
+    <div class="struk-row"><span>Status terakhir</span><strong>${esc(t.status_proses || t.status_cucian || "-")}</strong></div>
+    ${statusCucian}
+    <hr>
+    <div class="text-center small">Terima kasih telah menggunakan Amih Laundry.</div>
+  `;
 
   bootstrap.Modal.getOrCreateInstance($("modalStruk")).show();
 }
-
 function tampilQR(kode) {
   $("qrKode").textContent = kode;
   const box = $("qrBox");
@@ -2053,48 +2303,6 @@ $("formUploadBukti").addEventListener("submit", async function (e) {
     tombol.innerHTML = '<i class="bi bi-upload me-1"></i>Kirim Bukti';
   }
 });
-// =========================
-// UBAH PASSWORD
-// =========================
-$("formPassword").addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const pesan = $("pwPesan");
-  const btn = $("btnPw");
-  const tampil = (teks, ok) => {
-    pesan.textContent = teks;
-    pesan.className = "alert mt-3 mb-0 " + (ok ? "alert-success" : "alert-danger");
-  };
-
-  const lama = $("pwLama").value;
-  const baru = $("pwBaru").value;
-  const ulang = $("pwUlang").value;
-
-  if (baru !== ulang) { tampil("Password baru dan ulangannya tidak sama.", false); return; }
-  if (baru === lama) { tampil("Password baru harus berbeda dari password lama.", false); return; }
-
-  btn.disabled = true;
-  try {
-    const res = await apiFetch("/api/customer/password", {
-      method: "PUT",
-      body: JSON.stringify({ password_lama: lama, password_baru: baru }),
-    });
-    const json = await res.json();
-
-    if (!res.ok || json.success === false) {
-      tampil(json.message || "Gagal mengubah password.", false);
-    } else {
-      tampil("Password berhasil diubah. Gunakan password baru saat login berikutnya.", true);
-      e.target.reset();
-    }
-  } catch (err) {
-    console.error(err);
-    tampil("Tidak dapat terhubung ke server.", false);
-  } finally {
-    btn.disabled = false;
-  }
-});
-
 // Dipanggil dari atribut onclick
 window.goPage = goPage;
 window.lihatStruk = lihatStruk;
@@ -2176,5 +2384,15 @@ setInterval(() => muatData(false), 60000);
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
 
 

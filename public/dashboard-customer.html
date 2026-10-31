@@ -51,15 +51,37 @@
       padding: 24px 20px;
       border-bottom: 1px solid rgba(255,255,255,.15);
       flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar-brand .brand-logo {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+      background: white;
+      border-radius: 8px;
+      padding: 2px;
+      flex: 0 0 auto;
+    }
+
+    .sidebar-brand .brand-text {
+      min-width: 0;
     }
 
     .sidebar-brand h4 {
       margin: 0;
       font-weight: 700;
+      font-size: 18px;
+      line-height: 1.2;
+      white-space: nowrap;
     }
 
     .sidebar-brand small {
+      display: block;
       opacity: .75;
+      margin-top: 2px;
     }
 
     .sidebar-menu {
@@ -644,29 +666,28 @@
       color: #2f6fed;
     }
 
-    /* ===== STRUK ===== */
-    .struk {
-      font-size: 14px;
+    /* ===== STRUK CUSTOMER (sama dengan struk kasir) ===== */
+    .rc {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 12px;
+      color: #111;
+      max-width: 360px;
+      margin: 0 auto;
     }
-
-    .struk-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 4px 0;
-    }
-
-    .struk hr {
-      border-top: 1px dashed #cbd2dc;
-      opacity: 1;
-      margin: 12px 0;
-    }
-
-    @media print {
-      body * { visibility: hidden; }
-      #strukPrint, #strukPrint * { visibility: visible; }
-      #strukPrint { position: absolute; left: 0; top: 0; width: 100%; padding: 16px; }
-    }
+    .rc-c { text-align: center; }
+    .rc-logo { width: 64px; height: 64px; object-fit: contain; margin-bottom: 6px; }
+    .rc-title { font-weight: 700; font-size: 18px; letter-spacing: 1px; }
+    .rc-sub { font-size: 10px; letter-spacing: .5px; text-transform: uppercase; }
+    .rc hr { border: 0; border-top: 1px dashed #000; margin: 10px 0; opacity: 1; }
+    .rc-r { display: flex; justify-content: space-between; gap: 10px; padding: 2px 0; font-size: 11px; }
+    .rc-r span:last-child { text-align: right; }
+    .rc-h { font-size: 11px; text-transform: uppercase; padding: 2px 0; }
+    .rc-total { font-weight: 700; font-size: 13px; }
+    .rc table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .rc th { text-align: center; padding: 2px 3px; }
+    .rc td { padding: 2px 3px; }
+    .rc td.r { text-align: right; }
+    .rc-foot { font-size: 10px; text-align: center; }
 
     @media (max-width: 900px) {
       .topbar-search {
@@ -763,11 +784,11 @@
   <aside class="sidebar" id="sidebar">
 
     <div class="sidebar-brand">
-      <h4>
-        <i class="bi bi-droplet-fill"></i>
-        Amih Laundry
-      </h4>
-      <small>Pelanggan</small>
+      <img class="brand-logo" src="/logo-amih-laundry.png" alt="Logo Amih Laundry">
+      <div class="brand-text">
+        <h4>Amih Laundry</h4>
+        <small>Pelanggan</small>
+      </div>
     </div>
 
     <div class="sidebar-menu">
@@ -1145,33 +1166,7 @@
           </div>
         </div>
 
-        <div class="card-box mb-4">
-          <div class="card-title mb-3">Ubah Password</div>
-
-          <form id="formPassword" autocomplete="off">
-            <div class="row g-3">
-              <div class="col-md-4">
-                <div class="field-label">Password lama</div>
-                <input type="password" id="pwLama" class="form-control" required autocomplete="current-password" />
-              </div>
-              <div class="col-md-4">
-                <div class="field-label">Password baru (minimal 6 karakter)</div>
-                <input type="password" id="pwBaru" class="form-control" minlength="6" required autocomplete="new-password" />
-              </div>
-              <div class="col-md-4">
-                <div class="field-label">Ulangi password baru</div>
-                <input type="password" id="pwUlang" class="form-control" minlength="6" required autocomplete="new-password" />
-              </div>
-            </div>
-
-            <div class="alert d-none mt-3 mb-0" id="pwPesan" role="alert"></div>
-
-            <button type="submit" class="btn btn-primary mt-3" id="btnPw">
-              <i class="bi bi-key"></i>
-              Simpan password
-            </button>
-          </form>
-        </div>
+        
 
         <div class="card-box d-flex justify-content-between align-items-center flex-wrap gap-2">
           <span class="text-muted">Keluar dari akun ini di perangkat ini</span>
@@ -1250,15 +1245,11 @@
       </div>
 
       <div class="modal-body">
-        <div id="strukPrint" class="struk"></div>
+        <div id="strukPrint"></div>
       </div>
 
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-        <button type="button" class="btn btn-primary" onclick="window.print()">
-          <i class="bi bi-printer"></i>
-          Cetak
-        </button>
       </div>
 
     </div>
@@ -1485,12 +1476,28 @@ function footerAktif(t) {
 
 function tombolAksi(t) {
   const statusBayar = String(
-    t.status_pembayaran ?? t.pembayaran?.status_pembayaran ?? ""
+    t.status_pembayaran ?? ""
   ).trim().toUpperCase();
 
-  const belumLunas = statusBayar !== "LUNAS";
+  const pembayaran = Array.isArray(t.pembayaran)
+    ? t.pembayaran
+    : (t.pembayaran ? [t.pembayaran] : []);
 
-  if (belumLunas) {
+  const buktiPending = pembayaran.some(p =>
+    String(p.status_konfirmasi || "").toUpperCase() === "PENDING" &&
+    Boolean(p.bukti_pembayaran)
+  ) || (
+    String(t.status_konfirmasi || "").toUpperCase() === "PENDING" &&
+    Boolean(t.bukti_pembayaran)
+  );
+
+  if (buktiPending) {
+    return `<span class="badge rounded-pill text-bg-warning">
+      Menunggu Verifikasi Kasir
+    </span>`;
+  }
+
+  if (statusBayar !== "LUNAS") {
     return `
       <div class="d-flex flex-wrap gap-2">
         <button class="btn btn-success btn-sm" type="button"
@@ -1511,7 +1518,6 @@ function tombolAksi(t) {
   return `<button class="btn btn-outline-primary btn-sm" type="button"
     onclick="hubungiKasir()">Hubungi Kasir</button>`;
 }
-
 
 function kartuAktif(t) {
   return `
@@ -1598,7 +1604,7 @@ function renderBeranda() {
   $("berandaLayanan").innerHTML = layanan.length
     ? layanan.map((l) => `
         <div class="mini-item clickable" onclick="goPage('layanan')">
-          <div class="mini-icon"><i class="bi bi-droplet"></i></div>
+          <div class="mini-icon"><i class="${ikonLayanan(l.nama_layanan)}"></i></div>
           <div class="flex-grow-1">
             <div class="mini-title">${esc(l.nama_layanan)}</div>
             <div class="mini-sub">${rp(l.harga_per_satuan)} /${esc(l.jenis_satuan)}</div>
@@ -1621,6 +1627,17 @@ function renderBeranda() {
     : kosong("Belum ada transaksi.");
 }
 
+function ikonLayanan(nama) {
+  const n = String(nama || "").toLowerCase();
+  if (n.includes("sepatu")) return "bi bi-handbag";
+  if (n.includes("karpet")) return "bi bi-grid";
+  if (n.includes("selimut") || n.includes("bed cover")) return "bi bi-house";
+  if (n.includes("setrika")) return "bi bi-fire";
+  if (n.includes("express") || n.includes("kilat")) return "bi bi-lightning-charge";
+  if (n.includes("kering")) return "bi bi-wind";
+  if (n.includes("reguler") || n.includes("regular")) return "bi bi-clock";
+  return "bi bi-stars";
+}
 function renderLayanan() {
   const q = $("cariLayanan").value.trim().toLowerCase();
   const list = DATA.layanan.filter((l) => !q || String(l.nama_layanan || "").toLowerCase().includes(q));
@@ -1629,7 +1646,7 @@ function renderLayanan() {
     ? list.map((l) => `
         <div class="col-xl-3 col-lg-4 col-md-6">
           <div class="svc-card">
-            <div class="stat-icon"><i class="bi bi-droplet-fill"></i></div>
+            <div class="stat-icon"><i class="${ikonLayanan(l.nama_layanan)}"></i></div>
             <div class="fw-bold mb-1">${esc(l.nama_layanan)}</div>
             <div class="svc-price">${rp(l.harga_per_satuan)}</div>
             <div class="text-muted small">per ${esc(l.jenis_satuan)}</div>
@@ -1673,7 +1690,7 @@ function timelineEvents(t) {
     ev.push({
       s: (terakhir && k !== "SELESAI" && info.key !== "batal") ? "current" : "done",
       judul: LABEL[k] || p.status_proses || "Proses cucian",
-      ket: waktu(p.created_at) + (p.catatan_proses ? " â€” " + p.catatan_proses : ""),
+      ket: waktu(p.created_at) + (p.catatan_proses ? " \u2014 " + p.catatan_proses : ""),
     });
   });
 
@@ -1729,7 +1746,7 @@ function renderDetailPerjalanan() {
   $("detailPerjalanan").innerHTML = `
     <div class="mb-3">
       <span class="fw-semibold">${teksLayanan(t)}</span>
-      <span class="text-muted"> Â· ${rp(t.total_harga)}</span>
+      <span class="text-muted"> \u00b7 ${rp(t.total_harga)}</span>
     </div>
     <div class="tl">
       ${timelineEvents(t).map((e) => `
@@ -1768,7 +1785,7 @@ function renderProfil() {
   $("profilNamaLengkap").textContent = nama;
   $("profilTelepon").textContent = p.no_telepon || "-";
   $("profilAlamat").textContent = p.alamat || "-";
-  $("profilSub").textContent = (p.created_at ? "Pelanggan sejak " + tgl(p.created_at) + " â€¢ " : "") + DATA.transaksi.length + " transaksi";
+  $("profilSub").textContent = (p.created_at ? "Pelanggan sejak " + tgl(p.created_at) + " \u2022 " : "") + DATA.transaksi.length + " transaksi";
 }
 
 function renderHeader() {
@@ -1899,39 +1916,112 @@ $("cariRiwayat").addEventListener("input", renderRiwayat);
 $("pilihTrx").addEventListener("change", renderDetailPerjalanan);
 
 // =========================
-// STRUK, QR, KONTAK
+// STRUK CUSTOMER (tampilan sama dengan struk kasir, tanpa fitur cetak)
 // =========================
+const LOGO_STRUK = "/logo-amih-laundry.png";
+
+function strukIsiHtml(t) {
+  const p = DATA.pelanggan || {};
+  const items = t.items || [];
+  const info = infoTrx(t);
+
+  const baris = (k, v, cls) =>
+    `<div class="rc-r ${cls || ""}"><span>${k}</span><span>${v}</span></div>`;
+
+  const nf = (n) => "Rp " + Number(n || 0).toLocaleString("id-ID");
+
+  const tglPanjang = (() => {
+    const x = new Date(t.created_at);
+    if (isNaN(x)) return "-";
+    return x.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })
+      + " pukul " + x.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }).replace(":", ".");
+  })();
+
+  const tglPendek = (d) => {
+    const x = new Date(d);
+    return isNaN(x) ? "-" : x.toLocaleString("id-ID").replace(/\./g, ".");
+  };
+
+  const kasir = t.nama_kasir || (t.kasir && (t.kasir.nama || t.kasir)) || "";
+  const catatan = t.catatan || t.catatan_transaksi || "";
+  const noTelp = p.no_telepon || t.no_telepon || "";
+
+  let bayarList = Array.isArray(t.pembayaran) ? t.pembayaran : (t.pembayaran ? [t.pembayaran] : []);
+  if (!bayarList.length && (t.metode_pembayaran || t.bukti_pembayaran || t.status_konfirmasi)) {
+    bayarList = [t];
+  }
+  const lunas = /LUNAS/.test(norm(t.status_pembayaran));
+
+  const bayarHtml = bayarList.map((b, idx) => {
+    const metode = String(b.metode_pembayaran || b.metode || "-").replace(/_/g, " ");
+    const jml = b.jumlah_dibayar != null ? b.jumlah_dibayar : b.jumlah;
+    const verif = b.status_verifikasi || b.status_konfirmasi || b.status || "";
+    const wVerif = b.waktu_verifikasi || b.verified_at || "";
+    const cat = b.catatan_verifikasi || b.catatan || "";
+    return `
+      ${baris("Pembayaran " + (idx + 1) + " - Metode", esc(metode.toUpperCase()))}
+      ${jml != null ? baris("Jumlah dibayar", nf(jml)) : ""}
+      ${b.kembalian != null ? baris("Kembalian", nf(b.kembalian)) : ""}
+      ${verif ? baris("Verifikasi", esc(String(verif).toUpperCase())) : ""}
+      ${wVerif ? baris("Waktu verifikasi", esc(tglPendek(wVerif))) : ""}
+      ${cat ? baris("Catatan", esc(cat)) : ""}
+      ${(b.bukti_pembayaran || b.bukti) ? baris("Bukti pembayaran", "Tersimpan") : ""}`;
+  }).join("");
+
+  const prosesHtml = info.proses.length
+    ? `${baris("Status terakhir", esc(String(info.proses[info.proses.length - 1].status_proses || "-").toUpperCase()))}
+       ${info.proses.map((pr) =>
+         `<div class="rc-h">${esc(String(pr.status_proses || "").toUpperCase())} - ${esc(tglPendek(pr.created_at))}</div>`
+       ).join("")}`
+    : baris("Status terakhir", esc(STATUS_LABEL[info.key].toUpperCase()));
+
+  return `
+    <div class="rc">
+      <div class="rc-c">
+        <img class="rc-logo" src="${esc(LOGO_STRUK)}" alt="" onerror="this.style.display='none'">
+        <div class="rc-title">AMIH LAUNDRY</div>
+        <div class="rc-sub">Struk Transaksi Laundry</div>
+      </div>
+      <hr>
+      ${baris("Kode transaksi", `<strong>${esc(t.kode_transaksi)}</strong>`)}
+      ${baris("Tanggal", esc(tglPanjang))}
+      ${baris("Pelanggan", `<strong>${esc(p.nama || $("userName").textContent)}</strong>`)}
+      ${noTelp ? baris("No. telepon", esc(noTelp)) : ""}
+      ${kasir ? baris("Kasir", esc(kasir)) : ""}
+      ${catatan ? baris("Catatan", esc(catatan)) : ""}
+      <hr>
+      <div class="rc-h">Rincian layanan</div>
+      <table>
+        <thead><tr><th>Layanan</th><th>Jumlah</th><th>Harga</th><th>Subtotal</th></tr></thead>
+        <tbody>
+          ${items.length ? items.map((i) => {
+            const q = qtyItem(i);
+            return `<tr>
+              <td>${esc(i.nama_layanan || "Layanan")}</td>
+              <td>${q !== "" ? Number(q).toFixed(2) + " " + esc(i.jenis_satuan || "") : "-"}</td>
+              <td>${nf(i.harga_per_satuan)}</td>
+              <td class="r">${nf(subtotalItem(i))}</td>
+            </tr>`;
+          }).join("") : `<tr><td colspan="4">Rincian layanan tidak tersedia.</td></tr>`}
+        </tbody>
+      </table>
+      <hr>
+      ${baris("TOTAL TAGIHAN", nf(t.total_harga), "rc-total")}
+      <div class="rc-h">Informasi pembayaran</div>
+      ${bayarHtml}
+      ${baris("Status pembayaran transaksi", `<strong>${lunas ? "LUNAS" : "BELUM BAYAR"}</strong>`)}
+      <div class="rc-h" style="margin-top:6px">Status cucian</div>
+      ${prosesHtml}
+      <hr>
+      <div class="rc-foot">Terima kasih telah menggunakan Amih Laundry.</div>
+    </div>`;
+}
+
 function lihatStruk(kode) {
   const t = findTrx(kode);
   if (!t) return;
 
-  const p = DATA.pelanggan || {};
-  const items = t.items || [];
-
-  $("strukPrint").innerHTML = `
-    <div class="text-center mb-2">
-      <div class="fw-bold fs-5"><i class="bi bi-droplet-fill text-primary"></i> Amih Laundry</div>
-      <div class="text-muted small">Bukti Transaksi</div>
-    </div>
-    <hr>
-    <div class="struk-row"><span class="text-muted">Kode</span><strong>${esc(t.kode_transaksi)}</strong></div>
-    <div class="struk-row"><span class="text-muted">Tanggal</span><span>${waktu(t.created_at)}</span></div>
-    <div class="struk-row"><span class="text-muted">Pelanggan</span><span>${esc(p.nama || $("userName").textContent)}</span></div>
-    <hr>
-    ${items.length ? items.map((i) => {
-      const q = qtyItem(i);
-      return `
-      <div class="struk-row">
-        <span>${esc(i.nama_layanan || "Layanan")}${q !== "" ? `<br><small class="text-muted">${q.toLocaleString("id-ID")} ${esc(i.jenis_satuan || "")} Ã— ${rp(i.harga_per_satuan)}</small>` : ""}</span>
-        <span>${rp(subtotalItem(i))}</span>
-      </div>`;
-    }).join("") : `<div class="text-muted small">Rincian layanan tidak tersedia.</div>`}
-    <hr>
-    <div class="struk-row"><strong>Total</strong><strong>${rp(t.total_harga)}</strong></div>
-    <div class="struk-row"><span class="text-muted">Pembayaran</span><span>${pillBayar(t)}</span></div>
-    <div class="struk-row"><span class="text-muted">Status</span><span>${pillStatus(t)}</span></div>
-    <hr>
-    <div class="text-center text-muted small">Terima kasih sudah mencuci di Amih Laundry.</div>`;
+  $("strukPrint").innerHTML = strukIsiHtml(t);
 
   bootstrap.Modal.getOrCreateInstance($("modalStruk")).show();
 }
@@ -2041,48 +2131,6 @@ $("formUploadBukti").addEventListener("submit", async function (e) {
     tombol.innerHTML = '<i class="bi bi-upload me-1"></i>Kirim Bukti';
   }
 });
-// =========================
-// UBAH PASSWORD
-// =========================
-$("formPassword").addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const pesan = $("pwPesan");
-  const btn = $("btnPw");
-  const tampil = (teks, ok) => {
-    pesan.textContent = teks;
-    pesan.className = "alert mt-3 mb-0 " + (ok ? "alert-success" : "alert-danger");
-  };
-
-  const lama = $("pwLama").value;
-  const baru = $("pwBaru").value;
-  const ulang = $("pwUlang").value;
-
-  if (baru !== ulang) { tampil("Password baru dan ulangannya tidak sama.", false); return; }
-  if (baru === lama) { tampil("Password baru harus berbeda dari password lama.", false); return; }
-
-  btn.disabled = true;
-  try {
-    const res = await apiFetch("/api/customer/password", {
-      method: "PUT",
-      body: JSON.stringify({ password_lama: lama, password_baru: baru }),
-    });
-    const json = await res.json();
-
-    if (!res.ok || json.success === false) {
-      tampil(json.message || "Gagal mengubah password.", false);
-    } else {
-      tampil("Password berhasil diubah. Gunakan password baru saat login berikutnya.", true);
-      e.target.reset();
-    }
-  } catch (err) {
-    console.error(err);
-    tampil("Tidak dapat terhubung ke server.", false);
-  } finally {
-    btn.disabled = false;
-  }
-});
-
 // Dipanggil dari atribut onclick
 window.goPage = goPage;
 window.lihatStruk = lihatStruk;
@@ -2103,7 +2151,64 @@ setInterval(() => muatData(false), 60000);
 })();
 </script>
 
+<!-- FIX STATUS PEMBAYARAN CUSTOMER -->
+<script>
+(function () {
+  async function perbaruiStatusBukti() {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const response = await fetch("/api/customer/dashboard", {
+        headers: {
+          "Accept": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        cache: "no-store"
+      });
+
+      if (!response.ok) return;
+
+      const json = await response.json();
+      const data = json.data || {};
+      const transaksi = data.transaksi || [];
+      const pending = transaksi.filter(t =>
+        String(t.status_konfirmasi || "").toUpperCase() === "PENDING" &&
+        Boolean(t.bukti_pembayaran)
+      );
+
+      pending.forEach(t => {
+        const kode = String(t.kode_transaksi || "").trim();
+        if (!kode) return;
+
+        document.querySelectorAll(".order-card").forEach(card => {
+          if (!card.innerText.includes(kode)) return;
+
+          const tombol = Array.from(card.querySelectorAll("button"))
+            .find(btn => /upload bukti pembayaran/i.test(btn.innerText));
+
+          if (!tombol) return;
+
+          const status = document.createElement("span");
+          status.className = "badge-pill badge-soft-accent";
+          status.textContent = "Menunggu Verifikasi Kasir";
+          tombol.replaceWith(status);
+
+          card.querySelectorAll(".badge-pill").forEach(badge => {
+            if (/belum bayar/i.test(badge.innerText)) {
+              badge.textContent = "Menunggu Verifikasi";
+            }
+          });
+        });
+      });
+    } catch (error) {
+      console.error("Pemeriksaan status bukti gagal:", error);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", perbaruiStatusBukti);
+  setInterval(perbaruiStatusBukti, 3000);
+})();
+</script>
 </body>
 </html>
-
-

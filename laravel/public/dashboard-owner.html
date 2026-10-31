@@ -136,7 +136,7 @@ body{background:#f5f8fc;margin:0;font-family:Arial,sans-serif}
       <section id="page-dashboard" class="page-section">
         <div class="page-header">
           <h2>Dashboard Owner</h2>
-          <p>Selamat datang, <strong id="dashboardUserName">Owner</strong> 👋</p>
+          <p>Selamat datang, <strong id="dashboardUserName">Owner</strong> </p>
           <p>Pantau kinerja bisnis dan keuangan Amih Laundry.</p>
         </div>
         <div class="row g-4 mb-4" id="d-stat"></div>
@@ -177,27 +177,46 @@ body{background:#f5f8fc;margin:0;font-family:Arial,sans-serif}
         </div>
       </section>
 
-      <!-- LAPORAN -->
+      <!-- LAPORAN OWNER - FILTER TANGGAL -->
       <section id="page-laporan" class="page-section d-none">
-        <div class="page-header"><h2>Laporan</h2><p>Unduh rekap performa bisnis dalam berbagai periode.</p></div>
-        <div class="row g-4" id="l-cards"></div>
-<!-- AMIH-OWNER-REKAP-PERIODE-V1 -->
-<div class="row g-3 mt-2" id="owner-rekap-periode">
-  <div class="col-12"><div class="card-box">
-    <div class="card-title mb-1">Rekap Otomatis Seluruh Periode</div>
-    <div class="text-muted small mb-3">Pilih jenis laporan untuk melihat ringkasan dan membuka rincian transaksi serta biaya.</div>
-    <div class="d-flex flex-wrap gap-2 mb-3">
-      <button class="btn btn-sm btn-primary" data-rekap="harian">Harian</button>
-      <button class="btn btn-sm btn-outline-primary" data-rekap="mingguan">Mingguan</button>
-      <button class="btn btn-sm btn-outline-primary" data-rekap="bulanan">Bulanan</button>
-      <button class="btn btn-sm btn-outline-primary" data-rekap="tahunan">Tahunan</button>
-    </div>
-    <div id="owner-rekap-list">Memuat rekap...</div>
-  </div></div>
-</div>
-      </section>
+        <div class="page-header">
+          <h2>Laporan</h2>
+          <p>Pilih jenis dan periode laporan, lalu unduh hasilnya dalam PDF.</p>
+        </div>
 
-      <!-- PENDAPATAN -->
+        <div class="card-box">
+          <div class="card-title mb-1">Buat Laporan</div>
+          <p class="text-muted small mb-4">Hanya data dalam rentang tanggal yang dipilih akan dimasukkan ke PDF.</p>
+
+          <div class="mb-3">
+            <label for="laporanJenis" class="form-label">Jenis Laporan</label>
+            <select id="laporanJenis" class="form-select">
+              <option value="harian">Harian</option>
+              <option value="mingguan">Mingguan</option>
+              <option value="bulanan">Bulanan</option>
+              <option value="tahunan">Tahunan</option>
+            </select>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="laporanMulai" class="form-label">Tanggal Mulai</label>
+              <input type="date" id="laporanMulai" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+              <label for="laporanAkhir" class="form-label">Tanggal Akhir</label>
+              <input type="date" id="laporanAkhir" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <button type="button" id="btnUnduhLaporan" class="btn btn-primary" onclick="unduh()">
+              <i class="bi bi-file-earmark-pdf"></i> Unduh Laporan PDF
+            </button>
+          </div>
+          <div id="laporanPesan" class="small mt-3" role="status"></div>
+        </div>
+      </section>      <!-- PENDAPATAN -->
       <section id="page-pendapatan" class="page-section d-none">
         <div class="page-header"><h2>Pendapatan</h2><p>Rincian pemasukan dari seluruh transaksi laundry.</p></div>
         <div class="row g-4 mb-4" id="p-stat"></div>
@@ -324,7 +343,7 @@ body{background:#f5f8fc;margin:0;font-family:Arial,sans-serif}
  };
  const label=k=>{
    if(jenis==='harian')return dateFmt(k);
-   if(jenis==='mingguan'){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()+6);return dateFmt(k)+' – '+dateFmt(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
+   if(jenis==='mingguan'){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()+6);return dateFmt(k)+' Ã¢â‚¬â€œ '+dateFmt(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
    if(jenis==='bulanan'){const [y,m]=k.split('-').map(Number);return new Date(y,m-1,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});}
    return 'Tahun '+k;
  };
@@ -340,7 +359,7 @@ body{background:#f5f8fc;margin:0;font-family:Arial,sans-serif}
      const paid=g.trx.filter(x=>x.lunas),rev=paid.reduce((s,x)=>s+(Number(x.total)||0),0),cost=g.bia.reduce((s,x)=>s+(Number(x.jumlah)||0),0);
      const trxRows=g.trx.slice().sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kode)}</td><td>${esc(x.pel)}</td><td>${x.lunas?'Lunas':'Belum bayar'}</td><td class="text-end">${money(x.total)}</td></tr>`).join('')||'<tr><td colspan="5">Tidak ada transaksi</td></tr>';
      const biaRows=g.bia.slice().sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kat)}</td><td>${esc(x.ket)}</td><td class="text-end">${money(x.jumlah)}</td></tr>`).join('')||'<tr><td colspan="4">Tidak ada biaya</td></tr>';
-     return `<details class="border rounded p-3 mb-2"><summary class="fw-semibold">${esc(label(k))} <span class="text-muted fw-normal">· ${g.trx.length} transaksi · Pendapatan ${money(rev)} · Biaya ${money(cost)} · Bersih ${money(rev-cost)}</span></summary><div class="table-responsive mt-3"><h6>Rincian Transaksi</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kode</th><th>Pelanggan</th><th>Status</th><th class="text-end">Total</th></tr></thead><tbody>${trxRows}</tbody></table><h6 class="mt-3">Biaya Operasional</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th class="text-end">Jumlah</th></tr></thead><tbody>${biaRows}</tbody></table></div></details>`;
+     return `<details class="border rounded p-3 mb-2"><summary class="fw-semibold">${esc(label(k))} <span class="text-muted fw-normal">• ${g.trx.length} transaksi • Pendapatan ${money(rev)} • Biaya ${money(cost)} • Bersih ${money(rev-cost)}</span></summary><div class="table-responsive mt-3"><h6>Rincian Transaksi</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kode</th><th>Pelanggan</th><th>Status</th><th class="text-end">Total</th></tr></thead><tbody>${trxRows}</tbody></table><h6 class="mt-3">Biaya Operasional</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th class="text-end">Jumlah</th></tr></thead><tbody>${biaRows}</tbody></table></div></details>`;
    }).join('');
  }
  root.addEventListener('click',e=>{const b=e.target.closest('[data-rekap]');if(b){jenis=b.dataset.rekap;render();}});
@@ -365,7 +384,7 @@ body{background:#f5f8fc;margin:0;font-family:Arial,sans-serif}
  };
  const label=k=>{
    if(jenis==='harian')return dateFmt(k);
-   if(jenis==='mingguan'){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()+6);return dateFmt(k)+' – '+dateFmt(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
+   if(jenis==='mingguan'){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()+6);return dateFmt(k)+' Ã¢â‚¬â€œ '+dateFmt(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
    if(jenis==='bulanan'){const [y,m]=k.split('-').map(Number);return new Date(y,m-1,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});}
    return 'Tahun '+k;
  };
@@ -381,7 +400,7 @@ body{background:#f5f8fc;margin:0;font-family:Arial,sans-serif}
      const paid=g.trx.filter(x=>x.lunas),rev=paid.reduce((s,x)=>s+(Number(x.total)||0),0),cost=g.bia.reduce((s,x)=>s+(Number(x.jumlah)||0),0);
      const trxRows=g.trx.slice().sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kode)}</td><td>${esc(x.pel)}</td><td>${x.lunas?'Lunas':'Belum bayar'}</td><td class="text-end">${money(x.total)}</td></tr>`).join('')||'<tr><td colspan="5">Tidak ada transaksi</td></tr>';
      const biaRows=g.bia.slice().sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kat)}</td><td>${esc(x.ket)}</td><td class="text-end">${money(x.jumlah)}</td></tr>`).join('')||'<tr><td colspan="4">Tidak ada biaya</td></tr>';
-     return `<details class="border rounded p-3 mb-2"><summary class="fw-semibold">${esc(label(k))} <span class="text-muted fw-normal">· ${g.trx.length} transaksi · Pendapatan ${money(rev)} · Biaya ${money(cost)} · Bersih ${money(rev-cost)}</span></summary><div class="table-responsive mt-3"><h6>Rincian Transaksi</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kode</th><th>Pelanggan</th><th>Status</th><th class="text-end">Total</th></tr></thead><tbody>${trxRows}</tbody></table><h6 class="mt-3">Biaya Operasional</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th class="text-end">Jumlah</th></tr></thead><tbody>${biaRows}</tbody></table></div></details>`;
+     return `<details class="border rounded p-3 mb-2"><summary class="fw-semibold">${esc(label(k))} <span class="text-muted fw-normal">• ${g.trx.length} transaksi • Pendapatan ${money(rev)} • Biaya ${money(cost)} • Bersih ${money(rev-cost)}</span></summary><div class="table-responsive mt-3"><h6>Rincian Transaksi</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kode</th><th>Pelanggan</th><th>Status</th><th class="text-end">Total</th></tr></thead><tbody>${trxRows}</tbody></table><h6 class="mt-3">Biaya Operasional</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th class="text-end">Jumlah</th></tr></thead><tbody>${biaRows}</tbody></table></div></details>`;
    }).join('');
  }
  root.addEventListener('click',e=>{const b=e.target.closest('[data-rekap]');if(b){jenis=b.dataset.rekap;render();}});
@@ -474,11 +493,9 @@ function render(){
 
   const act=[...trx.map(x=>({tgl:x.tgl,ic:'receipt',j:'Transaksi #'+x.kode,n:x.total,o:x.kasir})),
     ...bia.map(b=>({tgl:b.tgl,ic:'wallet2',j:'Biaya '+b.kat,n:b.jumlah,o:b.oleh}))].sort((a,b)=>b.tgl.localeCompare(a.tgl)).slice(0,6);
-  $('d-act').innerHTML=act.map(a=>`<div class="activity-item"><div class="activity-icon"><i class="bi bi-${a.ic}"></i></div><div><div class="activity-title">${a.j}</div><div class="activity-subtitle">${rp(a.n)} · ${a.o}</div></div><div class="activity-time">${a.tgl}</div></div>`).join('')||'<div class="empty-state">Belum ada aktivitas</div>';
+  $('d-act').innerHTML=act.map(a=>`<div class="activity-item"><div class="activity-icon"><i class="bi bi-${a.ic}"></i></div><div><div class="activity-title">${a.j}</div><div class="activity-subtitle">${rp(a.n)} • ${a.o}</div></div><div class="activity-time">${a.tgl}</div></div>`).join('')||'<div class="empty-state">Belum ada aktivitas</div>';
 
   const L=[['Harian','Rekap transaksi & pendapatan per hari','harian','calendar-day'],['Mingguan','Ringkasan 7 hari terakhir','mingguan','calendar-week'],['Bulanan','Rekap pendapatan & biaya bulanan','bulanan','calendar-month'],['Tahunan','Ikhtisar kinerja satu tahun penuh','tahunan','calendar3']];
-  $('l-cards').innerHTML=L.map(l=>`<div class="col-xl-3 col-md-6"><div class="stat-card"><div class="stat-icon"><i class="bi bi-${l[3]}"></i></div><div class="card-title">Laporan ${l[0]}</div><div class="text-muted small mb-3">${l[1]}</div><button class="btn btn-sm btn-outline-primary" onclick="unduh('${l[2]}')"><i class="bi bi-download"></i> Unduh PDF</button></div></div>`).join('');
-
   $('p-stat').innerHTML=stat('cash-stack','Pendapatan Hari Ini',rp(hari))+stat('calendar3','Pendapatan Bulan Ini',rp(bln))+stat('graph-up-arrow','Rata-rata / Hari',rp(bln/30),'dari 30 hari')+stat('receipt','Transaksi Bulan Ini',jmlTrx);
   chart('c-30','line',t30.map(x=>x.tgl.slice(5)),[{data:t30.map(x=>x.total)}]);
   const pl={};trx.filter(x=>x.lunas&&x.tgl.startsWith(ym)).forEach(x=>pl[x.lay]=(pl[x.lay]||0)+x.total);
@@ -530,79 +547,258 @@ function renderTrx(){
   $('r-info').textContent=`Menampilkan ${Math.min(r.length,50)} dari ${r.length} transaksi`;
 }
 
-/* ===== Laporan PDF (dialog cetak) & Ekspor Excel (CSV) ===== */
-function unduh(j){
-  const pad=n=>String(n).padStart(2,'0');
-  const fmt=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-  const groups=new Map();
+/* ===== Laporan PDF berdasarkan jenis dan rentang tanggal ===== */
+function unduh(){
+  const jenisEl = $('laporanJenis');
+  const mulaiEl = $('laporanMulai');
+  const akhirEl = $('laporanAkhir');
+  const pesan = $('laporanPesan');
 
-  const keyOf=(date)=>{
-    if(j==='harian') return date;
-    if(j==='bulanan') return date.slice(0,7);
-    if(j==='tahunan') return date.slice(0,4);
-    const d=new Date(date+'T12:00:00');
+  const jenis = jenisEl.value;
+  const awal = mulaiEl.value;
+  const akhir = akhirEl.value;
+
+  pesan.textContent = '';
+  pesan.className = 'small mt-3';
+
+  if(!awal || !akhir){
+    pesan.textContent = 'Pilih tanggal mulai dan tanggal akhir terlebih dahulu.';
+    pesan.classList.add('text-danger');
+    return;
+  }
+  if(awal > akhir){
+    pesan.textContent = 'Tanggal mulai tidak boleh melewati tanggal akhir.';
+    pesan.classList.add('text-danger');
+    return;
+  }
+
+  const trxLaporan = trx.filter(x => x.tgl && x.tgl >= awal && x.tgl <= akhir);
+  const biaLaporan = bia.filter(x => x.tgl && x.tgl >= awal && x.tgl <= akhir);
+
+  if(!trxLaporan.length && !biaLaporan.length){
+    pesan.textContent = 'Tidak ada transaksi atau biaya pada rentang tanggal tersebut.';
+    pesan.classList.add('text-warning');
+    return;
+  }
+
+  const pad = n => String(n).padStart(2,'0');
+  const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const esc = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const total = (arr, field) => arr.reduce((n,x)=>n+(Number(x[field])||0),0);
+
+  const keyOf = date => {
+    if(jenis === 'harian') return date;
+    if(jenis === 'bulanan') return date.slice(0,7);
+    if(jenis === 'tahunan') return date.slice(0,4);
+    const d = new Date(date+'T12:00:00');
     d.setDate(d.getDate()-((d.getDay()+6)%7));
     return fmt(d);
   };
 
-  const labelOf=k=>{
-    if(j==='harian') return k;
-    if(j==='mingguan'){
-      const d=new Date(k+'T12:00:00');
+  const labelOf = key => {
+    if(jenis === 'harian') return key;
+    if(jenis === 'mingguan'){
+      const d = new Date(key+'T12:00:00');
       d.setDate(d.getDate()+6);
-      return `${k} s.d. ${fmt(d)}`;
+      return key+' s.d. '+fmt(d);
     }
-    if(j==='bulanan'){
-      const [y,m]=k.split('-').map(Number);
+    if(jenis === 'bulanan'){
+      const [y,m] = key.split('-').map(Number);
       return new Date(y,m-1,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});
     }
-    return 'Tahun '+k;
+    return 'Tahun '+key;
   };
 
-  const add=(k,type,x)=>{
-    if(!groups.has(k)) groups.set(k,{trx:[],bia:[]});
-    groups.get(k)[type].push(x);
+  const groups = new Map();
+  const add = (key,type,item) => {
+    if(!groups.has(key)) groups.set(key,{trx:[],bia:[]});
+    groups.get(key)[type].push(item);
   };
 
-  trx.forEach(x=>{
-    if(!x.tgl) return;
-    add(keyOf(x.tgl),'trx',x);
-  });
-  bia.forEach(x=>{
-    if(!x.tgl) return;
-    add(keyOf(x.tgl),'bia',x);
-  });
+  trxLaporan.forEach(x => add(keyOf(x.tgl),'trx',x));
+  biaLaporan.forEach(x => add(keyOf(x.tgl),'bia',x));
 
-  const rows=[...groups.entries()].sort((a,b)=>b[0].localeCompare(a[0]));
-  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const total=(arr,field)=>arr.reduce((n,x)=>n+(Number(x[field])||0),0);
-  const html=rows.map(([k,g])=>{
-    const paid=g.trx.filter(x=>x.lunas);
-    const rev=total(paid,'total');
-    const cost=total(g.bia,'jumlah');
-    return `<h3>${esc(labelOf(k))}</h3>
-      <p>Jumlah transaksi: ${g.trx.length} · Lunas: ${paid.length}</p>
-      <p>Pendapatan: ${rp(rev)} · Biaya: ${rp(cost)} · Keuntungan bersih: ${rp(rev-cost)}</p>
-      <table><tr><th>Tanggal</th><th>Kode transaksi</th><th>Pelanggan</th><th>Status</th><th>Total</th></tr>
-      ${g.trx.map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kode)}</td><td>${esc(x.pel)}</td><td>${x.lunas?'LUNAS':'BELUM LUNAS'}</td><td>${rp(x.total)}</td></tr>`).join('')||'<tr><td colspan="5">Tidak ada transaksi</td></tr>'}</table>
-      <table><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th>Jumlah</th></tr>
-      ${g.bia.map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kat)}</td><td>${esc(x.ket)}</td><td>${rp(x.jumlah)}</td></tr>`).join('')||'<tr><td colspan="4">Tidak ada biaya operasional</td></tr>'}</table>`;
+  const rows = [...groups.entries()].sort((a,b)=>a[0].localeCompare(b[0]));
+  const isi = rows.map(([key,g]) => {
+    const lunas = g.trx.filter(x=>x.lunas);
+    const pendapatan = total(lunas,'total');
+    const biaya = total(g.bia,'jumlah');
+
+    return `
+      <h3>${esc(labelOf(key))}</h3>
+      <p>Jumlah transaksi: ${g.trx.length} | Lunas: ${lunas.length}</p>
+      <p>Pendapatan: ${rp(pendapatan)} | Biaya operasional: ${rp(biaya)} | Keuntungan bersih: ${rp(pendapatan-biaya)}</p>
+      <h4>Rincian Transaksi</h4>
+      <table>
+        <thead><tr><th>Tanggal</th><th>Kode Transaksi</th><th>Pelanggan</th><th>Layanan</th><th>Kasir</th><th>Status</th><th>Total</th></tr></thead>
+        <tbody>${g.trx.map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kode)}</td><td>${esc(x.pel)}</td><td>${esc(x.lay)}</td><td>${esc(x.kasir)}</td><td>${x.lunas?'LUNAS':'BELUM LUNAS'}</td><td>${rp(x.total)}</td></tr>`).join('') || '<tr><td colspan="7">Tidak ada transaksi</td></tr>'}</tbody>
+      </table>
+      <h4>Rincian Biaya Operasional</h4>
+      <table>
+        <thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th>Jumlah</th></tr></thead>
+        <tbody>${g.bia.map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kat)}</td><td>${esc(x.ket)}</td><td>${rp(x.jumlah)}</td></tr>`).join('') || '<tr><td colspan="4">Tidak ada biaya operasional</td></tr>'}</tbody>
+      </table>`;
   }).join('');
 
-  if(!rows.length){alert('Belum ada data untuk laporan ini.');return;}
-  const title=({harian:'Harian',mingguan:'Mingguan',bulanan:'Bulanan',tahunan:'Tahunan'})[j]||'Laporan';
-  const w=window.open('','_blank');
-  if(!w){alert('Izinkan pop-up agar laporan bisa dicetak atau disimpan sebagai PDF.');return;}
-  w.document.write(`<html><head><meta charset="UTF-8"><title>Laporan ${title} Amih Laundry</title>
-  <style>body{font-family:Arial,sans-serif;color:#1f2937;padding:24px}h2{color:#164e8b}h3{margin-top:28px;background:#eaf3ff;padding:10px}table{border-collapse:collapse;width:100%;margin:10px 0 20px;font-size:12px}td,th{border:1px solid #ccd;padding:7px;text-align:left}th{background:#f1f5f9}p{font-size:13px}@media print{body{padding:0}h3{break-after:avoid}table{break-inside:avoid}}</style>
-  </head><body><h2>Amih Laundry — Laporan ${title}</h2><p>Rekap otomatis dari seluruh data periode yang tersedia.</p>${html}</body></html>`);
-  w.document.close();w.focus();setTimeout(()=>w.print(),500);
+  const dataGrafik = rows.map(([k,g])=>({
+    label: String(labelOf(k)),
+    pendapatan: total(g.trx.filter(x=>x.lunas),'total'),
+    biaya: total(g.bia,'jumlah')
+  }));
+  const nilaiMaks = Math.max(1,...dataGrafik.flatMap(d=>[d.pendapatan,d.biaya]));
+  const formatGrafik = n => {
+    n = Number(n)||0;
+    if(n>=1000000) return 'Rp'+(n/1000000).toLocaleString('id-ID',{maximumFractionDigits:1})+' jt';
+    if(n>=1000) return 'Rp'+(n/1000).toLocaleString('id-ID',{maximumFractionDigits:1})+' rb';
+    return 'Rp'+n.toLocaleString('id-ID');
+  };
+  const singkat = s => s.length>13 ? s.slice(0,12)+'…' : s;
+  const jumlahData = Math.max(1,dataGrafik.length);
+  const plotX = 62, plotY = 42, plotW = 790, plotH = 190;
+  const jarak = plotW/jumlahData;
+  const barW = Math.min(24,jarak*0.25);
+  const skalaY = n => plotY+plotH-(n/nilaiMaks)*plotH;
+  const garisGrid = [0,1,2,3,4].map(i=>{
+    const y=plotY+i*plotH/4;
+    const val=nilaiMaks*(1-i/4);
+    return `<line x1="${plotX}" y1="${y}" x2="${plotX+plotW}" y2="${y}" stroke="#e2e8f0"/>
+      <text x="${plotX-8}" y="${y+4}" text-anchor="end" font-size="10" fill="#64748b">${formatGrafik(val)}</text>`;
+  }).join('');
+  const batang = dataGrafik.map((d,i)=>{
+    const cx=plotX+jarak*(i+0.5);
+    const hp=plotY+plotH-skalaY(d.pendapatan);
+    const hb=plotY+plotH-skalaY(d.biaya);
+    return `<rect x="${cx-barW-2}" y="${skalaY(d.pendapatan)}" width="${barW}" height="${Math.max(0,hp)}" rx="3" fill="#3478d4">
+      <title>${esc(d.label)} — Pendapatan ${formatGrafik(d.pendapatan)}</title></rect>
+      <rect x="${cx+2}" y="${skalaY(d.biaya)}" width="${barW}" height="${Math.max(0,hb)}" rx="3" fill="#f0a23b">
+      <title>${esc(d.label)} — Biaya ${formatGrafik(d.biaya)}</title></rect>
+      <text x="${cx}" y="${plotY+plotH+17}" text-anchor="middle" font-size="10" fill="#475569">${esc(singkat(d.label))}</text>`;
+  }).join('');
+  const totalPendapatanGrafik=dataGrafik.reduce((s,d)=>s+d.pendapatan,0);
+  const totalBiayaGrafik=dataGrafik.reduce((s,d)=>s+d.biaya,0);
+  const totalDonat=Math.max(1,totalPendapatanGrafik+totalBiayaGrafik);
+  const persenPendapatan=totalPendapatanGrafik/totalDonat*100;
+  const persenBiaya=100-persenPendapatan;
+  const keliling=2*Math.PI*48;
+  const panjangDonat=keliling*persenPendapatan/100;
+  const sisaDonat=keliling-panjangDonat;
+
+  const trendX=55, trendY=335, trendW=405, trendH=100;
+  const nilaiTrendMaks=Math.max(1,...dataGrafik.map(d=>d.pendapatan));
+  const tx=i=>dataGrafik.length===1?trendX+trendW/2:trendX+i*trendW/(dataGrafik.length-1);
+  const ty=n=>trendY+trendH-(n/nilaiTrendMaks)*trendH;
+  const garisTrendGrid=[0,1,2,3].map(i=>{
+    const y=trendY+i*trendH/3;
+    return `<line x1="${trendX}" y1="${y}" x2="${trendX+trendW}" y2="${y}" stroke="#e2e8f0" stroke-dasharray="3 3"/>`;
+  }).join('');
+  const titikGaris=dataGrafik.map((d,i)=>`${tx(i)},${ty(d.pendapatan)}`).join(' ');
+  const titik=dataGrafik.map((d,i)=>`
+    <circle cx="${tx(i)}" cy="${ty(d.pendapatan)}" r="4" fill="#0f9d8a">
+      <title>${esc(d.label)}: ${formatGrafik(d.pendapatan)}</title>
+    </circle>
+    <text x="${tx(i)}" y="${trendY+trendH+17}" text-anchor="middle" font-size="9" fill="#64748b">${esc(singkat(d.label))}</text>
+  `).join('');
+
+  const grafikBisnis = `
+    <svg viewBox="0 0 900 510" width="100%" role="img" aria-label="Grafik laporan Amih Laundry">
+      <rect x="1" y="1" width="898" height="508" rx="12" fill="#fff" stroke="#e2e8f0"/>
+      <text x="28" y="32" font-size="17" font-weight="bold" fill="#1e293b">Pendapatan dan Biaya Operasional</text>
+      ${garisGrid}
+      ${batang}
+      <line x1="${plotX}" y1="${plotY+plotH}" x2="${plotX+plotW}" y2="${plotY+plotH}" stroke="#94a3b8"/>
+      <rect x="290" y="260" width="12" height="12" rx="3" fill="#3478d4"/>
+      <text x="309" y="270" font-size="12" fill="#475569">Pendapatan</text>
+      <rect x="405" y="260" width="12" height="12" rx="3" fill="#f0a23b"/>
+      <text x="424" y="270" font-size="12" fill="#475569">Biaya operasional</text>
+      <line x1="24" y1="290" x2="876" y2="290" stroke="#e2e8f0"/>
+
+      <text x="28" y="317" font-size="16" font-weight="bold" fill="#1e293b">Tren Pendapatan</text>
+      ${garisTrendGrid}
+      <line x1="${trendX}" y1="${trendY}" x2="${trendX}" y2="${trendY+trendH}" stroke="#94a3b8"/>
+      <line x1="${trendX}" y1="${trendY+trendH}" x2="${trendX+trendW}" y2="${trendY+trendH}" stroke="#94a3b8"/>
+      <polyline points="${titikGaris}" fill="none" stroke="#0f9d8a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+      ${titik}
+
+      <text x="530" y="317" font-size="16" font-weight="bold" fill="#1e293b">Komposisi Total</text>
+      <circle cx="665" cy="390" r="48" fill="none" stroke="#f0a23b" stroke-width="18"/>
+      <circle cx="665" cy="390" r="48" fill="none" stroke="#3478d4" stroke-width="18"
+        stroke-dasharray="${panjangDonat} ${sisaDonat}" transform="rotate(-90 665 390)"/>
+      <text x="665" y="386" text-anchor="middle" font-size="12" fill="#334155">Pendapatan</text>
+      <text x="665" y="402" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">${Math.round(persenPendapatan)}%</text>
+
+      <circle cx="535" cy="465" r="5" fill="#3478d4"/>
+      <text x="547" y="469" font-size="11" fill="#475569">Pendapatan: ${formatGrafik(totalPendapatanGrafik)}</text>
+      <circle cx="535" cy="485" r="5" fill="#f0a23b"/>
+      <text x="547" y="489" font-size="11" fill="#475569">Biaya operasional: ${formatGrafik(totalBiayaGrafik)}</text>
+    </svg>`;
+  const namaJenis = {harian:'Harian',mingguan:'Mingguan',bulanan:'Bulanan',tahunan:'Tahunan'}[jenis];
+  const w = window.open('','_blank');
+  if(!w){
+    pesan.textContent = 'Pop-up diblokir. Izinkan pop-up untuk mengunduh laporan PDF.';
+    pesan.classList.add('text-danger');
+    return;
+  }
+
+  w.document.write(`<!doctype html>
+  <html lang="id"><head><meta charset="UTF-8">
+  <title>Laporan ${namaJenis} - Amih Laundry</title>
+  <style>
+    body{font-family:Arial,sans-serif;color:#1f2937;padding:24px}
+    .kop{display:flex;align-items:center;justify-content:center;gap:18px;text-align:left;margin-bottom:16px}
+    .kop img{width:85px;height:85px;object-fit:contain}
+    .kop h2{color:#164e8b;margin:0 0 6px}
+    .kop p{font-size:11px;line-height:1.6;margin:0}
+    h3{margin-top:28px;background:#eaf3ff;padding:10px}
+    h4{margin-top:20px}
+    table{border-collapse:collapse;width:100%;margin:10px 0 22px;font-size:11px}
+    td,th{border:1px solid #ccd;padding:7px;text-align:left;overflow-wrap:anywhere}
+    th{background:#f1f5f9}
+    .info{font-size:13px;line-height:1.7}
+    @media print{body{padding:0}h3{break-after:avoid}table{break-inside:auto}tr{break-inside:avoid}}
+  </style></head><body>
+  <header class="kop">
+    <img src="${new URL('/logo-amih-laundry.png',location.href).href}" alt="Logo Amih Laundry">
+    <div>
+      <h2>AMIH LAUNDRY</h2>
+      <p>Kp. Simpang, RT.01/RW.16, Panundaan, Kec. Ciwidey,<br>
+      Kabupaten Bandung, Jawa Barat 40973</p>
+    </div>
+  </header>
+  <hr>
+  <h3>Laporan ${namaJenis}</h3>
+  <div class="info">
+    <div>Periode: ${esc(awal)} s.d. ${esc(akhir)}</div>
+    <div>Tanggal dibuat: ${esc(fmt(new Date()))}</div>
+    <div>Jumlah transaksi: ${trxLaporan.length}</div>
+    <div>Pendapatan dari transaksi lunas: ${rp(total(trxLaporan.filter(x=>x.lunas),'total'))}</div>
+    <div>Total biaya operasional: ${rp(total(biaLaporan,'jumlah'))}</div>
+    <div>Keuntungan bersih: ${rp(total(trxLaporan.filter(x=>x.lunas),'total')-total(biaLaporan,'jumlah'))}</div>
+  </div>
+  <h3>Visualisasi Laporan</h3>
+  <p style="font-size:11px;color:#64748b">Grafik berdasarkan data dan periode yang dipilih.</p>
+  ${grafikBisnis}
+  ${isi}
+  </body></html>`);
+  w.document.close();
+  w.focus();
+  setTimeout(()=>w.print(),500);
 }
 $('xls').onclick=()=>{
   const csv='\ufeffKode,Tanggal,Pelanggan,Layanan,Kasir,Total,Status\n'+rows().map(x=>[x.kode,x.tgl,x.pel,x.lay,x.kasir,x.total,(x.lunas?'Lunas':'Belum bayar')+' / '+cap(x.pr)].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='riwayat-transaksi.csv';a.click();
 };
 
+/* Default tanggal laporan Owner */
+(function(){
+  const elAwal = document.getElementById('laporanMulai');
+  const elAkhir = document.getElementById('laporanAkhir');
+  if(!elAwal || !elAkhir) return;
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const today = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  elAwal.value = today;
+  elAkhir.value = today;
+})();
 /* ===== Event & muat data ===== */
 function showErr(e){const b=$('err');b.classList.remove('d-none');b.textContent='Gagal memuat data: '+e.message}
 document.querySelectorAll('.menu-link[data-page]').forEach(l=>l.addEventListener('click',e=>{
@@ -644,7 +840,7 @@ Promise.all([getAll('/transaksi'),getAll('/biaya-operasional')]).then(([t,b])=>{
  };
  const label=k=>{
    if(jenis==='harian')return dateFmt(k);
-   if(jenis==='mingguan'){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()+6);return dateFmt(k)+' – '+dateFmt(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
+   if(jenis==='mingguan'){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()+6);return dateFmt(k)+' Ã¢â‚¬â€œ '+dateFmt(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
    if(jenis==='bulanan'){const [y,m]=k.split('-').map(Number);return new Date(y,m-1,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});}
    return 'Tahun '+k;
  };
@@ -660,7 +856,7 @@ Promise.all([getAll('/transaksi'),getAll('/biaya-operasional')]).then(([t,b])=>{
      const paid=g.trx.filter(x=>x.lunas),rev=paid.reduce((s,x)=>s+(Number(x.total)||0),0),cost=g.bia.reduce((s,x)=>s+(Number(x.jumlah)||0),0);
      const trxRows=g.trx.slice().sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kode)}</td><td>${esc(x.pel)}</td><td>${x.lunas?'Lunas':'Belum bayar'}</td><td class="text-end">${money(x.total)}</td></tr>`).join('')||'<tr><td colspan="5">Tidak ada transaksi</td></tr>';
      const biaRows=g.bia.slice().sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kat)}</td><td>${esc(x.ket)}</td><td class="text-end">${money(x.jumlah)}</td></tr>`).join('')||'<tr><td colspan="4">Tidak ada biaya</td></tr>';
-     return `<details class="border rounded p-3 mb-2"><summary class="fw-semibold">${esc(label(k))} <span class="text-muted fw-normal">· ${g.trx.length} transaksi · Pendapatan ${money(rev)} · Biaya ${money(cost)} · Bersih ${money(rev-cost)}</span></summary><div class="table-responsive mt-3"><h6>Rincian Transaksi</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kode</th><th>Pelanggan</th><th>Status</th><th class="text-end">Total</th></tr></thead><tbody>${trxRows}</tbody></table><h6 class="mt-3">Biaya Operasional</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th class="text-end">Jumlah</th></tr></thead><tbody>${biaRows}</tbody></table></div></details>`;
+     return `<details class="border rounded p-3 mb-2"><summary class="fw-semibold">${esc(label(k))} <span class="text-muted fw-normal">• ${g.trx.length} transaksi • Pendapatan ${money(rev)} • Biaya ${money(cost)} • Bersih ${money(rev-cost)}</span></summary><div class="table-responsive mt-3"><h6>Rincian Transaksi</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kode</th><th>Pelanggan</th><th>Status</th><th class="text-end">Total</th></tr></thead><tbody>${trxRows}</tbody></table><h6 class="mt-3">Biaya Operasional</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th class="text-end">Jumlah</th></tr></thead><tbody>${biaRows}</tbody></table></div></details>`;
    }).join('');
  }
  root.addEventListener('click',e=>{const b=e.target.closest('[data-rekap]');if(b){jenis=b.dataset.rekap;render();}});
@@ -670,3 +866,7 @@ Promise.all([getAll('/transaksi'),getAll('/biaya-operasional')]).then(([t,b])=>{
 </script>
 </body>
 </html>
+
+
+
+

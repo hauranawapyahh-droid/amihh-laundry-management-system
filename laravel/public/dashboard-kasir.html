@@ -2370,7 +2370,7 @@ async function loadPelanggan() {
               <small class="text-muted">
                 ${item.berat_jumlah}
                 ${escapeHtml(item.jenis_satuan)}
-                Ã—
+                —
                 ${formatRupiah(item.harga_satuan)}
               </small>
 
@@ -3536,7 +3536,12 @@ async function loadPelanggan() {
     }
     body {
       padding: 2mm 0;
-      overflow-wrap: anywhere;
+      overflow-wrap: normal;
+    }
+    .section {
+      white-space: nowrap !important;
+      word-break: keep-all !important;
+      overflow-wrap: normal !important;
     }
     h2 {
       font-size: 17px;
@@ -3573,7 +3578,8 @@ async function loadPelanggan() {
     }
     .row > :last-child {
       text-align: right;
-      overflow-wrap: anywhere;
+      overflow-wrap: normal;
+      word-break: normal;
     }
     .total {
       font-size: 12px;
@@ -3687,7 +3693,7 @@ async function loadPelanggan() {
       const paymentRows = payments.length
         ? payments.map((p, index) => `
           <div class="row">
-            <span>Pembayaran ${index + 1} - Metode</span>
+            <span>Metode</span>
             <strong>${metodeLabel(p.metode_pembayaran)}</strong>
           </div>
           <div class="row">
@@ -3720,6 +3726,11 @@ async function loadPelanggan() {
         <div class="center">
           <img src="/logo-amih-laundry.png" alt="Logo Amih Laundry" style="display:block;width:64px;height:64px;object-fit:contain;margin:0 auto 5px">
           <h2>AMIH LAUNDRY</h2>
+<div class="alamat-laundry" style="font-size:10px;line-height:1.4;text-align:center;margin:4px auto 6px;max-width:270px;">
+  Kp. Simpang, RT.01/RW.16, Panundaan,<br>
+  Kec. Ciwidey, Kabupaten Bandung,<br>
+  Jawa Barat 40973
+</div>
           <div class="muted">STRUK TRANSAKSI LAUNDRY</div>
           <div class="line"></div>
         </div>
@@ -3737,7 +3748,7 @@ async function loadPelanggan() {
         </table>
         <div class="line"></div>
         <div class="row total"><span>TOTAL TAGIHAN</span><span>${rupiah(trx.total_harga)}</span></div>
-        <div class="section">INFORMASI PEMBAYARAN</div>
+        <div class="section" style="display:block;width:100%;font-size:9px;letter-spacing:0;white-space:nowrap;word-break:normal;overflow-wrap:normal;">INFORMASI PEMBAYARAN</div>
         ${paymentRows}
         <div class="row"><span>Status pembayaran transaksi</span><strong>${safe(statusBayar)}</strong></div>
         <div class="section">STATUS CUCIAN</div>
@@ -3778,7 +3789,7 @@ async function loadPelanggan() {
           <div class="card-title mb-3">Informasi Pembayaran</div>
           ${payments.length ? payments.map((p, index) => `
             <div class="border rounded p-3 mb-3">
-              <div class="fw-semibold mb-2">Pembayaran ${index + 1}</div>
+              <div class="fw-semibold mb-2" style="white-space: nowrap;">Pembayaran ${index + 1}</div>
               <div class="summary-row"><span>Metode</span><strong>${metodeLabel(p.metode_pembayaran)}</strong></div>
               <div class="summary-row"><span>Jumlah dibayar</span><strong>${rupiah(p.jumlah_bayar)}</strong></div>
               <div class="summary-row"><span>Kembalian</span><strong>${rupiah(p.kembalian)}</strong></div>
@@ -4136,3 +4147,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 </body>
 </html>
+
+
+
+
+
+
