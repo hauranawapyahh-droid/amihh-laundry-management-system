@@ -16,10 +16,21 @@ class TransaksiController extends Controller
 {
     public function index()
     {
-        $data = Transaksi::with([
+        $user = auth()->user();
+
+        $query = Transaksi::with([
             'pelanggan', 'kasir', 'verifikator',
             'detail.layanan', 'pembayaran', 'prosesCucian.staff'
-        ])->orderByDesc('id_transaksi')->get();
+        ]);
+
+        if ($user && $user->role === 'CUSTOMER') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kamu tidak memiliki akses ke fitur ini',
+            ], 403);
+        }
+
+        $data = $query->orderByDesc('id_transaksi')->get();
 
         return response()->json([
             'success' => true,
@@ -29,6 +40,15 @@ class TransaksiController extends Controller
 
     public function show($id)
     {
+        $user = auth()->user();
+
+        if ($user && $user->role === 'CUSTOMER') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kamu tidak memiliki akses ke fitur ini',
+            ], 403);
+        }
+
         $transaksi = Transaksi::with([
             'pelanggan', 'kasir', 'verifikator',
             'detail.layanan', 'pembayaran', 'prosesCucian.staff'
