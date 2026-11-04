@@ -18,6 +18,7 @@ class Pelanggan extends Model
     const UPDATED_AT = null;
 
     protected $fillable = [
+        'id_user',
         'nama',
         'no_telepon',
         'alamat',

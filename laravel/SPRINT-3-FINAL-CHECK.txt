@@ -1,0 +1,190 @@
+﻿===== AUTOMATED TESTS =====
+PASS  Tests\Unit\ExampleTest
+  Γ£ô that true is true                                                                                    0.02s  
+
+
+
+
+
+
+
+
+
+
+   PASS  Tests\Feature\ApiSecurityTest
+  Γ£ô login rejects missing credentials                                                                    0.70s  
+  Γ£ô customer dashboard rejects missing token                                                             0.11s  
+  Γ£ô user management rejects missing token                                                                0.05s  
+  Γ£ô login rejects invalid credentials                                                                    0.11s  
+  Γ£ô transaction list rejects missing token                                                               0.05s  
+  Γ£ô reports reject missing token                                                                         0.05s  
+  Γ£ô laundry process rejects missing token                                                                0.05s  
+  Γ£ô customer password change rejects missing token                                                       0.05s  
+  Γ£ô role middleware rejects wrong role                                                                   0.08s  
+
+
+   PASS  Tests\Feature\ExampleTest
+  Γ£ô the application returns a successful response                                                        0.13s  
+
+
+
+
+   PASS  Tests\Feature\Sprint3ErrorHandlingTest
+  Γ£ô api validation error returns 422 json                                                                0.05s  
+  Γ£ô unknown api endpoint returns 404 json                                                                0.04s  
+  Γ£ô unexpected api exception returns safe 500 json                                                       0.06s  
+
+  Tests:    14 passed (24 assertions)
+  Duration: 2.04s
+EXIT CODE: 0
+
+===== PHP SYNTAX =====
+LULUS: 67 file PHP tanpa syntax error.
+EXIT CODE: 0
+
+===== API ROUTES =====
+POST      api/auth/login .............................................................. AuthController@login
+  GET|HEAD  api/auth/me .................................................................... AuthController@me
+  GET|HEAD  api/biaya-operasional ........................................... BiayaOperasionalController@index
+  POST      api/biaya-operasional ........................................... BiayaOperasionalController@store
+  PUT       api/biaya-operasional/{id} ..................................... BiayaOperasionalController@update
+  DELETE    api/biaya-operasional/{id} .................................... BiayaOperasionalController@destroy
+  GET|HEAD  api/customer/dashboard .............................................. CustomerController@dashboard
+  PUT       api/customer/password ............................................ CustomerController@ubahPassword
+  POST      api/customer/transaksi/{id}/bukti-pembayaran ...................... CustomerController@unggahBukti
+  GET|HEAD  api/laporan/biaya ........................................................ LaporanController@biaya
+  GET|HEAD  api/laporan/keuntungan .............................................. LaporanController@keuntungan
+  GET|HEAD  api/laporan/pendapatan .............................................. LaporanController@pendapatan
+  GET|HEAD  api/layanan .............................................................. LayananController@index
+  POST      api/layanan .............................................................. LayananController@store
+  GET|HEAD  api/layanan/{id} .......................................................... LayananController@show
+  PUT       api/layanan/{id} ........................................................ LayananController@update
+  DELETE    api/layanan/{id} ....................................................... LayananController@destroy
+  GET|HEAD  api/owner/biaya ............................................................ OwnerController@biaya
+  GET|HEAD  api/owner/overview ...................................................... OwnerController@overview
+  GET|HEAD  api/owner/transaksi .................................................... OwnerController@transaksi
+  GET|HEAD  api/pelanggan .......................................................... PelangganController@index
+  POST      api/pelanggan .......................................................... PelangganController@store
+  POST      api/pelanggan-umum ............................................. PelangganController@pelangganUmum
+  GET|HEAD  api/pelanggan/{id} ...................................................... PelangganController@show
+  PUT       api/pelanggan/{id} .................................................... PelangganController@update
+  DELETE    api/pelanggan/{id} ................................................... PelangganController@destroy
+  GET|HEAD  api/pembayaran/menunggu ............................................ PembayaranController@menunggu
+  POST      api/pembayaran/{id}/verifikasi ................................... PembayaranController@verifikasi
+  GET|HEAD  api/pengguna ............................................................ PenggunaController@index
+  POST      api/pengguna ............................................................ PenggunaController@store
+  PUT       api/pengguna/{id} ...................................................... PenggunaController@update
+  DELETE    api/pengguna/{id} ..................................................... PenggunaController@destroy
+  PUT       api/pengguna/{id}/reset-password ................................ PenggunaController@resetPassword
+  GET|HEAD  api/proses-cucian ............................................... TransaksiController@prosesCucian
+  GET|HEAD  api/transaksi .......................................................... TransaksiController@index
+  POST      api/transaksi .......................................................... TransaksiController@store
+  GET|HEAD  api/transaksi/{id} ...................................................... TransaksiController@show
+  POST      api/transaksi/{id}/pembayaran ..................................... TransaksiController@pembayaran
+  POST      api/transaksi/{id}/proses ....................................... TransaksiController@updateProses
+
+                                                                                           Showing [39] routes
+EXIT CODE: 0
+
+===== MIGRATIONS =====
+Migration name .............................................................................. Batch / Status  
+  2019_12_14_000001_create_personal_access_tokens_table .............................................. [1] Ran  
+  2026_10_21_020343_add_bukti_pembayaran_to_pembayaran_table ......................................... [1] Ran
+EXIT CODE: 0
+
+===== RESPONSIVE STATIC CHECK =====
+OK | public\index.html | viewport=True | media-query=True
+OK | public\login.html | viewport=True | media-query=True
+OK | public\dashboard-admin.html | viewport=True | media-query=True
+OK | public\dashboard-kasir.html | viewport=True | media-query=True
+OK | public\dashboard-customer.html | viewport=True | media-query=True
+OK | public\dashboard-owner.html | viewport=True | media-query=True
+OK | public\dashboard-staff.html | viewport=True | media-query=True
+EXIT CODE: 0
+
+===== COMPOSER SECURITY AUDIT =====
+Found 5 security vulnerability advisories affecting 1 package:
++-------------------+----------------------------------------------------------------------------------+
+| Package           | laravel/framework                                                                |
+| Severity          | critical                                                                         |
+| Advisory ID       | PKSA-b41t-wbzk-9q51                                                              |
+| CVE               | CVE-2026-114509                                                                  |
+| Title             | Laravel TokenGuard authentication bypass through non-string API credentials      |
+| URL               | https://github.com/advisories/GHSA-f9x3-7vq9-cph6                                |
+| Affected versions | <12.68.0|>=13.0.0,<13.29.0                                                       |
+| Reported at       | 2026-10-23T21:50:27+00:00                                                        |
++-------------------+----------------------------------------------------------------------------------+
++-------------------+----------------------------------------------------------------------------------+
+| Package           | laravel/framework                                                                |
+| Severity          | low                                                                              |
+| Advisory ID       | PKSA-d5tc-s1qs-h781                                                              |
+| CVE               | CVE-2026-102279                                                                  |
+| Title             | Laravel: XSS in Debug Page Information                                           |
+| URL               | https://github.com/advisories/GHSA-jh5r-qr3c-85q8                                |
+| Affected versions | >=13.0.0,<13.30.0|<12.69.0                                                       |
+| Reported at       | 2026-09-29T18:24:25+00:00                                                        |
++-------------------+----------------------------------------------------------------------------------+
++-------------------+----------------------------------------------------------------------------------+
+| Package           | laravel/framework                                                                |
+| Severity          | medium                                                                           |
+| Advisory ID       | PKSA-m5cs-t1y6-qpcs                                                              |
+| CVE               | NO CVE                                                                           |
+| Title             | Laravel Framework: Temporary Signed URL Path Confusion                           |
+| URL               | https://github.com/advisories/GHSA-crmm-hgp2-wgrp                                |
+| Affected versions | <12.61.1|>=13.0.0,<13.12.0                                                       |
+| Reported at       | 2026-06-17T13:54:13+00:00                                                        |
++-------------------+----------------------------------------------------------------------------------+
++-------------------+----------------------------------------------------------------------------------+
+| Package           | laravel/framework                                                                |
+| Severity          | high                                                                             |
+| Advisory ID       | PKSA-3r5d-mb8f-1qw9                                                              |
+| CVE               | NO CVE                                                                           |
+| Title             | Laravel Framework: CRLF injection in default email rule                          |
+| URL               | https://github.com/advisories/GHSA-5vg9-5847-vvmq                                |
+| Affected versions | <12.60.0|>=13.0.0,<=13.9.0                                                       |
+| Reported at       | 2026-06-17T13:53:44+00:00                                                        |
++-------------------+----------------------------------------------------------------------------------+
++-------------------+----------------------------------------------------------------------------------+
+| Package           | laravel/framework                                                                |
+| Severity          |                                                                                  |
+| Advisory ID       | PKSA-mdq4-51ck-6kdq                                                              |
+| CVE               | CVE-2026-48019                                                                   |
+| Title             | Laravel CRLF injection in default email rule                                     |
+| URL               | https://github.com/laravel/framework/security/advisories/GHSA-5vg9-5847-vvmq     |
+| Affected versions | >=9.0.0,<10.0.0|>=10.0.0,<11.0.0|>=11.0.0,<12.0.0|>=12.0.0,<12.60.0|>=13.0.0,<13 |
+|                   | .10.0                                                                            |
+| Reported at       | 2026-05-19T18:13:00+00:00                                                        |
++-------------------+----------------------------------------------------------------------------------+
+EXIT CODE: 1
+
+===== COMPOSER VALIDATION =====
+./composer.json is valid
+EXIT CODE: 0
+
+===== LARAVEL ABOUT =====
+Environment ................................................................................................  
+  Application Name .............................................................................. Amih Laundry  
+  Laravel Version .................................................................................... 10.50.4  
+  PHP Version ......................................................................................... 8.2.12  
+  Composer Version .................................................................................... 2.10.3  
+  Environment .......................................................................................... local  
+  Debug Mode ............................................................................................. OFF  
+  URL .............................................................................................. localhost  
+  Maintenance Mode ....................................................................................... OFF  
+
+  Cache ......................................................................................................  
+  Config .......................................................................................... NOT CACHED  
+  Events .......................................................................................... NOT CACHED  
+  Routes .......................................................................................... NOT CACHED  
+  Views ........................................................................................... NOT CACHED  
+
+  Drivers ....................................................................................................  
+  Broadcasting ........................................................................................... log  
+  Cache ................................................................................................. file  
+  Database ............................................................................................. mysql  
+  Logs ........................................................................................ stack / single  
+  Mail .................................................................................................. smtp  
+  Queue ................................................................................................. sync  
+  Session ............................................................................................... file
+EXIT CODE: 0
+

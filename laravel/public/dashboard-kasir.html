@@ -1546,6 +1546,12 @@
             >
           </div>
 
+          <div class="mb-3 d-none" id="grupPasswordPelanggan">
+            <label for="pelangganBaruPassword" class="form-label">Password Akun Pelanggan</label>
+            <input type="password" class="form-control" id="pelangganBaruPassword" placeholder="Minimal 6 karakter" minlength="6" autocomplete="new-password">
+            <small class="text-muted">Username login menggunakan nomor telepon.</small>
+          </div>
+
           <div class="mb-3">
             <label for="pelangganBaruAlamat" class="form-label">
               Alamat
@@ -2370,7 +2376,7 @@ async function loadPelanggan() {
               <small class="text-muted">
                 ${item.berat_jumlah}
                 ${escapeHtml(item.jenis_satuan)}
-                —
+                â€”
                 ${formatRupiah(item.harga_satuan)}
               </small>
 
@@ -3963,6 +3969,8 @@ function bukaModalPelangganBaru() {
 
     document.getElementById("formPelangganBaru").reset();
     document.getElementById("pelangganBaruId").value = "";
+    document.getElementById("grupPasswordPelanggan").style.display = "none";
+    document.getElementById("pelangganBaruPassword").required = false;
 
     document.getElementById("modalPelangganBaruLabel").innerHTML =
         '<i class="bi bi-person-plus me-2"></i> Pelanggan Baru';
@@ -3997,6 +4005,9 @@ function bukaModalEditPelanggan() {
     document.getElementById("pelangganBaruNama").value = p.nama || "";
     document.getElementById("pelangganBaruTelepon").value = p.no_telepon || "";
     document.getElementById("pelangganBaruAlamat").value = p.alamat || "";
+    document.getElementById("grupPasswordPelanggan").style.display = "none";
+    document.getElementById("pelangganBaruPassword").required = false;
+    document.getElementById("pelangganBaruPassword").value = "";
 
     document.getElementById("modalPelangganBaruLabel").innerHTML =
         '<i class="bi bi-pencil-square me-2"></i> Edit Pelanggan';
@@ -4068,6 +4079,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const nama = document.getElementById("pelangganBaruNama").value.trim();
         const noTelepon = document.getElementById("pelangganBaruTelepon").value.trim();
         const alamat = document.getElementById("pelangganBaruAlamat").value.trim();
+        const passwordInput = document.getElementById("pelangganBaruPassword");
+        const password = passwordInput ? passwordInput.value : "";
 
         if (!nama) {
             alert("Nama pelanggan wajib diisi.");
@@ -4081,6 +4094,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const modeEdit = Boolean(id);
 
+        if (!modeEdit && password.length > 0 && password.length < 6) {
+            alert("Password akun pelanggan minimal 6 karakter.");
+            return;
+        }
+
         try {
 
             const response = await apiRequest(
@@ -4090,7 +4108,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     body: JSON.stringify({
                         nama: nama,
                         no_telepon: noTelepon,
-                        alamat: alamat || null
+                        alamat: alamat || null,
+                        ...(!modeEdit ? { password: password } : {})
                     })
                 }
             );
@@ -4147,6 +4166,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 </body>
 </html>
+
+
+
+
+
 
 
 
