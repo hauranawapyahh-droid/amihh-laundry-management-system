@@ -71,21 +71,37 @@ let DATA_BIAYA = [];
 // =========================
 // NAVIGASI SIDEBAR
 // =========================
-const menuLinks = document.querySelectorAll(".menu-link[data-page]");
+const menuLinks = document.querySelectorAll(
+  ".menu-link[data-page], .mobile-bottom-nav [data-page], .mobile-more-menu [data-page]"
+);
 const pageSections = document.querySelectorAll(".page-section");
 
 menuLinks.forEach((link) => {
   link.addEventListener("click", (e) => {
     e.preventDefault();
-    const page = link.dataset.page;
-    menuLinks.forEach((l) => l.classList.remove("active"));
-    link.classList.add("active");
-    pageSections.forEach((s) => s.classList.add("d-none"));
 
-    const target = $("page-" + page);
-    if (target) target.classList.remove("d-none");
+    const page = link.dataset.page;
+    const target = document.getElementById("page-" + page);
+
+    if (!target) {
+      console.warn("Halaman tidak ditemukan:", page);
+      return;
+    }
+
+    menuLinks.forEach((item) => {
+      item.classList.toggle("active", item.dataset.page === page);
+    });
+
+    pageSections.forEach((section) => section.classList.add("d-none"));
+    target.classList.remove("d-none");
+
+    const mobileMenu = document.getElementById("mobileMoreMenu");
+    const mobileToggle = document.getElementById("mobileMoreToggle");
+
+    if (mobileMenu) mobileMenu.classList.remove("show");
+    if (mobileToggle) mobileToggle.classList.remove("active");
   });
-});
+});});
 
 // TOPBAR TANGGAL
 $("topbarDate").textContent = new Date().toLocaleDateString("id-ID", {

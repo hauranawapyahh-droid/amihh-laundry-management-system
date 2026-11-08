@@ -76,5 +76,14 @@ class ApiSecurityTest extends TestCase
                 'message' => 'Kamu tidak memiliki akses ke fitur ini',
             ]);
     }
+
+    public function test_invalid_jwt_token_is_rejected(): void
+    {
+        $this->withHeader('Authorization', 'Bearer token-rusak-tidak-valid')
+            ->getJson('/api/customer/dashboard')
+            ->assertStatus(401)
+            ->assertJson(['success' => false]);
+    }
 }
+
 

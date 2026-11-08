@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
@@ -75,7 +75,589 @@
       .content { padding: 15px; }
       .topbar-search { display: none; }
     }
-  </style>
+  
+/* ===== AMIH LAUNDRY RESPONSIVE AUTO FIX ===== */
+
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.admin-layout, .main-content, .content,
+.page-section, .card-box, .stat-card {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.main-content {
+  overflow-x: hidden;
+}
+
+.table-responsive {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+canvas {
+  max-width: 100%;
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    width: 220px;
+  }
+
+  .main-content {
+    margin-left: 220px;
+    width: calc(100% - 220px);
+  }
+
+  .content {
+    padding: 18px;
+  }
+}
+
+@media (max-width: 700px) {
+  .sidebar {
+    display: none !important;
+  }
+
+  .main-content {
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .topbar {
+    height: 58px;
+    padding: 0 13px;
+  }
+
+  .topbar-search {
+    display: none !important;
+  }
+
+  .topbar > .d-flex {
+    width: 100%;
+    justify-content: flex-end;
+    gap: 12px !important;
+  }
+
+  .content {
+    padding: 15px 12px;
+  }
+
+  .page-header {
+    margin-bottom: 16px;
+  }
+
+  .page-header h2 {
+    font-size: 19px;
+  }
+
+  .page-header p {
+    font-size: 12px;
+  }
+
+  .row {
+    --bs-gutter-x: 12px;
+    --bs-gutter-y: 12px;
+    max-width: 100%;
+  }
+
+  .stat-card {
+    padding: 13px;
+    border-radius: 12px;
+  }
+
+  .stat-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 17px;
+    margin-bottom: 9px;
+  }
+
+  .stat-title {
+    font-size: 11px;
+  }
+
+  .stat-value {
+    font-size: clamp(15px, 4vw, 20px);
+    overflow-wrap: anywhere;
+  }
+
+  .card-box {
+    padding: 13px;
+    border-radius: 12px;
+  }
+
+  .card-title {
+    font-size: 14px;
+  }
+
+  .card-subtitle {
+    font-size: 11px;
+  }
+
+  .page-header.d-flex {
+    align-items: flex-start !important;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .page-header .btn {
+    width: 100%;
+  }
+
+  .table th {
+    font-size: 11px;
+  }
+
+  .table td {
+    font-size: 12px;
+  }
+
+  .quickmenu-item {
+    padding: 12px 5px;
+    font-size: 12px;
+  }
+
+  #page-dashboard .row {
+    --bs-gutter-x: 12px;
+    --bs-gutter-y: 12px;
+  }
+
+  #page-dashboard .card-box > div[style*="height:320px"] {
+    height: 230px !important;
+  }
+
+  #page-dashboard .card-box > div[style*="height:230px"] {
+    height: 190px !important;
+  }
+
+  .modal-dialog {
+    margin: 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  .content {
+    padding: 12px 10px;
+  }
+
+  .stat-card, .card-box {
+    padding: 10px;
+  }
+
+  .stat-value {
+    font-size: 15px;
+  }
+
+  .page-header h2 {
+    font-size: 18px;
+  }
+}
+
+/* ===== END RESPONSIVE AUTO FIX ===== */
+
+
+/* ===== AMIH MOBILE APP LAYOUT V2 ===== */
+@media (max-width:700px) {
+
+  html, body {
+    width:100%;
+    max-width:100%;
+    overflow-x:hidden;
+    background:#f5f7fb;
+  }
+
+  .admin-layout {
+    display:block;
+    width:100%;
+    min-height:100vh;
+  }
+
+  .sidebar {
+    display:none !important;
+  }
+
+  .main-content {
+    margin:0 !important;
+    width:100% !important;
+    min-height:100vh;
+    padding:0;
+  }
+
+  .topbar {
+    height:60px;
+    padding:0 16px;
+    background:#fff;
+    position:sticky;
+    top:0;
+    z-index:900;
+    box-shadow:0 2px 8px rgba(0,0,0,.03);
+  }
+
+  .topbar-search {
+    display:none !important;
+  }
+
+  .topbar > .d-flex {
+    width:100%;
+    justify-content:flex-end;
+    gap:17px !important;
+    font-size:13px;
+  }
+
+  .content {
+    padding:18px 14px 105px !important;
+  }
+
+  .page-header {
+    margin-bottom:18px;
+  }
+
+  .page-header h2 {
+    font-size:22px;
+    font-weight:750;
+  }
+
+  .page-header p {
+    font-size:12px;
+    line-height:1.5;
+  }
+
+  /* STATISTIK 2 KOLOM */
+  #page-dashboard > .row:first-of-type {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;
+    margin:0 0 18px !important;
+  }
+
+  #page-dashboard > .row:first-of-type > div {
+    width:100%;
+    padding:0;
+  }
+
+  .stat-card {
+    padding:14px;
+    border-radius:15px;
+    min-height:135px;
+    box-shadow:0 3px 12px rgba(0,0,0,.035);
+  }
+
+  .stat-icon {
+    width:37px;
+    height:37px;
+    font-size:17px;
+    margin-bottom:12px;
+  }
+
+  .stat-title {
+    font-size:11px;
+    line-height:1.4;
+  }
+
+  .stat-value {
+    font-size:19px;
+    overflow-wrap:anywhere;
+  }
+
+  /* GRAFIK DAN KONTEN */
+  #page-dashboard > .row {
+    --bs-gutter-x:12px;
+    --bs-gutter-y:14px;
+  }
+
+  .card-box {
+    padding:15px;
+    border-radius:15px;
+    box-shadow:0 3px 12px rgba(0,0,0,.035);
+  }
+
+  .card-title {
+    font-size:15px;
+  }
+
+  .card-subtitle {
+    font-size:11px;
+  }
+
+  #page-dashboard [style*="height:320px"] {
+    height:220px !important;
+    max-width:100%;
+  }
+
+  #page-dashboard [style*="height:230px"] {
+    height:185px !important;
+    max-width:100%;
+  }
+
+  canvas {
+    max-width:100%;
+  }
+
+  .quickmenu-item {
+    padding:13px 5px;
+    font-size:12px;
+  }
+
+  .table-responsive {
+    overflow-x:auto;
+    width:100%;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .table {
+    min-width:550px;
+  }
+
+  .page-section .page-header.d-flex {
+    align-items:flex-start !important;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .page-section .page-header .btn {
+    width:100%;
+  }
+
+  /* BOTTOM NAVIGATION */
+  .mobile-bottom-nav {
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    width:100%;
+    min-height:66px;
+    padding:8px 5px calc(8px + env(safe-area-inset-bottom));
+    background:#fff;
+    border-top:1px solid #edf0f5;
+    display:grid;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    align-items:center;
+    z-index:2000;
+    box-shadow:0 -3px 15px rgba(0,0,0,.06);
+  }
+
+  .mobile-bottom-nav .mobile-nav-item {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    padding:5px 0;
+    color:#8993a5;
+    text-decoration:none;
+    font-size:10px;
+    font-weight:500;
+    background:transparent;
+    border:0;
+    min-width:0;
+  }
+
+  .mobile-bottom-nav .mobile-nav-item i {
+    font-size:20px;
+    line-height:1;
+  }
+
+  .mobile-bottom-nav .mobile-nav-item.active {
+    color:#2f6fed;
+    font-weight:700;
+  }
+
+  .mobile-more-menu {
+    display:none;
+    position:fixed;
+    bottom:calc(78px + env(safe-area-inset-bottom));
+    right:12px;
+    width:min(230px,calc(100vw - 24px));
+    background:white;
+    border-radius:16px;
+    padding:10px;
+    box-shadow:0 5px 30px rgba(0,0,0,.17);
+    z-index:2001;
+  }
+
+  .mobile-more-menu.show {
+    display:block;
+  }
+
+  .mobile-more-menu .menu-link {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px;
+    color:#344054;
+    text-decoration:none;
+    font-size:13px;
+    border-radius:9px;
+  }
+
+  .mobile-more-menu .menu-link.active {
+    color:#2f6fed;
+    background:#edf4ff;
+  }
+
+  .modal-dialog {
+    margin:12px;
+  }
+}
+
+@media (min-width:701px) {
+  .mobile-bottom-nav,
+  .mobile-more-menu {
+    display:none !important;
+  }
+}
+/* ===== END AMIH MOBILE APP LAYOUT V2 ===== */
+
+
+/* ===== AMIH MOBILE DASHBOARD REFINEMENT ===== */
+@media (max-width: 700px) {
+
+  body {
+    overflow-x: hidden !important;
+    background: #f1f5ff !important;
+  }
+
+  .main-content {
+    width: 100% !important;
+    margin: 0 !important;
+    min-width: 0 !important;
+  }
+
+  .content {
+    padding: 16px 14px 100px !important;
+  }
+
+  /* HEADER */
+  .topbar {
+    min-height: 62px !important;
+    padding: 12px 16px !important;
+    background: #10498f !important;
+    color: white !important;
+    border-radius: 0 0 20px 20px !important;
+  }
+
+  .topbar .text-muted {
+    color: white !important;
+  }
+
+  /* JUDUL DASHBOARD */
+  #page-dashboard .page-header {
+    margin-bottom: 20px !important;
+  }
+
+  #page-dashboard .page-header h2 {
+    font-size: 27px !important;
+    font-weight: 800 !important;
+    color: #102653 !important;
+  }
+
+  #page-dashboard .page-header p {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+  }
+
+  /* STATISTIK: DUA KOLOM */
+  #page-dashboard > .page-header + .row {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    margin: 0 0 16px !important;
+  }
+
+  #page-dashboard > .page-header + .row > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .stat-card {
+    height: 100% !important;
+    min-height: 125px !important;
+    padding: 15px !important;
+    border-radius: 18px !important;
+    background: #fff !important;
+    box-shadow: 0 5px 18px rgba(30, 75, 140, .08) !important;
+  }
+
+  .stat-icon {
+    margin-bottom: 10px !important;
+  }
+
+  .stat-title {
+    font-size: 12px !important;
+  }
+
+  .stat-value {
+    font-size: 19px !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  /* KARTU DASHBOARD */
+  .card-box {
+    min-width: 0 !important;
+    padding: 16px !important;
+    border-radius: 19px !important;
+    background: #fff !important;
+    box-shadow: 0 5px 18px rgba(30, 75, 140, .07) !important;
+  }
+
+  .card-box canvas {
+    max-width: 100% !important;
+  }
+
+  /* TABEL */
+  .table-responsive {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+  }
+
+  /* MENU CEPAT */
+  .quickmenu-item {
+    min-width: 0 !important;
+    padding: 12px 6px !important;
+    text-align: center !important;
+  }
+
+  /* NAVIGASI BAWAH */
+  .mobile-bottom-nav {
+    min-height: 72px !important;
+    padding: 8px 5px calc(8px + env(safe-area-inset-bottom)) !important;
+    background: #10498f !important;
+    border-radius: 20px 20px 0 0 !important;
+    border-top: 1px solid rgba(255,255,255,.2) !important;
+  }
+
+  .mobile-bottom-nav .mobile-nav-item {
+    color: #dceaff !important;
+    font-size: 10px !important;
+  }
+
+  .mobile-bottom-nav .mobile-nav-item.active {
+    color: white !important;
+    background: #2878f5 !important;
+    border-radius: 18px !important;
+  }
+
+  .mobile-bottom-nav .mobile-nav-item i {
+    font-size: 21px !important;
+  }
+
+  /* RUANG AGAR KONTEN TIDAK TERTUTUP NAVIGASI */
+  .mobile-more-menu {
+    max-height: 65vh !important;
+    overflow-y: auto !important;
+  }
+}
+/* ===== END MOBILE DASHBOARD REFINEMENT ===== */
+
+</style>
 </head>
 
 <body>
@@ -154,7 +736,7 @@
       <section id="page-dashboard" class="page-section">
         <div class="page-header">
           <h2>Dashboard</h2>
-          <p>Selamat datang, <strong id="dashboardUserName">Admin</strong> 👋</p>
+          <p>Selamat datang, <strong id="dashboardUserName">Admin</strong> ðŸ‘‹</p>
           <p>Kelola seluruh data dan aktivitas Amih Laundry.</p>
         </div>
 
@@ -346,6 +928,35 @@
 
     </div>
   </main>
+<nav class="mobile-bottom-nav" aria-label="Navigasi mobile">
+  <a href="#" class="mobile-nav-item menu-link active" data-page="dashboard">
+    <i class="bi bi-house-door-fill"></i><span>Home</span>
+  </a>
+  <a href="#" class="mobile-nav-item menu-link" data-page="pelanggan">
+    <i class="bi bi-people-fill"></i><span>Pelanggan</span>
+  </a>
+  <a href="#" class="mobile-nav-item menu-link" data-page="cucian">
+    <i class="bi bi-basket-fill"></i><span>Cucian</span>
+  </a>
+  <a href="#" class="mobile-nav-item menu-link" data-page="laporan">
+    <i class="bi bi-bar-chart-fill"></i><span>Laporan</span>
+  </a>
+  <button type="button" class="mobile-nav-item" id="mobileMoreToggle">
+    <i class="bi bi-grid-fill"></i><span>Lainnya</span>
+  </button>
+</nav>
+
+<div class="mobile-more-menu" id="mobileMoreMenu">
+  <a href="#" class="menu-link" data-page="layanan"><i class="bi bi-tags-fill"></i> Layanan & Harga</a>
+  <a href="#" class="menu-link" data-page="proses"><i class="bi bi-arrow-repeat"></i> Proses Cucian</a>
+  <a href="#" class="menu-link" data-page="pengguna"><i class="bi bi-person-gear"></i> Pengguna</a>
+  <a href="#" class="menu-link" data-page="biaya"><i class="bi bi-wallet2"></i> Biaya Operasional</a>
+  <a href="#" class="menu-link" data-page="pendapatan"><i class="bi bi-cash-stack"></i> Pendapatan</a>
+  <a href="#" class="menu-link" data-page="keuntungan"><i class="bi bi-graph-up-arrow"></i> Keuntungan</a>
+  <a href="#" class="menu-link" data-page="aktivitas"><i class="bi bi-clock-history"></i> Aktivitas</a>
+  <a href="#" class="menu-link" data-page="pengaturan"><i class="bi bi-gear"></i> Pengaturan</a>
+  <a href="#" class="menu-link" onclick="logout();return false;"><i class="bi bi-box-arrow-right"></i> Logout</a>
+</div>
 </div>
 
 
@@ -524,5 +1135,46 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/dashboard-admin.js"></script>
 
+<script>
+(function () {
+  const toggle = document.getElementById("mobileMoreToggle");
+  const menu = document.getElementById("mobileMoreMenu");
+
+  if (!toggle || !menu) return;
+
+  toggle.addEventListener("click", function () {
+    menu.classList.toggle("show");
+    toggle.classList.toggle("active", menu.classList.contains("show"));
+  });
+
+  menu.addEventListener("click", function (e) {
+    const link = e.target.closest("[data-page]");
+    if (link) {
+      menu.classList.remove("show");
+      toggle.classList.remove("active");
+    }
+  });
+
+  document.addEventListener("click", function(e) {
+    if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+      menu.classList.remove("show");
+      toggle.classList.remove("active");
+    }
+  });
+
+  document.addEventListener("click", function(e) {
+    const link = e.target.closest(".mobile-bottom-nav [data-page], .mobile-more-menu [data-page]");
+    if (!link) return;
+
+    document.querySelectorAll(".mobile-bottom-nav [data-page]").forEach(item => {
+      item.classList.toggle("active", item.dataset.page === link.dataset.page);
+    });
+
+    toggle.classList.remove("active");
+  });
+})();
+</script>
 </body>
 </html>
+
+

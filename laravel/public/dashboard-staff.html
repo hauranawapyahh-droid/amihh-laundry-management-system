@@ -58,6 +58,8 @@ body{background:#f5f8fc;margin:0;font-family:Arial,sans-serif}
 @media(max-width:900px){.sidebar{width:210px}.main-content{margin-left:210px;width:calc(100% - 210px)}.topbar-search{width:220px}}
 @media(max-width:700px){.sidebar{display:none}.main-content{margin-left:0;width:100%}.content{padding:15px}.topbar-search{display:none}}
 </style>
+<link rel="stylesheet" href="/css/dashboard-polish.css?v=1">
+<link rel="stylesheet" href="/css/dashboard-mobile.css?v=2">
 </head>
 
 <body>
@@ -219,9 +221,24 @@ const BERIKUTNYA={
   DISETRIKA:['SELESAI','Selesaikan','check-circle','success']
 };
 const badge=s=>{const [c,i,l]=STATUS[s]||['st-diterima','inbox',s||'-'];return `<span class="badge-pill ${c}"><i class="bi bi-${i}"></i>${l}</span>`};
-const tombol=(id,s)=>{const n=BERIKUTNYA[s];
-  return n?`<button class="btn btn-sm btn-${n[3]} text-nowrap" onclick="updateStatus(${id},'${n[0]}',this)"><i class="bi bi-${n[2]} me-1"></i>${n[1]}</button>`
-    :`<span class="badge-pill st-selesai"><i class="bi bi-check-circle"></i>Selesai</span>`};
+const tombol=(id,s)=>{
+  return `<select class="form-select form-select-sm" style="min-width:145px;width:auto" data-current="${s}" onchange="pilihStatus(${id},this)">
+    ${Object.entries(STATUS).map(([kode,info])=>`<option value="${kode}" ${s===kode?'selected':''}>${info[2]}</option>`).join('')}
+  </select>`;
+};
+
+async function pilihStatus(id,select){
+  const statusLama=select.dataset.current;
+  const statusBaru=select.value;
+  if(statusBaru===statusLama)return;
+  if(!confirm('Ubah status proses cucian menjadi '+STATUS[statusBaru][2]+'?')){
+    select.value=statusLama;
+    return;
+  }
+  select.dataset.current=statusBaru;
+  await updateStatus(id,statusBaru,select);
+  if(select.isConnected)select.dataset.current=select.value;
+}
 
 /* ===== Data ===== */
 let dataProses=[];
@@ -292,5 +309,9 @@ async function loadProses(){
 $('q').addEventListener('input',renderTabel);
 loadProses();
 </script>
+<script src="/js/dashboard-mobile.js?v=1"></script>
 </body>
 </html>
+
+
+

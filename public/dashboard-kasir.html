@@ -474,5 +474,52 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
+
+<style>
+/* Responsive khusus dashboard */
+@media (max-width: 768px) {
+  .app-shell {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    position: relative;
+  }
+
+  .sidebar-menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .sidebar-menu li {
+    flex: 1 1 140px;
+  }
+
+  .main-content {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .page-content {
+    padding: 12px;
+    overflow-x: auto;
+  }
+
+  .topbar {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar-menu li {
+    flex-basis: 100%;
+  }
+}
+</style>
 </body>
 </html>
+

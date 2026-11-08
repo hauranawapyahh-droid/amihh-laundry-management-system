@@ -70,6 +70,8 @@ body{background:#f5f8fc;margin:0;font-family:Arial,sans-serif}
 @media(max-width:900px){.sidebar{width:210px}.main-content{margin-left:210px;width:calc(100% - 210px)}.topbar-search{width:220px}}
 @media(max-width:700px){.sidebar{display:none}.main-content{margin-left:0;width:100%}.content{padding:15px}.topbar-search{display:none}}
 </style>
+<link rel="stylesheet" href="/css/dashboard-polish.css?v=1">
+<link rel="stylesheet" href="/css/dashboard-mobile.css?v=2">
 </head>
 
 <body>
@@ -343,7 +345,7 @@ body{background:#f5f8fc;margin:0;font-family:Arial,sans-serif}
  };
  const label=k=>{
    if(jenis==='harian')return dateFmt(k);
-   if(jenis==='mingguan'){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()+6);return dateFmt(k)+' Ã¢â‚¬â€œ '+dateFmt(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
+   if(jenis==='mingguan'){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()+6);return dateFmt(k)+' ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“ '+dateFmt(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
    if(jenis==='bulanan'){const [y,m]=k.split('-').map(Number);return new Date(y,m-1,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});}
    return 'Tahun '+k;
  };
@@ -384,7 +386,7 @@ body{background:#f5f8fc;margin:0;font-family:Arial,sans-serif}
  };
  const label=k=>{
    if(jenis==='harian')return dateFmt(k);
-   if(jenis==='mingguan'){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()+6);return dateFmt(k)+' Ã¢â‚¬â€œ '+dateFmt(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
+   if(jenis==='mingguan'){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()+6);return dateFmt(k)+' ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“ '+dateFmt(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
    if(jenis==='bulanan'){const [y,m]=k.split('-').map(Number);return new Date(y,m-1,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});}
    return 'Tahun '+k;
  };
@@ -652,7 +654,7 @@ function unduh(){
     if(n>=1000) return 'Rp'+(n/1000).toLocaleString('id-ID',{maximumFractionDigits:1})+' rb';
     return 'Rp'+n.toLocaleString('id-ID');
   };
-  const singkat = s => s.length>13 ? s.slice(0,12)+'…' : s;
+  const singkat = s => s.length>13 ? s.slice(0,12)+'â€¦' : s;
   const jumlahData = Math.max(1,dataGrafik.length);
   const plotX = 62, plotY = 42, plotW = 790, plotH = 190;
   const jarak = plotW/jumlahData;
@@ -669,9 +671,9 @@ function unduh(){
     const hp=plotY+plotH-skalaY(d.pendapatan);
     const hb=plotY+plotH-skalaY(d.biaya);
     return `<rect x="${cx-barW-2}" y="${skalaY(d.pendapatan)}" width="${barW}" height="${Math.max(0,hp)}" rx="3" fill="#3478d4">
-      <title>${esc(d.label)} — Pendapatan ${formatGrafik(d.pendapatan)}</title></rect>
+      <title>${esc(d.label)} â€” Pendapatan ${formatGrafik(d.pendapatan)}</title></rect>
       <rect x="${cx+2}" y="${skalaY(d.biaya)}" width="${barW}" height="${Math.max(0,hb)}" rx="3" fill="#f0a23b">
-      <title>${esc(d.label)} — Biaya ${formatGrafik(d.biaya)}</title></rect>
+      <title>${esc(d.label)} â€” Biaya ${formatGrafik(d.biaya)}</title></rect>
       <text x="${cx}" y="${plotY+plotH+17}" text-anchor="middle" font-size="10" fill="#475569">${esc(singkat(d.label))}</text>`;
   }).join('');
   const totalPendapatanGrafik=dataGrafik.reduce((s,d)=>s+d.pendapatan,0);
@@ -755,7 +757,9 @@ function unduh(){
     th{background:#f1f5f9}
     .info{font-size:13px;line-height:1.7}
     @media print{body{padding:0}h3{break-after:avoid}table{break-inside:auto}tr{break-inside:avoid}}
-  </style></head><body>
+  </style><link rel="stylesheet" href="/css/dashboard-polish.css?v=1">
+<link rel="stylesheet" href="/css/dashboard-mobile.css?v=2">
+</head><body>
   <header class="kop">
     <img src="${new URL('/logo-amih-laundry.png',location.href).href}" alt="Logo Amih Laundry">
     <div>
@@ -778,7 +782,8 @@ function unduh(){
   <p style="font-size:11px;color:#64748b">Grafik berdasarkan data dan periode yang dipilih.</p>
   ${grafikBisnis}
   ${isi}
-  </body></html>`);
+  <script src="/js/dashboard-mobile.js?v=1"><\/script>
+</body></html>`);
   w.document.close();
   w.focus();
   setTimeout(()=>w.print(),500);
@@ -840,7 +845,7 @@ Promise.all([getAll('/transaksi'),getAll('/biaya-operasional')]).then(([t,b])=>{
  };
  const label=k=>{
    if(jenis==='harian')return dateFmt(k);
-   if(jenis==='mingguan'){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()+6);return dateFmt(k)+' Ã¢â‚¬â€œ '+dateFmt(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
+   if(jenis==='mingguan'){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()+6);return dateFmt(k)+' ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“ '+dateFmt(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
    if(jenis==='bulanan'){const [y,m]=k.split('-').map(Number);return new Date(y,m-1,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});}
    return 'Tahun '+k;
  };
@@ -864,8 +869,13 @@ Promise.all([getAll('/transaksi'),getAll('/biaya-operasional')]).then(([t,b])=>{
  render();
 })();
 </script>
+<script src="/js/dashboard-mobile.js?v=1"></script>
 </body>
 </html>
+
+
+
+
 
 
 

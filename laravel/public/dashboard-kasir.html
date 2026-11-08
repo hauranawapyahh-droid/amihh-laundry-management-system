@@ -574,6 +574,8 @@
     }
 
   </style>
+<link rel="stylesheet" href="/css/dashboard-polish.css?v=1">
+<link rel="stylesheet" href="/css/dashboard-mobile.css?v=2">
 </head>
 
 <body>
@@ -2376,7 +2378,7 @@ async function loadPelanggan() {
               <small class="text-muted">
                 ${item.berat_jumlah}
                 ${escapeHtml(item.jenis_satuan)}
-                â€”
+                Ã¢â‚¬â€
                 ${formatRupiah(item.harga_satuan)}
               </small>
 
@@ -3613,6 +3615,8 @@ async function loadPelanggan() {
       }
     }
   </style>
+<link rel="stylesheet" href="/css/dashboard-polish.css?v=1">
+<link rel="stylesheet" href="/css/dashboard-mobile.css?v=2">
 </head>
 <body>
   ${currentDetailReceiptHTML}
@@ -3622,6 +3626,7 @@ async function loadPelanggan() {
       setTimeout(function () { window.print(); }, 300);
     };
   <\/script>
+<script src="/js/dashboard-mobile.js?v=1"><\/script>
 </body>
 </html>`);
     win.document.close();
@@ -4164,8 +4169,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 </script>
 
+<script src="/js/dashboard-mobile.js?v=1"></script>
 </body>
 </html>
+
+
+
+
 
 
 

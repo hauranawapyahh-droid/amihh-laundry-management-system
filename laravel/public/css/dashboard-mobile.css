@@ -1,0 +1,508 @@
+﻿@media screen and (max-width: 768px) {
+  html, body {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .admin-layout, .kasir-layout {
+    width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: clip;
+  }
+
+  .sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: min(280px, 82vw) !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    display: flex !important;
+    transform: translateX(-105%);
+    transition: transform .25s ease;
+    z-index: 1200 !important;
+    box-shadow: 8px 0 30px rgba(0,0,0,.18);
+  }
+
+  .sidebar.mobile-open,
+  .sidebar.open {
+    transform: translateX(0) !important;
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .topbar {
+    min-height: 64px;
+    height: auto !important;
+    padding: 10px 14px !important;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .amih-mobile-toggle {
+    display: inline-flex !important;
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #dce8f5;
+    border-radius: 10px;
+    background: #fff;
+    color: #174b80;
+    font-size: 23px;
+    cursor: pointer;
+  }
+
+  .topbar-search {
+    display: none !important;
+  }
+
+  .content {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 16px !important;
+    min-width: 0 !important;
+  }
+
+  .page-header h2 {
+    font-size: 21px !important;
+    line-height: 1.3;
+  }
+
+  .page-header p {
+    font-size: 13px;
+  }
+
+  .row:has(.stat-card) > [class*="col-"] {
+    width: 50% !important;
+    flex: 0 0 50% !important;
+  }
+
+  .stat-card {
+    padding: 14px !important;
+    min-height: 125px;
+  }
+
+  .stat-value {
+    font-size: 21px !important;
+    overflow-wrap: anywhere;
+  }
+
+  .stat-title {
+    font-size: 12px !important;
+  }
+
+  .card-box {
+    padding: 15px !important;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-wrap table {
+    min-width: 650px;
+  }
+
+  .card-box form,
+  .card-box .row {
+    min-width: 0;
+  }
+
+  .card-box input,
+  .card-box select,
+  .card-box textarea,
+  .card-box button {
+    max-width: 100%;
+  }
+
+  .btn {
+    white-space: normal;
+  }
+
+  .amih-mobile-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(13, 31, 51, .48);
+    z-index: 1190;
+  }
+
+  .amih-mobile-backdrop.show {
+    display: block;
+  }
+}
+
+@media screen and (max-width: 380px) {
+  .row:has(.stat-card) > [class*="col-"] {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+
+  .content {
+    padding: 12px !important;
+  }
+}
+
+@media screen and (min-width: 769px) {
+  .amih-mobile-toggle,
+  .amih-mobile-backdrop {
+    display: none !important;
+  }
+}
+
+/* =====================================================
+   AMIH LAUNDRY - MOBILE REFINEMENT
+   Khusus layar HP, desktop tidak diubah.
+   ===================================================== */
+
+@media screen and (max-width: 768px) {
+
+  /* Ruang halaman lebih ringkas */
+  .content {
+    padding: 14px !important;
+    gap: 14px !important;
+  }
+
+  .page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px !important;
+  }
+
+  .page-header h2 {
+    font-size: 21px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .page-header p {
+    font-size: 13px !important;
+    margin-bottom: 0 !important;
+    line-height: 1.5;
+  }
+
+  .page-header .btn {
+    width: auto !important;
+    max-width: 100%;
+    min-height: 42px;
+    padding: 9px 14px !important;
+    font-size: 14px !important;
+  }
+
+  /* Statistik lebih padat */
+  .row:has(.stat-card) {
+    --bs-gutter-x: 12px;
+    --bs-gutter-y: 12px;
+  }
+
+  .stat-card {
+    min-height: 112px !important;
+    padding: 13px !important;
+    border-radius: 16px !important;
+  }
+
+  .stat-card .stat-icon {
+    width: 44px !important;
+    height: 44px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .stat-value {
+    font-size: 20px !important;
+    margin-top: 5px !important;
+  }
+
+  /* Grafik tidak terlalu tinggi */
+  canvas {
+    max-width: 100% !important;
+  }
+
+  .card-box,
+  .card {
+    margin-bottom: 14px !important;
+    border-radius: 16px !important;
+  }
+
+  .card-box {
+    padding: 13px !important;
+  }
+
+  /* Tabel berubah menjadi kartu */
+  .table-responsive,
+  .table-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .table-responsive > table,
+  .table-wrap > table,
+  .content table {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin-bottom: 0 !important;
+    border-collapse: separate !important;
+    border-spacing: 0 9px !important;
+    table-layout: fixed;
+  }
+
+  .table-responsive thead,
+  .table-wrap thead,
+  .content table thead {
+    display: none !important;
+  }
+
+  .table-responsive tbody tr,
+  .table-wrap tbody tr,
+  .content table tbody tr {
+    display: block !important;
+    width: 100% !important;
+    margin-bottom: 11px !important;
+    padding: 9px 12px !important;
+    background: #fff !important;
+    border: 1px solid #e7edf5 !important;
+    border-radius: 13px !important;
+    box-shadow: 0 2px 8px rgba(30, 65, 100, .045);
+  }
+
+  .table-responsive tbody td,
+  .table-wrap tbody td,
+  .content table tbody td {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 8px 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid #f0f3f7 !important;
+    text-align: right !important;
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+    overflow-wrap: anywhere;
+  }
+
+  .table-responsive tbody td:last-child,
+  .table-wrap tbody td:last-child,
+  .content table tbody td:last-child {
+    border-bottom: 0 !important;
+  }
+
+  .table-responsive tbody td::before,
+  .table-wrap tbody td::before,
+  .content table tbody td::before {
+    flex: 0 0 38%;
+    max-width: 38%;
+    color: #718096;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: left;
+    overflow-wrap: anywhere;
+  }
+
+  /* Admin: pelanggan */
+  #tabelPelanggan td:nth-child(1)::before { content: "Nama"; }
+  #tabelPelanggan td:nth-child(2)::before { content: "Telepon"; }
+  #tabelPelanggan td:nth-child(3)::before { content: "Alamat"; }
+  #tabelPelanggan td:nth-child(4)::before { content: "Aksi"; }
+
+  /* Admin: layanan */
+  #tabelLayanan td:nth-child(1)::before { content: "Layanan"; }
+  #tabelLayanan td:nth-child(2)::before { content: "Satuan"; }
+  #tabelLayanan td:nth-child(3)::before { content: "Harga"; }
+  #tabelLayanan td:nth-child(4)::before { content: "Status"; }
+  #tabelLayanan td:nth-child(5)::before { content: "Aksi"; }
+
+  /* Admin: data cucian */
+  #tabelCucian td:nth-child(1)::before { content: "Kode"; }
+  #tabelCucian td:nth-child(2)::before { content: "Total"; }
+  #tabelCucian td:nth-child(3)::before { content: "Pembayaran"; }
+  #tabelCucian td:nth-child(4)::before { content: "Pengambilan"; }
+  #tabelCucian td:nth-child(5)::before { content: "Tanggal"; }
+
+  /* Admin: proses */
+  #tabelProses td:nth-child(1)::before { content: "Transaksi"; }
+  #tabelProses td:nth-child(2)::before { content: "Status"; }
+  #tabelProses td:nth-child(3)::before { content: "Catatan"; }
+  #tabelProses td:nth-child(4)::before { content: "Waktu"; }
+
+  /* Admin: pengguna */
+  #tabelPengguna td:nth-child(1)::before { content: "Nama"; }
+  #tabelPengguna td:nth-child(2)::before { content: "Username"; }
+  #tabelPengguna td:nth-child(3)::before { content: "Role"; }
+  #tabelPengguna td:nth-child(4)::before { content: "Status"; }
+  #tabelPengguna td:nth-child(5)::before { content: "Aksi"; }
+
+  /* Admin: biaya */
+  #tabelBiaya td:nth-child(1)::before { content: "Tanggal"; }
+  #tabelBiaya td:nth-child(2)::before { content: "Nama biaya"; }
+  #tabelBiaya td:nth-child(3)::before { content: "Kategori"; }
+  #tabelBiaya td:nth-child(4)::before { content: "Jumlah"; }
+  #tabelBiaya td:nth-child(5)::before { content: "Aksi"; }
+
+  /* Kasir */
+  #tabelDashboard td:nth-child(1)::before,
+  #tabelPembayaran td:nth-child(1)::before,
+  #tabelRiwayat td:nth-child(1)::before { content: "Kode transaksi"; }
+
+  #tabelDashboard td:nth-child(2)::before,
+  #tabelPembayaran td:nth-child(2)::before,
+  #tabelRiwayat td:nth-child(2)::before { content: "Pelanggan"; }
+
+  #tabelDashboard td:nth-child(3)::before,
+  #tabelPembayaran td:nth-child(3)::before,
+  #tabelRiwayat td:nth-child(3)::before { content: "Total"; }
+
+  #tabelDashboard td:nth-child(4)::before,
+  #tabelPembayaran td:nth-child(4)::before,
+  #tabelRiwayat td:nth-child(4)::before { content: "Pembayaran"; }
+
+  #tabelDashboard td:nth-child(5)::before,
+  #tabelPembayaran td:nth-child(5)::before { content: "Proses / Aksi"; }
+
+  #tabelRiwayat td:nth-child(5)::before { content: "Proses"; }
+  #tabelRiwayat td:nth-child(6)::before { content: "Aksi"; }
+
+  /* Staff */
+  #tabelCucian td:nth-child(1)::before,
+  #tabelProses td:nth-child(1)::before { content: "Kode transaksi"; }
+
+  #tabelCucian td:nth-child(2)::before,
+  #tabelProses td:nth-child(2)::before { content: "Pelanggan"; }
+
+  #tabelCucian td:nth-child(3)::before,
+  #tabelProses td:nth-child(3)::before { content: "Layanan"; }
+
+  #tabelCucian td:nth-child(4)::before,
+  #tabelProses td:nth-child(4)::before { content: "Status"; }
+
+  #tabelCucian td:nth-child(5)::before,
+  #tabelProses td:nth-child(5)::before { content: "Catatan"; }
+
+  #tabelCucian td:nth-child(6)::before,
+  #tabelProses td:nth-child(6)::before { content: "Waktu"; }
+
+  #tabelCucian td:nth-child(7)::before,
+  #tabelProses td:nth-child(7)::before { content: "Aksi"; }
+
+  /* Customer */
+  #tabelRiwayat td:nth-child(1)::before { content: "Kode transaksi"; }
+  #tabelRiwayat td:nth-child(2)::before { content: "Layanan"; }
+  #tabelRiwayat td:nth-child(3)::before { content: "Tanggal"; }
+  #tabelRiwayat td:nth-child(4)::before { content: "Total"; }
+  #tabelRiwayat td:nth-child(5)::before { content: "Status"; }
+  #tabelRiwayat td:nth-child(6)::before { content: "Bukti"; }
+
+  /* Baris kosong/loading tidak diberi label */
+  .table-responsive td[colspan]::before,
+  .table-wrap td[colspan]::before,
+  .content table td[colspan]::before {
+    content: none !important;
+    display: none !important;
+  }
+
+  .table-responsive td[colspan],
+  .table-wrap td[colspan],
+  .content table td[colspan] {
+    display: block !important;
+    text-align: center !important;
+  }
+
+  /* Tombol aksi tetap nyaman disentuh */
+  .table-responsive td .btn,
+  .table-wrap td .btn,
+  .content table td .btn {
+    margin: 2px !important;
+    white-space: normal !important;
+  }
+
+  /* Laporan Owner: tabel rincian ikut menjadi kartu */
+  .content h3,
+  .content h4 {
+    font-size: 16px !important;
+    margin-top: 16px !important;
+  }
+
+  .content p {
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+  }
+}
+
+@media screen and (max-width: 380px) {
+  .content {
+    padding: 11px !important;
+  }
+
+  .stat-card {
+    min-height: 100px !important;
+    padding: 11px !important;
+  }
+
+  .table-responsive tbody tr,
+  .table-wrap tbody tr,
+  .content table tbody tr {
+    padding: 8px 10px !important;
+  }
+}
+
+/* FIX FINAL: posisi teks dan isi tabel di HP */
+@media screen and (max-width: 768px) {
+  .content table tbody td:not([colspan]) {
+    display: block !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-height: 38px !important;
+    padding: 9px 0 9px 40% !important;
+    text-align: left !important;
+    justify-content: initial !important;
+    align-items: initial !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .content table tbody td:not([colspan])::before {
+    position: absolute !important;
+    top: 9px !important;
+    left: 0 !important;
+    display: block !important;
+    width: 36% !important;
+    max-width: 36% !important;
+    padding: 0 !important;
+    text-align: left !important;
+    white-space: normal !important;
+  }
+
+  .content table tbody td:not([colspan]) > .btn,
+  .content table tbody td:not([colspan]) button {
+    margin: 2px 5px 2px 0 !important;
+    vertical-align: middle;
+  }
+
+  .content table tbody td[colspan] {
+    display: block !important;
+    width: 100% !important;
+    padding: 14px !important;
+    text-align: center !important;
+  }
+
+  .content table tbody td[colspan]::before {
+    display: none !important;
+    content: none !important;
+  }
+}

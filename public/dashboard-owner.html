@@ -171,5 +171,60 @@ async function loadOwner() {
 
 loadOwner();
 </script>
+
+<style>
+/* Responsive khusus Dashboard Owner */
+@media (max-width: 768px) {
+  .app-shell {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    position: relative;
+  }
+
+  .sidebar-menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .sidebar-menu li {
+    flex: 1 1 140px;
+  }
+
+  .main-content {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .page-content {
+    padding: 12px;
+  }
+
+  .topbar {
+    padding: 12px;
+  }
+
+  .stat-value {
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar-menu li {
+    flex-basis: 100%;
+  }
+
+  .page-title {
+    font-size: 1.25rem;
+  }
+}
+</style>
 </body>
 </html>

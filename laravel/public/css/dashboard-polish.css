@@ -1,0 +1,216 @@
+﻿/* AMIH LAUNDRY - SHARED DASHBOARD THEME */
+@media screen {
+  body {
+    background: #f3f7fc !important;
+    color: #243449;
+    font-family: "Segoe UI", Arial, sans-serif;
+  }
+
+  .admin-layout,
+  .kasir-layout {
+    background: #f3f7fc;
+  }
+
+  .sidebar {
+    background: linear-gradient(180deg, #174b80 0%, #12375f 100%) !important;
+    box-shadow: 4px 0 18px rgba(20, 55, 95, .10);
+  }
+
+  .sidebar-brand {
+    border-bottom-color: rgba(255,255,255,.14) !important;
+  }
+
+  .sidebar-brand h4 {
+    color: #fff;
+    letter-spacing: .2px;
+  }
+
+  .sidebar-brand small {
+    color: rgba(255,255,255,.75);
+  }
+
+  .menu-title {
+    color: #c6d9ee;
+  }
+
+  .menu-link {
+    border-radius: 11px !important;
+    transition: background .2s ease, transform .2s ease;
+  }
+
+  .menu-link:hover {
+    background: rgba(255,255,255,.13) !important;
+    transform: translateX(2px);
+  }
+
+  .menu-link.active {
+    background: #fff !important;
+    color: #174b80 !important;
+    font-weight: 600;
+    box-shadow: 0 3px 12px rgba(0,0,0,.10);
+  }
+
+  .menu-link.active i {
+    color: #2875bd;
+  }
+
+  .sidebar-user {
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.10) !important;
+  }
+
+  .main-content {
+    background: #f3f7fc;
+    min-width: 0;
+  }
+
+  .topbar {
+    background: rgba(255,255,255,.97) !important;
+    border-bottom: 1px solid #e5edf6 !important;
+    box-shadow: 0 2px 12px rgba(35,65,100,.035);
+  }
+
+  .topbar-search input {
+    background: #f4f7fb !important;
+    border-color: #e2eaf3 !important;
+  }
+
+  .content {
+    padding: 28px;
+  }
+
+  .page-header h2 {
+    color: #183b60 !important;
+    letter-spacing: -.35px;
+  }
+
+  .page-header p {
+    color: #718096 !important;
+  }
+
+  .stat-card,
+  .card-box {
+    background: #fff !important;
+    border: 1px solid #e5edf6 !important;
+    border-radius: 17px !important;
+    box-shadow: 0 5px 18px rgba(35,65,100,.045) !important;
+    transition: box-shadow .2s ease, transform .2s ease;
+  }
+
+  .stat-card:hover {
+    box-shadow: 0 9px 22px rgba(35,65,100,.09) !important;
+    transform: translateY(-2px);
+  }
+
+  .stat-icon {
+    border-radius: 13px !important;
+    background: #e8f3ff !important;
+    color: #2875bd !important;
+  }
+
+  .stat-title,
+  .card-subtitle {
+    color: #78889b !important;
+  }
+
+  .stat-value,
+  .card-title {
+    color: #243e5b !important;
+  }
+
+  .table th {
+    background: #f2f6fb !important;
+    color: #52677f !important;
+    border-bottom-color: #e3ebf4 !important;
+  }
+
+  .table td {
+    border-color: #edf1f6;
+    color: #40536a;
+  }
+
+  .table tbody tr:hover {
+    background: #f7faff;
+  }
+
+  .btn-primary {
+    background: #2875bd !important;
+    border-color: #2875bd !important;
+    border-radius: 9px;
+  }
+
+  .btn-primary:hover {
+    background: #1d609f !important;
+    border-color: #1d609f !important;
+  }
+
+  .btn-outline-primary {
+    color: #2875bd !important;
+    border-color: #b8d4ed !important;
+    border-radius: 9px;
+  }
+
+  .btn-outline-primary:hover {
+    color: #fff !important;
+    background: #2875bd !important;
+    border-color: #2875bd !important;
+  }
+
+  .badge-pill {
+    letter-spacing: .1px;
+  }
+
+  .quickmenu-item {
+    border-radius: 14px;
+    transition: .2s ease;
+  }
+
+  .empty-state {
+    color: #8798aa;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .content {
+    padding: 17px !important;
+  }
+
+  .topbar {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .page-header {
+    margin-bottom: 18px !important;
+  }
+
+  .page-header h2 {
+    font-size: 22px;
+  }
+
+  .stat-card,
+  .card-box {
+    border-radius: 14px !important;
+  }
+
+  .table-wrap {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
+
+/* FIX ACTIVE MENU ADMIN */
+@media screen {
+  .admin-layout .sidebar .menu-link.active,
+  .admin-layout .sidebar .menu-link.active:hover {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #174b80 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 3px 12px rgba(0,0,0,.10) !important;
+  }
+
+  .admin-layout .sidebar .menu-link.active i {
+    color: #2875bd !important;
+  }
+}

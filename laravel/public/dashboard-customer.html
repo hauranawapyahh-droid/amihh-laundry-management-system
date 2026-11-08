@@ -907,6 +907,168 @@
   }
 }
 </style>
+<link rel="stylesheet" href="/css/dashboard-polish.css?v=1">
+<link rel="stylesheet" href="/css/dashboard-mobile.css?v=2">
+<style id="customer-mobile-only">
+@media (max-width: 768px) {
+
+  /* BERANDA */
+  #page-beranda .row {
+    --bs-gutter-x: 12px;
+    --bs-gutter-y: 12px;
+  }
+
+  #page-beranda .col-xl-8,
+  #page-beranda .col-xl-4 {
+    min-width: 0;
+  }
+
+  #page-beranda #berandaAktif .table-responsive {
+    overflow-x: hidden;
+  }
+
+  #page-beranda #berandaAktif table {
+    width: 100%;
+    min-width: 0;
+  }
+
+  #page-beranda #berandaAktif td {
+    display: block !important;
+    width: 100%;
+    padding: 7px 4px !important;
+    text-align: left !important;
+  }
+
+  #page-beranda #berandaAktif td::before {
+    content: none !important;
+  }
+
+  /* PESANAN AKTIF */
+  #page-aktif .order-card {
+    padding: 14px;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  #page-aktif .order-kode {
+    overflow-wrap: anywhere;
+  }
+
+  #page-aktif .order-card > .d-flex {
+    flex-wrap: wrap;
+    gap: 10px !important;
+  }
+
+  #page-aktif .order-card > .d-flex > .text-end {
+    width: 100%;
+    text-align: left !important;
+  }
+
+  #page-aktif .order-card > .d-flex > .text-end .d-flex {
+    justify-content: flex-start !important;
+    flex-wrap: wrap;
+  }
+
+  #page-aktif .order-total {
+    font-size: 17px;
+  }
+
+  #page-aktif .order-foot {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #page-aktif .stepper {
+    max-width: 100%;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  /* DAFTAR LAYANAN */
+  #page-layanan #daftarLayanan > [class*="col-"] {
+    flex: 0 0 50%;
+    width: 50%;
+    min-width: 0;
+  }
+
+  #page-layanan .svc-card {
+    padding: 14px 10px;
+    overflow-wrap: anywhere;
+  }
+
+  /* STATUS */
+  #page-status .status-box {
+    padding: 14px 8px;
+  }
+
+  #page-status .status-box .num {
+    font-size: 23px;
+  }
+
+  #page-status #detailPerjalanan {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* RIWAYAT */
+  #page-riwayat .table-responsive {
+    overflow: visible;
+  }
+
+  #page-riwayat #tabelRiwayat tr {
+    display: block;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    border: 1px solid #e8edf3;
+    border-radius: 12px;
+    background: #fff;
+  }
+
+  #page-riwayat #tabelRiwayat td {
+    display: flex !important;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 0 !important;
+    text-align: right !important;
+    border: 0 !important;
+    overflow-wrap: anywhere;
+  }
+
+  #page-riwayat #tabelRiwayat td::before {
+    position: static !important;
+    flex: 0 0 38%;
+    text-align: left;
+  }
+
+  #page-riwayat #tabelRiwayat td[colspan] {
+    display: block !important;
+    text-align: center !important;
+  }
+
+  #page-riwayat #tabelRiwayat td[colspan]::before {
+    display: none !important;
+  }
+
+  #page-layanan #cariLayanan,
+  #page-riwayat #cariRiwayat {
+    max-width: 100%;
+  }
+
+  /* SEMUA BAGIAN CUSTOMER */
+  #page-beranda,
+  #page-layanan,
+  #page-aktif,
+  #page-status,
+  #page-riwayat,
+  #page-profil {
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+</style>
 </head>
 
 <body>
@@ -1846,7 +2008,7 @@ function timelineEvents(t) {
     ev.push({
       s: (terakhir && k !== "SELESAI" && info.key !== "batal") ? "current" : "done",
       judul: LABEL[k] || p.status_proses || "Proses cucian",
-      ket: waktu(p.created_at) + (p.catatan_proses ? " Ã¢â‚¬â€ " + p.catatan_proses : ""),
+      ket: waktu(p.created_at) + (p.catatan_proses ? " — " + p.catatan_proses : ""),
     });
   });
 
@@ -2347,6 +2509,10 @@ setInterval(() => muatData(false), 60000);
 </script>
 </body>
 </html>
+
+
+
+
 
 
 
