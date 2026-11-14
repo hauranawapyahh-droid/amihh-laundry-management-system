@@ -1689,7 +1689,7 @@
       headers["Authorization"] = "Bearer " + token;
     }
 
-    if (options.body && !headers["Content-Type"]) {
+    if (options.body && !(options.body instanceof FormData) && !headers["Content-Type"]) {
       headers["Content-Type"] = "application/json";
     }
 
@@ -1874,6 +1874,39 @@
     }
   }
 
+  function aksiBuktiPembayaran(p) {
+    if (p.url_bukti) {
+      return `
+        <div class="d-flex flex-wrap gap-1">
+          <a class="btn btn-sm btn-outline-primary" href="${escapeHtml(p.url_bukti)}" target="_blank" rel="noopener noreferrer">Lihat Bukti</a>
+          <button class="btn btn-sm btn-success" onclick="verifikasiPembayaran(${Number(p.id_pembayaran)})">Terima</button>
+          <button class="btn btn-sm btn-danger" onclick="tolakPembayaran(${Number(p.id_pembayaran)})">Tolak</button>
+        </div>`;
+    }
+
+    if (String(p.no_telepon || "").startsWith("UMUM-")) {
+      return `<button class="btn btn-sm btn-primary" onclick="verifikasiPembayaran(${Number(p.id_pembayaran)})">Konfirmasi Pembayaran</button>`;
+    }
+
+    return `<span class="text-muted small">Menunggu pelanggan upload bukti</span>`;
+  }
+
+  async function tolakPembayaran(id) {
+    if (!confirm("Tolak bukti pembayaran ini? Pelanggan dapat mengunggah ulang bukti.")) return;
+    try {
+      const hasil = await apiRequest("/api/pembayaran/" + Number(id) + "/tolak", {
+        method: "POST",
+        body: JSON.stringify({
+          catatan_pelunasan: "Bukti pembayaran ditolak kasir. Silakan unggah ulang."
+        })
+      });
+      if (hasil.success === false) throw new Error(hasil.message || "Gagal menolak bukti.");
+      alert(hasil.message || "Bukti berhasil ditolak.");
+      await loadPembayaran();
+    } catch (error) {
+      alert(error.message || "Gagal menolak bukti.");
+    }
+  }
   async function loadPembayaran() {
     const tbody = document.getElementById("tabelPembayaran");
     tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Memuat pembayaran...</div></td></tr>`;
@@ -1910,19 +1943,10 @@
               <td><span class="fw-semibold">${escapeHtml(p.kode_transaksi || kode)}</span></td>
               <td>${escapeHtml(p.nama_pelanggan || nama)}</td>
               <td>${formatRupiah(p.total_harga)}</td>
-              <td><span class="badge bg-warning text-dark">Menunggu Verifikasi</span>
+              <td><span class="badge bg-warning text-dark">Menunggu Konfirmasi</span>
                 <div class="small mt-1">${escapeHtml(p.metode_pembayaran || "")}</div>
               </td>
-              <td>
-                <a class="btn btn-sm btn-outline-primary mb-1"
-                   href="${escapeHtml(p.url_bukti)}" target="_blank" rel="noopener">
-                  <i class="bi bi-image"></i> Lihat Bukti
-                </a>
-                <button class="btn btn-sm btn-success mb-1"
-                  onclick="verifikasiPembayaran(${Number(p.id_pembayaran)})">
-                  <i class="bi bi-check-circle"></i> Verifikasi
-                </button>
-              </td>
+              <td>${aksiBuktiPembayaran(p)}</td>
             </tr>`;
         }
 
@@ -1949,13 +1973,10 @@
             <td><span class="fw-semibold">${escapeHtml(p.kode_transaksi || "-")}</span></td>
             <td>${escapeHtml(p.nama_pelanggan || "-")}</td>
             <td>${formatRupiah(p.total_harga)}</td>
-            <td><span class="badge bg-warning text-dark">Menunggu Verifikasi</span>
+            <td><span class="badge bg-warning text-dark">Menunggu Konfirmasi</span>
               <div class="small mt-1">${escapeHtml(p.metode_pembayaran || "")}</div>
             </td>
-            <td>
-              <a class="btn btn-sm btn-outline-primary mb-1" href="${escapeHtml(p.url_bukti)}" target="_blank" rel="noopener">Lihat Bukti</a>
-              <button class="btn btn-sm btn-success mb-1" onclick="verifikasiPembayaran(${Number(p.id_pembayaran)})">Verifikasi</button>
-            </td>
+            <td>${aksiBuktiPembayaran(p)}</td>
           </tr>`).join(""));
       }
     } catch (error) {
@@ -1965,13 +1986,13 @@
   }
 
   async function verifikasiPembayaran(id) {
-    if (!confirm("Pastikan bukti sudah diperiksa dan pembayaran benar-benar diterima. Verifikasi pembayaran ini?")) return;
+    if (!confirm("Pastikan pembayaran benar-benar sudah masuk. Konfirmasi pembayaran ini?")) return;
 
     try {
       const hasil = await apiRequest("/api/pembayaran/" + Number(id) + "/verifikasi", {
         method: "POST",
         body: JSON.stringify({
-          catatan_pelunasan: "Bukti pembayaran diverifikasi kasir."
+          catatan_pelunasan: "Pembayaran telah diperiksa dan dikonfirmasi kasir."
         })
       });
 
@@ -2378,7 +2399,7 @@ async function loadPelanggan() {
               <small class="text-muted">
                 ${item.berat_jumlah}
                 ${escapeHtml(item.jenis_satuan)}
-                Ã¢â‚¬â€
+                &mdash;
                 ${formatRupiah(item.harga_satuan)}
               </small>
 
@@ -3023,6 +3044,39 @@ async function loadPelanggan() {
      PEMBAYARAN
   ========================================================= */
 
+  function aksiBuktiPembayaran(p) {
+    if (p.url_bukti) {
+      return `
+        <div class="d-flex flex-wrap gap-1">
+          <a class="btn btn-sm btn-outline-primary" href="${escapeHtml(p.url_bukti)}" target="_blank" rel="noopener noreferrer">Lihat Bukti</a>
+          <button class="btn btn-sm btn-success" onclick="verifikasiPembayaran(${Number(p.id_pembayaran)})">Terima</button>
+          <button class="btn btn-sm btn-danger" onclick="tolakPembayaran(${Number(p.id_pembayaran)})">Tolak</button>
+        </div>`;
+    }
+
+    if (String(p.no_telepon || "").startsWith("UMUM-")) {
+      return `<button class="btn btn-sm btn-primary" onclick="verifikasiPembayaran(${Number(p.id_pembayaran)})">Konfirmasi Pembayaran</button>`;
+    }
+
+    return `<span class="text-muted small">Menunggu pelanggan upload bukti</span>`;
+  }
+
+  async function tolakPembayaran(id) {
+    if (!confirm("Tolak bukti pembayaran ini? Pelanggan dapat mengunggah ulang bukti.")) return;
+    try {
+      const hasil = await apiRequest("/api/pembayaran/" + Number(id) + "/tolak", {
+        method: "POST",
+        body: JSON.stringify({
+          catatan_pelunasan: "Bukti pembayaran ditolak kasir. Silakan unggah ulang."
+        })
+      });
+      if (hasil.success === false) throw new Error(hasil.message || "Gagal menolak bukti.");
+      alert(hasil.message || "Bukti berhasil ditolak.");
+      await loadPembayaran();
+    } catch (error) {
+      alert(error.message || "Gagal menolak bukti.");
+    }
+  }
   async function loadPembayaran() {
     const tbody = document.getElementById("tabelPembayaran");
     tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Memuat pembayaran...</div></td></tr>`;
@@ -3059,19 +3113,10 @@ async function loadPelanggan() {
               <td><span class="fw-semibold">${escapeHtml(p.kode_transaksi || kode)}</span></td>
               <td>${escapeHtml(p.nama_pelanggan || nama)}</td>
               <td>${formatRupiah(p.total_harga)}</td>
-              <td><span class="badge bg-warning text-dark">Menunggu Verifikasi</span>
+              <td><span class="badge bg-warning text-dark">Menunggu Konfirmasi</span>
                 <div class="small mt-1">${escapeHtml(p.metode_pembayaran || "")}</div>
               </td>
-              <td>
-                <a class="btn btn-sm btn-outline-primary mb-1"
-                   href="${escapeHtml(p.url_bukti)}" target="_blank" rel="noopener">
-                  <i class="bi bi-image"></i> Lihat Bukti
-                </a>
-                <button class="btn btn-sm btn-success mb-1"
-                  onclick="verifikasiPembayaran(${Number(p.id_pembayaran)})">
-                  <i class="bi bi-check-circle"></i> Verifikasi
-                </button>
-              </td>
+              <td>${aksiBuktiPembayaran(p)}</td>
             </tr>`;
         }
 
@@ -3098,13 +3143,10 @@ async function loadPelanggan() {
             <td><span class="fw-semibold">${escapeHtml(p.kode_transaksi || "-")}</span></td>
             <td>${escapeHtml(p.nama_pelanggan || "-")}</td>
             <td>${formatRupiah(p.total_harga)}</td>
-            <td><span class="badge bg-warning text-dark">Menunggu Verifikasi</span>
+            <td><span class="badge bg-warning text-dark">Menunggu Konfirmasi</span>
               <div class="small mt-1">${escapeHtml(p.metode_pembayaran || "")}</div>
             </td>
-            <td>
-              <a class="btn btn-sm btn-outline-primary mb-1" href="${escapeHtml(p.url_bukti)}" target="_blank" rel="noopener">Lihat Bukti</a>
-              <button class="btn btn-sm btn-success mb-1" onclick="verifikasiPembayaran(${Number(p.id_pembayaran)})">Verifikasi</button>
-            </td>
+            <td>${aksiBuktiPembayaran(p)}</td>
           </tr>`).join(""));
       }
     } catch (error) {
@@ -3114,13 +3156,13 @@ async function loadPelanggan() {
   }
 
   async function verifikasiPembayaran(id) {
-    if (!confirm("Pastikan bukti sudah diperiksa dan pembayaran benar-benar diterima. Verifikasi pembayaran ini?")) return;
+    if (!confirm("Pastikan pembayaran benar-benar sudah masuk. Konfirmasi pembayaran ini?")) return;
 
     try {
       const hasil = await apiRequest("/api/pembayaran/" + Number(id) + "/verifikasi", {
         method: "POST",
         body: JSON.stringify({
-          catatan_pelunasan: "Bukti pembayaran diverifikasi kasir."
+          catatan_pelunasan: "Pembayaran telah diperiksa dan dikonfirmasi kasir."
         })
       });
 
@@ -3615,8 +3657,6 @@ async function loadPelanggan() {
       }
     }
   </style>
-<link rel="stylesheet" href="/css/dashboard-polish.css?v=1">
-<link rel="stylesheet" href="/css/dashboard-mobile.css?v=2">
 </head>
 <body>
   ${currentDetailReceiptHTML}
@@ -3626,7 +3666,6 @@ async function loadPelanggan() {
       setTimeout(function () { window.print(); }, 300);
     };
   <\/script>
-<script src="/js/dashboard-mobile.js?v=1"><\/script>
 </body>
 </html>`);
     win.document.close();
@@ -3720,7 +3759,7 @@ async function loadPelanggan() {
             <strong>${safe(p.status_konfirmasi || "Belum tercatat")}</strong>
           </div>
           ${p.waktu_konfirmasi ? `<div class="row"><span>Waktu verifikasi</span><span>${safe(new Date(p.waktu_konfirmasi).toLocaleString("id-ID"))}</span></div>` : ""}
-          ${p.catatan_pelunasan ? `<div class="row"><span>Catatan pembayaran</span><span>${safe(p.catatan_pelunasan)}</span></div>` : ""}
+          ${p.catatan_pelunasan ? `<div class="row" style="display:block;white-space:normal;overflow-wrap:anywhere;margin:4px 0;"><span style="display:block;font-weight:bold;text-align:left;">Catatan pembayaran</span><span style="display:block;text-align:left;white-space:normal;overflow-wrap:anywhere;">${safe(p.catatan_pelunasan)}</span></div>` : ""}
           ${p.bukti_pembayaran ? `<div class="row"><span>Bukti pembayaran</span><span>Tersimpan</span></div>` : ""}
           ${index < payments.length - 1 ? '<hr>' : ''}
         `).join("")
@@ -4172,6 +4211,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <script src="/js/dashboard-mobile.js?v=1"></script>
 </body>
 </html>
+
 
 
 

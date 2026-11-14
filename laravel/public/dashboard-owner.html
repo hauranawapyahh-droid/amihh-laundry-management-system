@@ -310,7 +310,7 @@ body{background:#f5f8fc;margin:0;font-family:Arial,sans-serif}
       <section id="page-riwayat" class="page-section d-none">
         <div class="page-header d-flex justify-content-between align-items-center">
           <div><h2>Riwayat Transaksi</h2><p>Seluruh transaksi yang tercatat di sistem, lintas kasir.</p></div>
-          <button class="btn btn-primary" id="xls"><i class="bi bi-file-earmark-excel"></i> Ekspor Excel</button>
+          <div class="d-flex gap-2"><button class="btn btn-outline-danger" id="pdfRiwayat"><i class="bi bi-file-earmark-pdf"></i> Ekspor PDF</button><button class="btn btn-primary" id="xls"><i class="bi bi-file-earmark-excel"></i> Ekspor Excel</button></div>
         </div>
         <div class="d-flex gap-2 mb-3" id="r-f">
           <button class="btn btn-sm btn-primary" data-s="">Semua</button>
@@ -793,7 +793,7 @@ $('xls').onclick=()=>{
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='riwayat-transaksi.csv';a.click();
 };
 
-/* Default tanggal laporan Owner */
+$("pdfRiwayat").onclick=()=>{const data=rows();const w=window.open("","_blank");if(!w){alert("Izinkan pop-up untuk membuat PDF.");return;}const e=v=>String(v??"-").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");const body=data.map((x,i)=>`<tr><td>${i+1}</td><td>${e(x.kode)}</td><td>${e(x.tgl)}</td><td>${e(x.pel)}</td><td>${e(x.lay)}</td><td>${e(x.kasir)}</td><td>Rp ${Number(x.total||0).toLocaleString("id-ID")}</td><td>${x.lunas?"Lunas":"Belum Bayar"}</td><td>${e(x.pr)}</td></tr>`).join("");w.document.write(`<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>Riwayat Transaksi - Amih Laundry</title><style>body{font-family:Arial;padding:20px;color:#1f2937}h2{color:#164e8b}table{width:100%;border-collapse:collapse;font-size:10px}th,td{border:1px solid #ccc;padding:7px;text-align:left}th{background:#eaf3ff} @page{size:landscape;margin:12mm}</style></head><body><h2>AMIH LAUNDRY</h2><h3>Riwayat Transaksi</h3><p>Tanggal cetak: ${new Date().toLocaleString("id-ID")}</p><p>Jumlah transaksi: ${data.length}</p><table><thead><tr><th>No</th><th>Kode</th><th>Tanggal</th><th>Pelanggan</th><th>Layanan</th><th>Kasir</th><th>Total</th><th>Pembayaran</th><th>Proses</th></tr></thead><tbody>${body}</tbody></table></body></html>`);w.document.close();w.focus();setTimeout(()=>w.print(),500);};/* Default tanggal laporan Owner */
 (function(){
   const elAwal = document.getElementById('laporanMulai');
   const elAkhir = document.getElementById('laporanAkhir');

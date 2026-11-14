@@ -63,6 +63,7 @@ Route::middleware('jwt')->group(function () {
     Route::middleware('role:ADMIN,KASIR')->group(function () {
         Route::get('/pembayaran/menunggu', [PembayaranController::class, 'menunggu']);
         Route::post('/pembayaran/{id}/verifikasi', [PembayaranController::class, 'verifikasi']);
+        Route::post('/pembayaran/{id}/tolak', [PembayaranController::class, 'tolak']);
     });
 
     // BIAYA OPERASIONAL
