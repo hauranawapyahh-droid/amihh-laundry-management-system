@@ -16,7 +16,7 @@ use App\Http\Controllers\PembayaranController;
 
 // LOGIN
 Route::post('/auth/login', [AuthController::class, 'login'])
-    ->middleware('throttle:5,1');
+    ->middleware('throttle:login');
 
 Route::middleware('jwt')->group(function () {
 
