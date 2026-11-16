@@ -4139,7 +4139,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const id=active ? active.id.toLowerCase() : "";
       if(id.includes("dashboard")) await loadDashboard();
       else if(id.includes("pembayaran")) await loadPembayaran();
-      else if(id.includes("riwayat")) await loadRiwayat();
+      
     } catch(e){ console.warn("Auto refresh kasir:",e); }
     finally { busy=false; }
   },3000);
@@ -4149,6 +4149,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <script src="/js/dashboard-mobile.js?v=1"></script>
 </body>
 </html>
+
 
 
 
