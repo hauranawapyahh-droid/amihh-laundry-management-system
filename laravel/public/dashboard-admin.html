@@ -3280,6 +3280,8 @@ async function toggleStatusLayanan(id) {
     alert("Terjadi kesalahan saat mengubah status");
   }
 }
+window.toggleStatusLayanan = toggleStatusLayanan;
+
 async function hapusLayanan(id) {
   if (!confirm("Yakin ingin menghapus layanan ini?")) return;
   try {
@@ -3888,6 +3890,7 @@ document.addEventListener("submit", async function (e) {
 <script src="/js/dashboard-mobile.js?v=1"></script>
 </body>
 </html>
+
 
 
 

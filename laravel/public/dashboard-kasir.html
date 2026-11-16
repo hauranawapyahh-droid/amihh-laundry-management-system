@@ -1268,9 +1268,9 @@
 
         <div class="card-box">
           <div class="row g-3 mb-3">
-            <div class="col-md-4"><label class="form-label">Metode Pembayaran</label><select id="filterMetodeRiwayat" class="form-select" onchange="loadRiwayat()"><option value="">Semua Metode</option><option value="TUNAI">Tunai</option><option value="QRIS">QRIS</option><option value="TRANSFER_BANK">Transfer Bank</option></select></div>
-            <div class="col-md-4"><label class="form-label">Status Pesanan</label><select id="filterStatusRiwayat" class="form-select" onchange="loadRiwayat()"><option value="">Semua Status</option><option value="BELUM_DIAMBIL">Belum Diambil</option><option value="SUDAH_DIAMBIL">Sudah Diambil</option></select></div>
-            <div class="col-md-4"><label class="form-label">Total Nominal Hasil Filter</label><div id="totalNominalRiwayat" class="form-control fw-bold">Rp 0</div></div>
+            <div class="col-md-4"><label class="form-label">Metode Pembayaran</label><select id="filterMetodeRiwayat2" class="form-select" onchange="loadRiwayat()"><option value="">Semua Metode</option><option value="TUNAI">Tunai</option><option value="QRIS">QRIS</option><option value="TRANSFER_BANK">Transfer Bank</option></select></div>
+            <div class="col-md-4"><label class="form-label">Status Pesanan</label><select id="filterStatusRiwayat2" class="form-select" onchange="loadRiwayat()"><option value="">Semua Status</option><option value="BELUM_DIAMBIL">Belum Diambil</option><option value="SUDAH_DIAMBIL">Sudah Diambil</option></select></div>
+            <div class="col-md-4"><label class="form-label">Total Nominal Hasil Filter</label><div id="totalNominalRiwayat2" class="form-control fw-bold">Rp 0</div></div>
           </div>
           <div class="table-responsive">
 
@@ -3438,8 +3438,8 @@ async function loadPelanggan() {
 
   async function loadRiwayat() {
     const tbody = document.getElementById("tabelRiwayat");
-    const metode = document.getElementById("filterMetodeRiwayat")?.value || "";
-    const status = document.getElementById("filterStatusRiwayat")?.value || "";
+    const metode = document.getElementById("filterMetodeRiwayat2")?.value || "";
+    const status = document.getElementById("filterStatusRiwayat2")?.value || "";
     tbody.innerHTML = `<tr><td colspan="6">Memuat data...</td></tr>`;
     const list = await loadTransaksi();
     const filtered = list.filter(item => {
@@ -3447,7 +3447,7 @@ async function loadPelanggan() {
       return (!metode || pagos.some(p => p.metode_pembayaran === metode)) && (!status || item.status_pengambilan === status);
     }).sort((a,b) => Number(b.id_transaksi)-Number(a.id_transaksi));
     const total = filtered.reduce((sum,item) => sum + Number(item.total_harga || 0),0);
-    document.getElementById("totalNominalRiwayat").textContent = formatRupiah(total);
+    document.getElementById("totalNominalRiwayat2").textContent = formatRupiah(total);
     if (!filtered.length) {
       tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">Tidak ada transaksi yang sesuai filter.</div></td></tr>`;
       return;
@@ -4149,6 +4149,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <script src="/js/dashboard-mobile.js?v=1"></script>
 </body>
 </html>
+
 
 
 
