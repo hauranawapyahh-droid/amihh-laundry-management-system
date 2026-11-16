@@ -94,6 +94,7 @@ class TransaksiController extends Controller
 
                 $total = 0;
                 $detailData = [];
+                $totalBeratKiloan = 0;
 
                 foreach ($validated['detail'] as $item) {
                     $layanan = Layanan::find($item['id_layanan']);
@@ -103,6 +104,18 @@ class TransaksiController extends Controller
                     }
 
                     $beratJumlah = (float) $item['berat_jumlah'];
+
+                    if (strtolower(trim((string) $layanan->jenis_satuan)) === 'kg') {
+
+                        $totalBeratKiloan += $beratJumlah;
+
+                        if ($totalBeratKiloan > 10) {
+
+                            throw new \Exception('Total laundry kiloan maksimal 10 kg dalam satu transaksi.');
+
+                        }
+
+                    }
                     $harga = (float) $layanan->harga_per_satuan;
                     $subtotal = $beratJumlah * $harga;
                     $total += $subtotal;
@@ -149,8 +162,8 @@ class TransaksiController extends Controller
                         throw new \Exception('Metode pembayaran wajib diisi.');
                     }
 
-                    $jumlah = (float) ($input['jumlah_bayar'] ?? 0);
                     $tunai = $metode === 'TUNAI';
+                    $jumlah = $tunai ? (float) ($input['jumlah_bayar'] ?? 0) : $total;
 
                     if ($tunai && $jumlah < $total) {
                         throw new \Exception('Jumlah pembayaran kurang dari total transaksi.');

@@ -1,4 +1,4 @@
-const auth = checkAuth("ADMIN");
+﻿const auth = checkAuth("ADMIN");
 document.getElementById("userName").textContent = auth.user.nama;
 const inisial = auth.user.nama.split(" ").map(w => w[0]).join("").substring(0, 2).toUpperCase();
 document.getElementById("sidebarAvatarInitial").textContent = inisial;
@@ -139,7 +139,7 @@ function renderChartPendapatan(transaksiList) {
   // Highlight hari ini (index terakhir) pakai warna accent, sisanya primary
   const barColors = totals.map((_, i) => (i === totals.length - 1 ? "#F59E0B" : "#2F6FED"));
 
-  new Chart(document.getElementById("chartPendapatan7Hari"), {
+  if (window.chartPendapatan7Hari) window.chartPendapatan7Hari.destroy(); window.chartPendapatan7Hari = new Chart(document.getElementById("chartPendapatan7Hari"), {
     type: "bar",
     data: { labels, datasets: [{ label: "Pendapatan", data: totals, backgroundColor: barColors, borderRadius: 6 }] },
     options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } },
@@ -157,7 +157,7 @@ function renderChartStatusCucian(prosesList) {
   const values = Object.values(counts);
   const colors = labels.map(getStatusColor);
 
-  new Chart(document.getElementById("chartStatusCucian"), {
+  if (window.chartStatusCucian) window.chartStatusCucian.destroy(); window.chartStatusCucian = new Chart(document.getElementById("chartStatusCucian"), {
     type: "doughnut",
     data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 0 }] },
     options: { plugins: { legend: { display: false } } },
@@ -478,3 +478,13 @@ loadCucian();
 loadProses();
 loadPengguna();
 loadBiaya();
+let adminRefreshBusy = false;
+setInterval(async () => {
+  if (adminRefreshBusy || document.hidden) return;
+  adminRefreshBusy = true;
+  try {
+    await Promise.all([loadDashboardStats(), loadRingkasan()]);
+  } finally {
+    adminRefreshBusy = false;
+  }
+}, 3000);

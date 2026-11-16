@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
@@ -2008,7 +2008,7 @@ function timelineEvents(t) {
     ev.push({
       s: (terakhir && k !== "SELESAI" && info.key !== "batal") ? "current" : "done",
       judul: LABEL[k] || p.status_proses || "Proses cucian",
-      ket: waktu(p.created_at) + (p.catatan_proses ? " — " + p.catatan_proses : ""),
+      ket: waktu(p.created_at) + (p.catatan_proses ? " â€” " + p.catatan_proses : ""),
     });
   });
 
@@ -2064,7 +2064,7 @@ function renderDetailPerjalanan() {
   $("detailPerjalanan").innerHTML = `
     <div class="mb-3">
       <span class="fw-semibold">${teksLayanan(t)}</span>
-      <span class="text-muted"> · ${rp(t.total_harga)}</span>
+      <span class="text-muted"> Â· ${rp(t.total_harga)}</span>
     </div>
     <div class="tl">
       ${timelineEvents(t).map((e) => `
@@ -2443,7 +2443,7 @@ renderHeader();
 muatData(false);
 
 // Perbarui otomatis tiap 60 detik supaya update dari kasir/staff ikut tampil
-setInterval(() => muatData(false), 60000);
+setInterval(() => muatData(false), 3000);
 
 })();
 </script>
@@ -2509,6 +2509,7 @@ setInterval(() => muatData(false), 60000);
 </script>
 </body>
 </html>
+
 
 
 

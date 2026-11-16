@@ -1,4 +1,4 @@
-
+﻿
     'use strict';
 
     const API = '/api';
@@ -270,4 +270,15 @@
     }
 
     window.refreshOwnerDashboard = loadOwnerDashboard;
+let ownerRefreshBusy = false;
+setInterval(async () => {
+  if (ownerRefreshBusy || document.hidden) return;
+  ownerRefreshBusy = true;
+  try {
+    await loadOwnerDashboard();
+  } finally {
+    ownerRefreshBusy = false;
+  }
+}, 3000);
+
 
