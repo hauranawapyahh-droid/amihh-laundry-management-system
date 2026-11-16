@@ -76,7 +76,7 @@ class TransaksiController extends Controller
             'detail.*.berat_jumlah' => 'required|numeric|min:0.01',
             'pembayaran' => 'required|array',
             'pembayaran.status' => 'required|in:SEKARANG,NANTI',
-            'pembayaran.metode_pembayaran' => 'nullable|in:TUNAI,TRANSFER_BANK,QRIS',
+            'pembayaran.metode_pembayaran' => 'required|in:TUNAI,TRANSFER_BANK,QRIS',
             'pembayaran.jumlah_bayar' => 'nullable|numeric|min:0',
             'pembayaran.catatan_pelunasan' => 'nullable|string|max:1000',
             'catatan' => 'nullable|string',
@@ -351,3 +351,4 @@ class TransaksiController extends Controller
         ]);
     }
 }
+

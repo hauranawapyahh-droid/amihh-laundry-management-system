@@ -21,6 +21,7 @@ class Transaksi extends Model
         'id_kasir',
         'id_verifikator',
         'total_harga',
+        'metode_pembayaran',
         'status_pembayaran',
         'status_pengambilan',
         'waktu_pengambilan',
