@@ -124,6 +124,7 @@ class TransaksiController extends Controller
                     'id_kasir' => $user->id_user,
                     'id_verifikator' => null,
                     'total_harga' => $total,
+                    'metode_pembayaran' => $validated['pembayaran']['metode_pembayaran'],
                     'status_pembayaran' => 'BELUM_DIBAYAR',
                     'status_pengambilan' => 'BELUM_DIAMBIL',
                     'waktu_pengambilan' => null,
