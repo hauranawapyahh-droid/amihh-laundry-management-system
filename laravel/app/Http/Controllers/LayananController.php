@@ -103,6 +103,28 @@ class LayananController extends Controller
         ]);
     }
 
+
+    public function toggle($id)
+    {
+        $layanan = Layanan::find($id);
+
+        if (!$layanan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data layanan tidak ditemukan'
+            ], 404);
+        }
+
+        $layanan->update([
+            'is_active' => !$layanan->is_active
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => $layanan->is_active ? 'Layanan tersedia' : 'Layanan habis',
+            'data' => $layanan
+        ]);
+    }
     public function destroy($id)
     {
         $layanan = Layanan::find($id);

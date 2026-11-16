@@ -40,6 +40,7 @@ Route::middleware('jwt')->group(function () {
     Route::middleware('role:ADMIN')->group(function () {
         Route::post('/layanan', [LayananController::class, 'store']);
         Route::put('/layanan/{id}', [LayananController::class, 'update']);
+        Route::post('/layanan/{id}/toggle', [LayananController::class, 'toggle']);
         Route::delete('/layanan/{id}', [LayananController::class, 'destroy']);
     });
 
