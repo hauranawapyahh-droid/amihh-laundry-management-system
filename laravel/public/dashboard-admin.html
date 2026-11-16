@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
@@ -937,7 +937,7 @@ html, body {
                 <strong id="dashboardUserName">
                   Admin
                 </strong>
-                👋
+                ðŸ‘‹
               </p>
 
               <p>
@@ -3195,7 +3195,7 @@ async function loadLayanan() {
         <td>${formatRupiah(l.harga_per_satuan)}</td>
         <td>${badgeStatus(l.is_active ? "Aktif" : "Nonaktif")}</td>
         <td>
-          <button class="btn btn-sm btn-outline-primary" title="Edit" onclick="bukaEditLayanan(${l.id_layanan})"><i class="bi bi-pencil-square"></i></button>
+          <button class="btn btn-sm btn-outline-warning" title="Ubah status" onclick="toggleStatusLayanan(${l.id_layanan})"><i class="bi bi-power"></i></button> <button class="btn btn-sm btn-outline-primary" title="Edit" onclick="bukaEditLayanan(${l.id_layanan})"><i class="bi bi-pencil-square"></i></button>
           <button class="btn btn-sm btn-outline-danger" title="Hapus" onclick="hapusLayanan(${l.id_layanan})"><i class="bi bi-trash"></i></button>
         </td>
       </tr>`).join("");
@@ -3256,6 +3256,30 @@ document.getElementById("formEditLayanan").addEventListener("submit", (e) => {
   );
 });
 
+async function toggleStatusLayanan(id) {
+  const l = layananData.find(x => String(x.id_layanan) === String(id));
+  if (!l) return alert("Data layanan tidak ditemukan");
+  const aktif = Number(l.is_active) !== 1;
+  if (!confirm(`Yakin ingin ${aktif ? "mengaktifkan" : "menonaktifkan"} layanan ${l.nama_layanan}?`)) return;
+  try {
+    const res = await apiFetch(`/api/layanan/${id}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        nama_layanan: l.nama_layanan,
+        jenis_satuan: l.jenis_satuan,
+        harga_per_satuan: l.harga_per_satuan,
+        is_active: aktif ? 1 : 0
+      })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) return alert(data.message || "Gagal mengubah status");
+    await loadLayanan();
+    alert("Status layanan berhasil diubah");
+  } catch (error) {
+    console.error(error);
+    alert("Terjadi kesalahan saat mengubah status");
+  }
+}
 async function hapusLayanan(id) {
   if (!confirm("Yakin ingin menghapus layanan ini?")) return;
   try {
@@ -3554,7 +3578,7 @@ async function muatSaranPelanggan() {
     daftarPelangganUntukAkun.forEach((p) => {
       const option = document.createElement("option");
       option.value = p.nama;
-      option.label = `${p.nama} — ${p.no_telepon}`;
+      option.label = `${p.nama} â€” ${p.no_telepon}`;
       saranNamaPelanggan.appendChild(option);
     });
   } catch (err) {
@@ -3864,6 +3888,7 @@ document.addEventListener("submit", async function (e) {
 <script src="/js/dashboard-mobile.js?v=1"></script>
 </body>
 </html>
+
 
 
 
