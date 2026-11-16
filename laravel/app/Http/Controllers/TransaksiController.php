@@ -14,7 +14,7 @@ use App\Models\Layanan;
 
 class TransaksiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
 
@@ -30,11 +30,16 @@ class TransaksiController extends Controller
             ], 403);
         }
 
+        $query->when($request->filled('metode_pembayaran'), function ($q) use ($request) { $q->whereHas('pembayaran', function ($p) use ($request) { $p->where('metode_pembayaran', $request->metode_pembayaran); }); });
+
+        $query->when($request->filled('status_pengambilan'), function ($q) use ($request) { $q->where('status_pengambilan', $request->status_pengambilan); });
+
         $data = $query->orderByDesc('id_transaksi')->get();
 
         return response()->json([
             'success' => true,
-            'data' => $data
+            'data' => $data,
+            'total_nominal' => $data->sum('total_harga')
         ]);
     }
 
@@ -316,7 +321,7 @@ class TransaksiController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $data
+            'data' => $data,
         ]);
     }
 
@@ -352,4 +357,6 @@ class TransaksiController extends Controller
         ]);
     }
 }
+
+
 
