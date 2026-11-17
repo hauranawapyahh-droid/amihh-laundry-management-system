@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
@@ -1178,9 +1178,9 @@
 
         <div class="card-box">
           <div class="row g-3 mb-3">
-            <div class="col-md-4"><label class="form-label">Metode Pembayaran</label><select id="filterMetodeRiwayat" class="form-select" onchange="loadRiwayat()"><option value="">Semua Metode</option><option value="TUNAI">Tunai</option><option value="QRIS">QRIS</option><option value="TRANSFER_BANK">Transfer Bank</option></select></div>
-            <div class="col-md-4"><label class="form-label">Status Pesanan</label><select id="filterStatusRiwayat" class="form-select" onchange="loadRiwayat()"><option value="">Semua Status</option><option value="BELUM_DIAMBIL">Belum Diambil</option><option value="SUDAH_DIAMBIL">Sudah Diambil</option></select></div>
-            <div class="col-md-4"><label class="form-label">Total Nominal Hasil Filter</label><div id="totalNominalRiwayat" class="form-control fw-bold">Rp 0</div></div>
+            <div class="col-md-4"><label class="form-label">Metode Pembayaran</label><select id="filterMetodePembayaran" class="form-select" onchange="loadPembayaran()"><option value="">Semua Metode</option><option value="TUNAI">Tunai</option><option value="QRIS">QRIS</option><option value="TRANSFER_BANK">Transfer Bank</option></select></div>
+            <div class="col-md-4"><label class="form-label">Status Pesanan</label><select id="filterStatusPembayaran" class="form-select" onchange="loadPembayaran()"><option value="">Semua Status</option><option value="BELUM_DIAMBIL">Belum Diambil</option><option value="SUDAH_DIAMBIL">Sudah Diambil</option></select></div>
+            <div class="col-md-4"><label class="form-label">Total Nominal Hasil Filter</label><div id="totalNominalPembayaran" class="form-control fw-bold">Rp 0</div></div>
           </div>
           <div class="table-responsive">
 
@@ -1894,7 +1894,7 @@
   }
   async function loadPembayaran() {
     const tbody = document.getElementById("tabelPembayaran");
-    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Memuat pembayaran...</div></td></tr>`;
+    if (!tbody.children.length) tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Memuat pembayaran...</div></td></tr>`;
 
     try {
       const [list, hasilPending] = await Promise.all([
@@ -1902,14 +1902,28 @@
         apiRequest("/api/pembayaran/menunggu")
       ]);
 
-      const pending = hasilPending.data || [];
-      const pendingByKode = new Map(
-        pending.map(p => [String(p.kode_transaksi), p])
-      );
+      const metodeFilter = (document.getElementById("filterMetodePembayaran")?.value || "").toUpperCase();
+      const statusFilter = (document.getElementById("filterStatusPembayaran")?.value || "").toUpperCase();
 
-      const sorted = [...list].sort(
-        (a, b) => Number(b.id_transaksi) - Number(a.id_transaksi)
-      );
+      const sorted = [...list].filter(item => {
+        const pagos = Array.isArray(item.pembayaran) ? item.pembayaran : (item.pembayaran ? [item.pembayaran] : []);
+        const cocokMetode = !metodeFilter || pagos.some(p => String(p?.metode_pembayaran || "").trim().toUpperCase() === metodeFilter) || String(item.metode_pembayaran || "").trim().toUpperCase() === metodeFilter;
+        const cocokStatus = !statusFilter || String(item.status_pengambilan || "").trim().toUpperCase() === statusFilter;
+        return cocokMetode && cocokStatus;
+      }).sort((a, b) => Number(b.id_transaksi) - Number(a.id_transaksi));
+
+      const pendingSemua = hasilPending.data || [];
+      const pending = pendingSemua.filter(p => {
+        const transaksi = list.find(t => String(t.kode_transaksi) === String(p.kode_transaksi));
+        const pagos = Array.isArray(transaksi?.pembayaran) ? transaksi.pembayaran : (transaksi?.pembayaran ? [transaksi.pembayaran] : []);
+        const metodePending = String(p.metode_pembayaran || pagos[0]?.metode_pembayaran || "").trim().toUpperCase();
+        const statusPending = String(p.status_pengambilan || transaksi?.status_pengambilan || "").trim().toUpperCase();
+        return (!metodeFilter || metodePending === metodeFilter) && (!statusFilter || statusPending === statusFilter);
+      });
+
+      const pendingByKode = new Map(pending.map(p => [String(p.kode_transaksi), p]));
+      const totalElement = document.getElementById("totalNominalPembayaran");
+      if (totalElement) totalElement.textContent = formatRupiah(0);
 
       if (!sorted.length && !pending.length) {
         tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Belum ada pembayaran.</div></td></tr>`;
@@ -1951,6 +1965,11 @@
       // Tampilkan bukti pending meskipun transaksinya tidak muncul di daftar transaksi.
       const kodeTransaksi = new Set(sorted.map(t => String(t.kode_transaksi || "")));
       const tambahan = pending.filter(p => !kodeTransaksi.has(String(p.kode_transaksi || "")));
+
+      if (totalElement) {
+        const total = sorted.reduce((sum, item) => sum + Number(item.total_harga || 0), 0) + tambahan.reduce((sum, item) => sum + Number(item.total_harga || 0), 0);
+        totalElement.textContent = formatRupiah(total);
+      }
 
       if (tambahan.length) {
         tbody.insertAdjacentHTML("afterbegin", tambahan.map(p => `
@@ -2720,51 +2739,38 @@ async function loadPelanggan() {
      TRANSAKSI API
   ========================================================= */
 
-  async function loadTransaksi() {
+  let transaksiCacheAt = 0;
+let transaksiCachePromise = null;
 
-    try {
-
-      const response = await apiRequest("/api/transaksi");
-
-      console.log("HASIL API TRANSAKSI:", response);
-
-      let data = response.data;
-
-      // Antisipasi kalau API mengembalikan data langsung
-      if (Array.isArray(data)) {
-        transaksiList = data;
-      }
-
-      // Antisipasi kalau API berbentuk { data: [...] }
-      else if (data && Array.isArray(data.data)) {
-        transaksiList = data.data;
-      }
-
-      else {
-        transaksiList = [];
-      }
-
-      console.log("TRANSAKSI YANG DIBACA FRONTEND:", transaksiList);
-
-      return transaksiList;
-
-    } catch (error) {
-
-      console.error("GAGAL LOAD TRANSAKSI:", error);
-
-      // JANGAN diam-diam dianggap tidak ada data
-      alert(
-        "Gagal mengambil data transaksi dari server.\n\n" +
-        error.message
-      );
-
-      transaksiList = [];
-
-      return [];
-
-    }
-
+async function loadTransaksi(forceRefresh = false) {
+  if (!forceRefresh && transaksiList.length && Date.now() - transaksiCacheAt < 15000) {
+    return transaksiList;
   }
+  if (!forceRefresh && transaksiCachePromise) return transaksiCachePromise;
+
+  transaksiCachePromise = (async () => {
+    try {
+      const response = await apiRequest("/api/transaksi");
+      let data = response.data;
+      if (Array.isArray(data)) transaksiList = data;
+      else if (data && Array.isArray(data.data)) transaksiList = data.data;
+      else transaksiList = [];
+      transaksiCacheAt = Date.now();
+      console.log("TRANSAKSI YANG DIBACA FRONTEND:", transaksiList);
+      return transaksiList;
+    } catch (error) {
+      console.error("GAGAL LOAD TRANSAKSI:", error);
+      alert("Gagal mengambil data transaksi dari server.\n\n" + error.message);
+      transaksiList = [];
+      transaksiCacheAt = 0;
+      return [];
+    } finally {
+      transaksiCachePromise = null;
+    }
+  })();
+
+  return transaksiCachePromise;
+}
 
 
   /* =========================================================
@@ -3041,82 +3047,124 @@ async function loadPelanggan() {
     }
   }
   async function loadPembayaran() {
-    const tbody = document.getElementById("tabelPembayaran");
-    if (!tbody.children.length) tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Memuat pembayaran...</div></td></tr>`;
+  const tbody = document.getElementById("tabelPembayaran");
+  const totalElement = document.getElementById("totalNominalPembayaran");
+  if (!tbody) return;
+  if (!tbody.children.length) tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Memuat pembayaran...</div></td></tr>`;
 
-    try {
-      const [list, hasilPending] = await Promise.all([
-        loadTransaksi(),
-        apiRequest("/api/pembayaran/menunggu")
-      ]);
+  const norm = v => String(v ?? "").trim().toUpperCase();
 
-      const pending = hasilPending.data || [];
-      const pendingByKode = new Map(
-        pending.map(p => [String(p.kode_transaksi), p])
+  try {
+    const [list, hasilPending] = await Promise.all([
+      loadTransaksi(),
+      apiRequest("/api/pembayaran/menunggu")
+    ]);
+
+    const metodeFilter = norm(document.getElementById("filterMetodePembayaran")?.value);
+    const statusFilter = norm(document.getElementById("filterStatusPembayaran")?.value);
+
+    const getPayments = item => Array.isArray(item?.pembayaran)
+      ? item.pembayaran
+      : item?.pembayaran ? [item.pembayaran] : [];
+
+    const cocokTransaksi = item => {
+      const payments = getPayments(item);
+      const metodeCocok = !metodeFilter ||
+        norm(item?.metode_pembayaran) === metodeFilter ||
+        payments.some(p => norm(p?.metode_pembayaran) === metodeFilter);
+      const statusCocok = !statusFilter ||
+        norm(item?.status_pengambilan) === statusFilter;
+      return metodeCocok && statusCocok;
+    };
+
+    const sorted = [...list].filter(cocokTransaksi)
+      .sort((a, b) => Number(b.id_transaksi) - Number(a.id_transaksi));
+
+    const pendingSemua = Array.isArray(hasilPending.data) ? hasilPending.data : [];
+    const pending = pendingSemua.filter(p => {
+      const transaksi = list.find(t =>
+        String(t.kode_transaksi || "") === String(p.kode_transaksi || "")
       );
+      const payments = getPayments(transaksi);
+      const semuaMetode = [
+        p.metode_pembayaran,
+        transaksi?.metode_pembayaran,
+        ...payments.map(x => x?.metode_pembayaran)
+      ];
+      const metodeCocok = !metodeFilter ||
+        semuaMetode.some(m => norm(m) === metodeFilter);
+      const statusCocok = !statusFilter ||
+        norm(p.status_pengambilan || transaksi?.status_pengambilan) === statusFilter;
+      return metodeCocok && statusCocok;
+    });
 
-      const sorted = [...list].sort(
-        (a, b) => Number(b.id_transaksi) - Number(a.id_transaksi)
-      );
+    const pendingByKode = new Map(
+      pending.map(p => [String(p.kode_transaksi || ""), p])
+    );
 
-      if (!sorted.length && !pending.length) {
-        tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Belum ada pembayaran.</div></td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = sorted.map(item => {
-        const kode = String(item.kode_transaksi || "");
-        const nama = item.pelanggan?.nama || "-";
-        const lunas = String(item.status_pembayaran || "").toUpperCase() === "LUNAS";
-        const p = pendingByKode.get(kode);
-
-        if (p) {
-          return `
-            <tr>
-              <td><span class="fw-semibold">${escapeHtml(p.kode_transaksi || kode)}</span></td>
-              <td>${escapeHtml(p.nama_pelanggan || nama)}</td>
-              <td>${formatRupiah(p.total_harga)}</td>
-              <td><span class="badge bg-warning text-dark">Menunggu Konfirmasi</span>
-                <div class="small mt-1">${escapeHtml(p.metode_pembayaran || "")}</div>
-              </td>
-              <td>${aksiBuktiPembayaran(p)}</td>
-            </tr>`;
-        }
-
-        return `
-          <tr>
-            <td><span class="fw-semibold">${escapeHtml(kode)}</span></td>
-            <td>${escapeHtml(nama)}</td>
-            <td>${formatRupiah(item.total_harga)}</td>
-            <td>${badgePembayaran(item.status_pembayaran)}</td>
-            <td>${lunas
-              ? `<span class="text-muted small"><i class="bi bi-check-circle"></i> Sudah Lunas</span>`
-              : `<button class="btn btn-sm btn-primary" onclick="bukaModalBayar(${Number(item.id_transaksi)})"><i class="bi bi-wallet2"></i> Bayar</button>`
-            }</td>
-          </tr>`;
-      }).join("");
-
-      // Tampilkan bukti pending meskipun transaksinya tidak muncul di daftar transaksi.
-      const kodeTransaksi = new Set(sorted.map(t => String(t.kode_transaksi || "")));
-      const tambahan = pending.filter(p => !kodeTransaksi.has(String(p.kode_transaksi || "")));
-
-      if (tambahan.length) {
-        tbody.insertAdjacentHTML("afterbegin", tambahan.map(p => `
-          <tr>
-            <td><span class="fw-semibold">${escapeHtml(p.kode_transaksi || "-")}</span></td>
-            <td>${escapeHtml(p.nama_pelanggan || "-")}</td>
-            <td>${formatRupiah(p.total_harga)}</td>
-            <td><span class="badge bg-warning text-dark">Menunggu Konfirmasi</span>
-              <div class="small mt-1">${escapeHtml(p.metode_pembayaran || "")}</div>
-            </td>
-            <td>${aksiBuktiPembayaran(p)}</td>
-          </tr>`).join(""));
-      }
-    } catch (error) {
-      console.error("Gagal memuat pembayaran:", error);
-      tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Gagal memuat pembayaran: ${escapeHtml(error.message || "Kesalahan server")}</div></td></tr>`;
+    if (!sorted.length && !pending.length) {
+      tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Tidak ada pembayaran yang sesuai filter.</div></td></tr>`;
+      if (totalElement) totalElement.textContent = formatRupiah(0);
+      return;
     }
+
+    tbody.innerHTML = sorted.map(item => {
+      const kode = String(item.kode_transaksi || "");
+      const nama = item.pelanggan?.nama || "-";
+      const lunas = norm(item.status_pembayaran) === "LUNAS";
+      const p = pendingByKode.get(kode);
+
+      if (p) {
+        return `<tr>
+          <td><span class="fw-semibold">${escapeHtml(p.kode_transaksi || kode)}</span></td>
+          <td>${escapeHtml(p.nama_pelanggan || nama)}</td>
+          <td>${formatRupiah(p.total_harga ?? item.total_harga)}</td>
+          <td><span class="badge bg-warning text-dark">Menunggu Konfirmasi</span>
+            <div class="small mt-1">${escapeHtml(p.metode_pembayaran || "")}</div>
+          </td>
+          <td>${aksiBuktiPembayaran(p)}</td>
+        </tr>`;
+      }
+
+      return `<tr>
+        <td><span class="fw-semibold">${escapeHtml(kode)}</span></td>
+        <td>${escapeHtml(nama)}</td>
+        <td>${formatRupiah(item.total_harga)}</td>
+        <td>${badgePembayaran(item.status_pembayaran)}</td>
+        <td>${lunas
+          ? `<span class="text-muted small"><i class="bi bi-check-circle"></i> Sudah Lunas</span>`
+          : `<button class="btn btn-sm btn-primary" onclick="bukaModalBayar(${Number(item.id_transaksi)})"><i class="bi bi-wallet2"></i> Bayar</button>`
+        }</td>
+      </tr>`;
+    }).join("");
+
+    const kodeTransaksi = new Set(sorted.map(t => String(t.kode_transaksi || "")));
+    const tambahan = pending.filter(p => !kodeTransaksi.has(String(p.kode_transaksi || "")));
+
+    if (tambahan.length) {
+      tbody.insertAdjacentHTML("beforeend", tambahan.map(p => `
+        <tr>
+          <td><span class="fw-semibold">${escapeHtml(p.kode_transaksi || "-")}</span></td>
+          <td>${escapeHtml(p.nama_pelanggan || "-")}</td>
+          <td>${formatRupiah(p.total_harga)}</td>
+          <td><span class="badge bg-warning text-dark">Menunggu Konfirmasi</span>
+            <div class="small mt-1">${escapeHtml(p.metode_pembayaran || "")}</div>
+          </td>
+          <td>${aksiBuktiPembayaran(p)}</td>
+        </tr>`).join(""));
+    }
+
+    if (totalElement) {
+      const total = sorted.reduce((sum, item) => sum + Number(item.total_harga || 0), 0)
+        + tambahan.reduce((sum, item) => sum + Number(item.total_harga || 0), 0);
+      totalElement.textContent = formatRupiah(total);
+    }
+  } catch (error) {
+    console.error("Gagal memuat pembayaran:", error);
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Gagal memuat pembayaran: ${escapeHtml(error.message || "Kesalahan server")}</div></td></tr>`;
+    if (totalElement) totalElement.textContent = formatRupiah(0);
   }
+}
 
   async function verifikasiPembayaran(id) {
     if (!confirm("Pastikan pembayaran benar-benar sudah masuk. Konfirmasi pembayaran ini?")) return;
@@ -3392,35 +3440,40 @@ async function loadPelanggan() {
   ========================================================= */
 
   async function loadRiwayat() {
-    const tbody = document.getElementById("tabelRiwayat");
-    const metode = document.getElementById("filterMetodeRiwayat")?.value || "";
-    const status = document.getElementById("filterStatusRiwayat")?.value || "";
-    tbody.innerHTML = `<tr><td colspan="6">Memuat data...</td></tr>`;
+  const tbody = document.getElementById("tabelRiwayat");
+  if (!tbody) return;
+  if (!tbody.children.length) tbody.innerHTML = `<tr><td colspan="6">Memuat data...</td></tr>`;
+
+  try {
     const list = await loadTransaksi();
+
+    const metode = String(document.getElementById("filterMetodeRiwayat")?.value || "").trim().toUpperCase();
+    const status = String(document.getElementById("filterStatusRiwayat")?.value || "").trim().toUpperCase();
+
     const filtered = list.filter(item => {
-      const pagos = Array.isArray(item.pembayaran)
+      const payments = Array.isArray(item.pembayaran)
         ? item.pembayaran
-        : (item.pembayaran ? [item.pembayaran] : []);
+        : item.pembayaran ? [item.pembayaran] : [];
 
-      const metodeTransaksi = String(item.metode_pembayaran || "")
-        .trim()
-        .toUpperCase();
+      const metodeCocok = !metode ||
+        String(item.metode_pembayaran || "").trim().toUpperCase() === metode ||
+        payments.some(p => String(p?.metode_pembayaran || "").trim().toUpperCase() === metode);
 
-      const cocokMetode = !metode ||
-        metodeTransaksi === metode ||
-        pagos.some(p =>
-          String(p?.metode_pembayaran || "").trim().toUpperCase() === metode
-        );
+      const statusCocok = !status ||
+        String(item.status_pengambilan || "").trim().toUpperCase() === status;
 
-      return cocokMetode &&
-        (!status || item.status_pengambilan === status);
-    }).sort((a,b) => Number(b.id_transaksi)-Number(a.id_transaksi));
-    const total = filtered.reduce((sum,item) => sum + Number(item.total_harga || 0),0);
-    document.getElementById("totalNominalRiwayat").textContent = formatRupiah(total);
+      return metodeCocok && statusCocok;
+    }).sort((a, b) => Number(b.id_transaksi) - Number(a.id_transaksi));
+
+    const total = filtered.reduce((sum, item) => sum + Number(item.total_harga || 0), 0);
+    const totalElement = document.getElementById("totalNominalRiwayat");
+    if (totalElement) totalElement.textContent = formatRupiah(total);
+
     if (!filtered.length) {
       tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">Tidak ada transaksi yang sesuai filter.</div></td></tr>`;
       return;
     }
+
     tbody.innerHTML = filtered.map(item => `<tr>
       <td><span class="fw-semibold">${escapeHtml(item.kode_transaksi || "-")}</span></td>
       <td>${escapeHtml(item.pelanggan?.nama || "-")}</td>
@@ -3429,8 +3482,11 @@ async function loadPelanggan() {
       <td>${badgeProses(getStatusProses(item))}</td>
       <td><button class="btn btn-sm btn-outline-primary" onclick="lihatDetail(${Number(item.id_transaksi)})"><i class="bi bi-eye"></i> Detail</button></td>
     </tr>`).join("");
+  } catch (error) {
+    console.error("Gagal memuat riwayat:", error);
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">Gagal memuat riwayat: ${escapeHtml(error.message || "Kesalahan server")}</div></td></tr>`;
   }
-
+}
 
   /* =========================================================
      DETAIL TRANSAKSI
@@ -3913,11 +3969,7 @@ async function loadPelanggan() {
 
       tampilkanTanggal();
 
-      await loadPelanggan();
-
-      await loadLayanan();
-
-      await loadDashboard();
+      await Promise.all([loadPelanggan(), loadLayanan(), loadDashboard()]);
 
     }
   );
@@ -4190,25 +4242,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
 /* AMIH_AUTO_REFRESH_KASIR */
 (function(){
-  let busy=false;
+  let busy = false;
   setInterval(async function(){
-    if(busy || document.hidden) return;
-    busy=true;
+    if (busy || document.hidden) return;
+    busy = true;
     try {
-      const active=document.querySelector(".page-section:not(.d-none)");
-      const id=active ? active.id.toLowerCase() : "";
-      if(id.includes("dashboard")) await loadDashboard();
-      else if(id.includes("pembayaran")) await loadPembayaran();
-      else if(id.includes("riwayat")) await loadRiwayat();
-    } catch(e){ console.warn("Auto refresh kasir:",e); }
-    finally { busy=false; }
-  },3000);
+      const active = document.querySelector(".page-section:not(.d-none)");
+      const id = active ? active.id.toLowerCase() : "";
+      if (id.includes("dashboard")) await loadDashboard();
+      else if (id.includes("pembayaran")) await loadPembayaran();
+      else if (id.includes("riwayat")) await loadRiwayat();
+    } catch(e) {
+      console.warn("Auto refresh kasir:", e);
+    } finally {
+      busy = false;
+    }
+  }, 3000);
 })();
 </script>
 
 <script src="/js/dashboard-mobile.js?v=1"></script>
 </body>
 </html>
+
+
 
 
 
