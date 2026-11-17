@@ -32,9 +32,13 @@ class Handler extends ExceptionHandler
                 ? $e->getStatusCode()
                 : 500;
 
-            $message = $status >= 500
-                ? 'Terjadi kesalahan pada server.'
-                : $e->getMessage();
+            if ($status >= 500) {
+                $message = config('app.debug')
+                    ? 'Terjadi kesalahan pada server: ' . class_basename($e) . ' - ' . $e->getMessage()
+                    : 'Terjadi kesalahan pada server.';
+            } else {
+                $message = $e->getMessage();
+            }
 
             return response()->json([
                 'success' => false,
