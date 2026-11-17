@@ -169,10 +169,10 @@ body{background:#f5f8fc;margin:0;font-family:Arial,sans-serif}
             <div class="card-box">
               <div class="card-title mb-3">Laporan</div>
               <div class="row g-3">
-                <div class="col-6 quickmenu-item" onclick="unduh('harian')"><i class="bi bi-calendar-day"></i><span>Laporan Harian</span></div>
-                <div class="col-6 quickmenu-item" onclick="unduh('mingguan')"><i class="bi bi-calendar-week"></i><span>Laporan Mingguan</span></div>
-                <div class="col-6 quickmenu-item" onclick="unduh('bulanan')"><i class="bi bi-calendar-month"></i><span>Laporan Bulanan</span></div>
-                <div class="col-6 quickmenu-item" onclick="unduh('tahunan')"><i class="bi bi-calendar3"></i><span>Laporan Tahunan</span></div>
+                <div class="col-6 quickmenu-item" onclick="laporanCepat('harian')"><i class="bi bi-calendar-day"></i><span>Laporan Harian</span></div>
+                <div class="col-6 quickmenu-item" onclick="laporanCepat('mingguan')"><i class="bi bi-calendar-week"></i><span>Laporan Mingguan</span></div>
+                <div class="col-6 quickmenu-item" onclick="laporanCepat('bulanan')"><i class="bi bi-calendar-month"></i><span>Laporan Bulanan</span></div>
+                <div class="col-6 quickmenu-item" onclick="laporanCepat('tahunan')"><i class="bi bi-calendar3"></i><span>Laporan Tahunan</span></div>
               </div>
             </div>
           </div>
@@ -328,88 +328,8 @@ body{background:#f5f8fc;margin:0;font-family:Arial,sans-serif}
   </main>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js">/* AMIH-OWNER-REKAP-PERIODE-V1 */
-(function(){
- const root=document.getElementById('owner-rekap-periode');
- if(!root)return;
- let jenis='harian';
- const esc=s=>String(s??'-').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const money=n=>typeof rp==='function'?rp(Number(n)||0):'Rp '+(Number(n)||0).toLocaleString('id-ID');
- const dateFmt=s=>{const d=new Date(s+'T12:00:00');return isNaN(d)?s:d.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});};
- const keyFor=(s)=>{
-   if(jenis==='harian')return s;
-   if(jenis==='bulanan')return s.slice(0,7);
-   if(jenis==='tahunan')return s.slice(0,4);
-   const d=new Date(s+'T12:00:00');d.setDate(d.getDate()-((d.getDay()+6)%7));
-   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
- };
- const label=k=>{
-   if(jenis==='harian')return dateFmt(k);
-   if(jenis==='mingguan'){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()+6);return dateFmt(k)+' ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“ '+dateFmt(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
-   if(jenis==='bulanan'){const [y,m]=k.split('-').map(Number);return new Date(y,m-1,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});}
-   return 'Tahun '+k;
- };
- function render(){
-   root.querySelectorAll('[data-rekap]').forEach(b=>b.className='btn btn-sm '+(b.dataset.rekap===jenis?'btn-primary':'btn-outline-primary'));
-   const groups=new Map();
-   const add=(k,t,x)=>{if(!groups.has(k))groups.set(k,{trx:[],bia:[]});groups.get(k)[t].push(x);};
-   (Array.isArray(trx)?trx:[]).forEach(x=>{if(x.tgl)add(keyFor(x.tgl),'trx',x);});
-   (Array.isArray(bia)?bia:[]).forEach(x=>{if(x.tgl)add(keyFor(x.tgl),'bia',x);});
-   const list=[...groups.entries()].sort((a,b)=>b[0].localeCompare(a[0]));
-   if(!list.length){document.getElementById('owner-rekap-list').innerHTML='<p class="text-muted mb-0">Belum ada data periode yang bisa ditampilkan.</p>';return;}
-   document.getElementById('owner-rekap-list').innerHTML=list.map(([k,g])=>{
-     const paid=g.trx.filter(x=>x.lunas),rev=paid.reduce((s,x)=>s+(Number(x.total)||0),0),cost=g.bia.reduce((s,x)=>s+(Number(x.jumlah)||0),0);
-     const trxRows=g.trx.slice().sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kode)}</td><td>${esc(x.pel)}</td><td>${x.lunas?'Lunas':'Belum bayar'}</td><td class="text-end">${money(x.total)}</td></tr>`).join('')||'<tr><td colspan="5">Tidak ada transaksi</td></tr>';
-     const biaRows=g.bia.slice().sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kat)}</td><td>${esc(x.ket)}</td><td class="text-end">${money(x.jumlah)}</td></tr>`).join('')||'<tr><td colspan="4">Tidak ada biaya</td></tr>';
-     return `<details class="border rounded p-3 mb-2"><summary class="fw-semibold">${esc(label(k))} <span class="text-muted fw-normal">• ${g.trx.length} transaksi • Pendapatan ${money(rev)} • Biaya ${money(cost)} • Bersih ${money(rev-cost)}</span></summary><div class="table-responsive mt-3"><h6>Rincian Transaksi</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kode</th><th>Pelanggan</th><th>Status</th><th class="text-end">Total</th></tr></thead><tbody>${trxRows}</tbody></table><h6 class="mt-3">Biaya Operasional</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th class="text-end">Jumlah</th></tr></thead><tbody>${biaRows}</tbody></table></div></details>`;
-   }).join('');
- }
- root.addEventListener('click',e=>{const b=e.target.closest('[data-rekap]');if(b){jenis=b.dataset.rekap;render();}});
- window.addEventListener('owner-data-loaded',render);
- render();
-})();
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">/* AMIH-OWNER-REKAP-PERIODE-V1 */
-(function(){
- const root=document.getElementById('owner-rekap-periode');
- if(!root)return;
- let jenis='harian';
- const esc=s=>String(s??'-').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const money=n=>typeof rp==='function'?rp(Number(n)||0):'Rp '+(Number(n)||0).toLocaleString('id-ID');
- const dateFmt=s=>{const d=new Date(s+'T12:00:00');return isNaN(d)?s:d.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});};
- const keyFor=(s)=>{
-   if(jenis==='harian')return s;
-   if(jenis==='bulanan')return s.slice(0,7);
-   if(jenis==='tahunan')return s.slice(0,4);
-   const d=new Date(s+'T12:00:00');d.setDate(d.getDate()-((d.getDay()+6)%7));
-   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
- };
- const label=k=>{
-   if(jenis==='harian')return dateFmt(k);
-   if(jenis==='mingguan'){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()+6);return dateFmt(k)+' ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“ '+dateFmt(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
-   if(jenis==='bulanan'){const [y,m]=k.split('-').map(Number);return new Date(y,m-1,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});}
-   return 'Tahun '+k;
- };
- function render(){
-   root.querySelectorAll('[data-rekap]').forEach(b=>b.className='btn btn-sm '+(b.dataset.rekap===jenis?'btn-primary':'btn-outline-primary'));
-   const groups=new Map();
-   const add=(k,t,x)=>{if(!groups.has(k))groups.set(k,{trx:[],bia:[]});groups.get(k)[t].push(x);};
-   (Array.isArray(trx)?trx:[]).forEach(x=>{if(x.tgl)add(keyFor(x.tgl),'trx',x);});
-   (Array.isArray(bia)?bia:[]).forEach(x=>{if(x.tgl)add(keyFor(x.tgl),'bia',x);});
-   const list=[...groups.entries()].sort((a,b)=>b[0].localeCompare(a[0]));
-   if(!list.length){document.getElementById('owner-rekap-list').innerHTML='<p class="text-muted mb-0">Belum ada data periode yang bisa ditampilkan.</p>';return;}
-   document.getElementById('owner-rekap-list').innerHTML=list.map(([k,g])=>{
-     const paid=g.trx.filter(x=>x.lunas),rev=paid.reduce((s,x)=>s+(Number(x.total)||0),0),cost=g.bia.reduce((s,x)=>s+(Number(x.jumlah)||0),0);
-     const trxRows=g.trx.slice().sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kode)}</td><td>${esc(x.pel)}</td><td>${x.lunas?'Lunas':'Belum bayar'}</td><td class="text-end">${money(x.total)}</td></tr>`).join('')||'<tr><td colspan="5">Tidak ada transaksi</td></tr>';
-     const biaRows=g.bia.slice().sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kat)}</td><td>${esc(x.ket)}</td><td class="text-end">${money(x.jumlah)}</td></tr>`).join('')||'<tr><td colspan="4">Tidak ada biaya</td></tr>';
-     return `<details class="border rounded p-3 mb-2"><summary class="fw-semibold">${esc(label(k))} <span class="text-muted fw-normal">• ${g.trx.length} transaksi • Pendapatan ${money(rev)} • Biaya ${money(cost)} • Bersih ${money(rev-cost)}</span></summary><div class="table-responsive mt-3"><h6>Rincian Transaksi</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kode</th><th>Pelanggan</th><th>Status</th><th class="text-end">Total</th></tr></thead><tbody>${trxRows}</tbody></table><h6 class="mt-3">Biaya Operasional</h6><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th class="text-end">Jumlah</th></tr></thead><tbody>${biaRows}</tbody></table></div></details>`;
-   }).join('');
- }
- root.addEventListener('click',e=>{const b=e.target.closest('[data-rekap]');if(b){jenis=b.dataset.rekap;render();}});
- window.addEventListener('owner-data-loaded',render);
- render();
-})();
-</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 /* ===== Auth ===== */
 const TOKEN=localStorage.getItem('token');
@@ -549,16 +469,32 @@ function renderTrx(){
   $('r-info').textContent=`Menampilkan ${Math.min(r.length,50)} dari ${r.length} transaksi`;
 }
 
+const _hari=s=>new Date(s+"T12:00:00").toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"});const _bulan=s=>new Date(s.slice(0,7)+"-01T12:00:00").toLocaleDateString("id-ID",{month:"long",year:"numeric"});function teksPeriode(j,a,b){if(j==="harian")return a===b?_hari(a):_hari(a)+" s.d. "+_hari(b);if(j==="mingguan")return _hari(a)+" s.d. "+_hari(b);if(j==="bulanan")return a.slice(0,7)===b.slice(0,7)?_bulan(a):_bulan(a)+" s.d. "+_bulan(b);return a.slice(0,4)===b.slice(0,4)?"Tahun "+a.slice(0,4):"Tahun "+a.slice(0,4)+" s.d. "+b.slice(0,4)}
 /* ===== Laporan PDF berdasarkan jenis dan rentang tanggal ===== */
-function unduh(){
+function rentangLaporan(jenis){const p2=n=>String(n).padStart(2,"0");const f2=d=>d.getFullYear()+"-"+p2(d.getMonth()+1)+"-"+p2(d.getDate());const now=new Date();let a=new Date(now),b=new Date(now);if(jenis==="harian"){a=new Date(now.getFullYear(),now.getMonth(),1)}else if(jenis==="mingguan"){a=new Date(now.getFullYear(),now.getMonth(),1);b=new Date(now.getFullYear(),now.getMonth()+1,0)}else if(jenis==="bulanan"){a=new Date(now.getFullYear(),0,1);b=new Date(now.getFullYear(),11,31)}else if(jenis==="tahunan"){const ys=[...trx,...bia].map(x=>x.tgl?Number(x.tgl.slice(0,4)):0).filter(Boolean);a=new Date(ys.length?Math.min(...ys):now.getFullYear(),0,1);b=new Date(now.getFullYear(),11,31)}return{awal:f2(a),akhir:f2(b)}}
+document.getElementById('laporanJenis')?.addEventListener('change', function(){
+  const r = rentangLaporan(this.value);
+  document.getElementById('laporanMulai').value = r.awal;
+  document.getElementById('laporanAkhir').value = r.akhir;
+});
+
+function unduh(jenisCepat){
+  const cepat = typeof jenisCepat === 'string';
   const jenisEl = $('laporanJenis');
   const mulaiEl = $('laporanMulai');
   const akhirEl = $('laporanAkhir');
-  const pesan = $('laporanPesan');
+  const pesanEl = $('laporanPesan');
+  const pesan = cepat
+    ? { className:'', classList:{ add(){} }, set textContent(v){ if(v) alert(v); } }
+    : pesanEl;
 
-  const jenis = jenisEl.value;
-  const awal = mulaiEl.value;
-  const akhir = akhirEl.value;
+  const jenis = cepat ? jenisCepat : jenisEl.value;
+  let awal = mulaiEl.value, akhir = akhirEl.value;
+  if(cepat){
+    const r = rentangLaporan(jenis);
+    awal = r.awal; akhir = r.akhir;
+    jenisEl.value = jenis; mulaiEl.value = awal; akhirEl.value = akhir;
+  }
 
   pesan.textContent = '';
   pesan.className = 'small mt-3';
@@ -597,19 +533,7 @@ function unduh(){
     return fmt(d);
   };
 
-  const labelOf = key => {
-    if(jenis === 'harian') return key;
-    if(jenis === 'mingguan'){
-      const d = new Date(key+'T12:00:00');
-      d.setDate(d.getDate()+6);
-      return key+' s.d. '+fmt(d);
-    }
-    if(jenis === 'bulanan'){
-      const [y,m] = key.split('-').map(Number);
-      return new Date(y,m-1,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});
-    }
-    return 'Tahun '+key;
-  };
+  const labelOf=key=>{if(jenis==="harian")return _hari(key);if(jenis==="mingguan"){const d=new Date(key+"T12:00:00");d.setDate(d.getDate()+6);let s=key<awal?awal:key;let e=fmt(d)>akhir?akhir:fmt(d);return s===e?_hari(s):_hari(s)+" s.d. "+_hari(e)}if(jenis==="bulanan")return _bulan(key);return "Tahun "+key};const labelPendek=key=>{if(jenis==="bulanan")return new Date(key+"-01T12:00:00").toLocaleDateString("id-ID",{month:"short",year:"2-digit"});if(jenis==="tahunan")return key;return new Date(key+"T12:00:00").toLocaleDateString("id-ID",{day:"numeric",month:"short"})};
 
   const groups = new Map();
   const add = (key,type,item) => {
@@ -618,10 +542,10 @@ function unduh(){
   };
 
   trxLaporan.forEach(x => add(keyOf(x.tgl),'trx',x));
-  biaLaporan.forEach(x => add(keyOf(x.tgl),'bia',x));
+  biaLaporan.forEach(x => add(keyOf(x.tgl),'bia',x));if(jenis!=="harian"){const cur=new Date(awal+"T12:00:00"),end=new Date(akhir+"T12:00:00");while(cur<=end){const k=keyOf(fmt(cur));if(!groups.has(k))groups.set(k,{trx:[],bia:[]});cur.setDate(cur.getDate()+1)}}
 
   const rows = [...groups.entries()].sort((a,b)=>a[0].localeCompare(b[0]));
-  const isi = rows.map(([key,g]) => {
+  const isi = rows.map(([key,g]) => {if(!g.trx.length&&!g.bia.length)return "<h3>"+esc(labelOf(key))+"</h3><p>Tidak ada data pada periode ini.</p>";
     const lunas = g.trx.filter(x=>x.lunas);
     const pendapatan = total(lunas,'total');
     const biaya = total(g.bia,'jumlah');
@@ -633,17 +557,17 @@ function unduh(){
       <h4>Rincian Transaksi</h4>
       <table>
         <thead><tr><th>Tanggal</th><th>Kode Transaksi</th><th>Pelanggan</th><th>Layanan</th><th>Kasir</th><th>Status</th><th>Total</th></tr></thead>
-        <tbody>${g.trx.map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kode)}</td><td>${esc(x.pel)}</td><td>${esc(x.lay)}</td><td>${esc(x.kasir)}</td><td>${x.lunas?'LUNAS':'BELUM LUNAS'}</td><td>${rp(x.total)}</td></tr>`).join('') || '<tr><td colspan="7">Tidak ada transaksi</td></tr>'}</tbody>
+        <tbody>${g.trx.map(x=>`<tr><td>${esc(_hari(x.tgl))}</td><td>${esc(x.kode)}</td><td>${esc(x.pel)}</td><td>${esc(x.lay)}</td><td>${esc(x.kasir)}</td><td>${x.lunas?'LUNAS':'BELUM LUNAS'}</td><td>${rp(x.total)}</td></tr>`).join('') || '<tr><td colspan="7">Tidak ada transaksi</td></tr>'}</tbody>
       </table>
       <h4>Rincian Biaya Operasional</h4>
       <table>
         <thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th>Jumlah</th></tr></thead>
-        <tbody>${g.bia.map(x=>`<tr><td>${esc(x.tgl)}</td><td>${esc(x.kat)}</td><td>${esc(x.ket)}</td><td>${rp(x.jumlah)}</td></tr>`).join('') || '<tr><td colspan="4">Tidak ada biaya operasional</td></tr>'}</tbody>
+        <tbody>${g.bia.map(x=>`<tr><td>${esc(_hari(x.tgl))}</td><td>${esc(x.kat)}</td><td>${esc(x.ket)}</td><td>${rp(x.jumlah)}</td></tr>`).join('') || '<tr><td colspan="4">Tidak ada biaya operasional</td></tr>'}</tbody>
       </table>`;
   }).join('');
 
   const dataGrafik = rows.map(([k,g])=>({
-    label: String(labelOf(k)),
+    label: String(labelPendek(k)),
     pendapatan: total(g.trx.filter(x=>x.lunas),'total'),
     biaya: total(g.bia,'jumlah')
   }));
@@ -654,7 +578,7 @@ function unduh(){
     if(n>=1000) return 'Rp'+(n/1000).toLocaleString('id-ID',{maximumFractionDigits:1})+' rb';
     return 'Rp'+n.toLocaleString('id-ID');
   };
-  const singkat = s => s.length>13 ? s.slice(0,12)+'â€¦' : s;
+  const singkat = s => s.length>13 ? s.slice(0,12)+'...' : s;
   const jumlahData = Math.max(1,dataGrafik.length);
   const plotX = 62, plotY = 42, plotW = 790, plotH = 190;
   const jarak = plotW/jumlahData;
@@ -671,9 +595,9 @@ function unduh(){
     const hp=plotY+plotH-skalaY(d.pendapatan);
     const hb=plotY+plotH-skalaY(d.biaya);
     return `<rect x="${cx-barW-2}" y="${skalaY(d.pendapatan)}" width="${barW}" height="${Math.max(0,hp)}" rx="3" fill="#3478d4">
-      <title>${esc(d.label)} â€” Pendapatan ${formatGrafik(d.pendapatan)}</title></rect>
+      <title>${esc(d.label)} - Pendapatan ${formatGrafik(d.pendapatan)}</title></rect>
       <rect x="${cx+2}" y="${skalaY(d.biaya)}" width="${barW}" height="${Math.max(0,hb)}" rx="3" fill="#f0a23b">
-      <title>${esc(d.label)} â€” Biaya ${formatGrafik(d.biaya)}</title></rect>
+      <title>${esc(d.label)} - Biaya ${formatGrafik(d.biaya)}</title></rect>
       <text x="${cx}" y="${plotY+plotH+17}" text-anchor="middle" font-size="10" fill="#475569">${esc(singkat(d.label))}</text>`;
   }).join('');
   const totalPendapatanGrafik=dataGrafik.reduce((s,d)=>s+d.pendapatan,0);
@@ -771,7 +695,7 @@ function unduh(){
   <hr>
   <h3>Laporan ${namaJenis}</h3>
   <div class="info">
-    <div>Periode: ${esc(awal)} s.d. ${esc(akhir)}</div>
+    <div>Periode: ${esc(teksPeriode(jenis, awal, akhir))}</div>
     <div>Tanggal dibuat: ${esc(fmt(new Date()))}</div>
     <div>Jumlah transaksi: ${trxLaporan.length}</div>
     <div>Pendapatan dari transaksi lunas: ${rp(total(trxLaporan.filter(x=>x.lunas),'total'))}</div>
@@ -794,15 +718,227 @@ $('xls').onclick=()=>{
 };
 
 $("pdfRiwayat").onclick=()=>{const data=rows();const w=window.open("","_blank");if(!w){alert("Izinkan pop-up untuk membuat PDF.");return;}const e=v=>String(v??"-").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");const body=data.map((x,i)=>`<tr><td>${i+1}</td><td>${e(x.kode)}</td><td>${e(x.tgl)}</td><td>${e(x.pel)}</td><td>${e(x.lay)}</td><td>${e(x.kasir)}</td><td>Rp ${Number(x.total||0).toLocaleString("id-ID")}</td><td>${x.lunas?"Lunas":"Belum Bayar"}</td><td>${e(x.pr)}</td></tr>`).join("");w.document.write(`<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>Riwayat Transaksi - Amih Laundry</title><style>body{font-family:Arial;padding:20px;color:#1f2937}h2{color:#164e8b}table{width:100%;border-collapse:collapse;font-size:10px}th,td{border:1px solid #ccc;padding:7px;text-align:left}th{background:#eaf3ff} @page{size:landscape;margin:12mm}</style></head><body><h2>AMIH LAUNDRY</h2><h3>Riwayat Transaksi</h3><p>Tanggal cetak: ${new Date().toLocaleString("id-ID")}</p><p>Jumlah transaksi: ${data.length}</p><table><thead><tr><th>No</th><th>Kode</th><th>Tanggal</th><th>Pelanggan</th><th>Layanan</th><th>Kasir</th><th>Total</th><th>Pembayaran</th><th>Proses</th></tr></thead><tbody>${body}</tbody></table></body></html>`);w.document.close();w.focus();setTimeout(()=>w.print(),500);};/* Default tanggal laporan Owner */
+
+{const r=rentangLaporan('harian');$('laporanMulai').value=r.awal;$('laporanAkhir').value=r.akhir;}
+/* AMIH-LAPORAN-CEPAT-V1 */
 (function(){
-  const elAwal = document.getElementById('laporanMulai');
-  const elAkhir = document.getElementById('laporanAkhir');
-  if(!elAwal || !elAkhir) return;
-  const now = new Date();
-  const pad = n => String(n).padStart(2,'0');
-  const today = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
-  elAwal.value = today;
-  elAkhir.value = today;
+  const NAMA_JENIS = {harian:'Harian', mingguan:'Mingguan', bulanan:'Bulanan', tahunan:'Tahunan'};
+  const escL = s => String(s == null ? '-' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const p2 = n => String(n).padStart(2, '0');
+  const iso = d => d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate());
+  const dariIso = s => new Date(s + 'T12:00:00');
+  const tgl = (s, hari) => dariIso(s).toLocaleDateString('id-ID', Object.assign(hari ? {weekday:'long'} : {}, {day:'numeric', month:'long', year:'numeric'}));
+  const jml = (arr, f) => arr.reduce((n, x) => n + (Number(x[f]) || 0), 0);
+
+  function rentang(jenis){
+    const now = new Date();
+    let a = new Date(now), b = new Date(now);
+    if(jenis === 'mingguan'){
+      a = new Date(now.getFullYear(), now.getMonth(), now.getDate() - ((now.getDay() + 6) % 7));
+      b = new Date(a.getFullYear(), a.getMonth(), a.getDate() + 6);
+    } else if(jenis === 'bulanan'){
+      a = new Date(now.getFullYear(), now.getMonth(), 1);
+      b = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    } else if(jenis === 'tahunan'){
+      a = new Date(now.getFullYear(), 0, 1);
+      b = new Date(now.getFullYear(), 11, 31);
+    }
+    return { awal: iso(a), akhir: iso(b) };
+  }
+
+  function kunci(jenis, t){
+    if(jenis === 'harian') return t;
+    if(jenis === 'bulanan') return t.slice(0, 7);
+    if(jenis === 'tahunan') return t.slice(0, 4);
+    const d = dariIso(t);
+    d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+    return iso(d);
+  }
+
+  function labelP(jenis, k, awal, akhir){
+    if(jenis === 'harian') return tgl(k, true);
+    if(jenis === 'mingguan'){
+      const s = dariIso(k), e = new Date(s);
+      e.setDate(e.getDate() + 6);
+      let a = iso(s), b = iso(e);
+      if(a < awal) a = awal;
+      if(b > akhir) b = akhir;
+      return 'Dari ' + tgl(a) + ' sampai ' + tgl(b);
+    }
+    if(jenis === 'bulanan'){
+      const p = k.split('-').map(Number);
+      return new Date(p[0], p[1] - 1, 1).toLocaleDateString('id-ID', {month:'long', year:'numeric'});
+    }
+    return 'Tahun ' + k;
+  }
+
+  function teksPeriode(jenis, awal, akhir, cepat){
+    if(!cepat) return 'Dari ' + tgl(awal) + ' sampai ' + tgl(akhir);
+    if(jenis === 'harian') return tgl(awal, true);
+    if(jenis === 'mingguan') return 'Dari ' + tgl(awal) + ' sampai ' + tgl(akhir);
+    if(jenis === 'bulanan') return labelP('bulanan', awal.slice(0, 7), awal, akhir);
+    return 'Tahun ' + awal.slice(0, 4);
+  }
+
+  const kotakAngka = (judul, nilai, warna) =>
+    '<div class="col-6 col-lg-3"><div class="stat-card" style="min-height:0;padding:16px">' +
+    '<div class="stat-title">' + judul + '</div>' +
+    '<div class="stat-value" style="font-size:20px' + (warna ? ';color:' + warna : '') + '">' + nilai + '</div></div></div>';
+
+  function bangunLaporan(jenis, awal, akhir, cepat){
+    const semuaT = Array.isArray(trx) ? trx : [];
+    const semuaB = Array.isArray(bia) ? bia : [];
+    const T = semuaT.filter(x => x.tgl && x.tgl >= awal && x.tgl <= akhir);
+    const B = semuaB.filter(x => x.tgl && x.tgl >= awal && x.tgl <= akhir);
+    const adaData = T.length > 0 || B.length > 0;
+
+    const banner =
+      '<div class="alert alert-info d-flex gap-2 align-items-start mb-3"><i class="bi bi-info-circle mt-1"></i><div>' +
+      '<div class="fw-semibold">Laporan ' + NAMA_JENIS[jenis] + ' &mdash; ' + escL(teksPeriode(jenis, awal, akhir, cepat)) + '</div>' +
+      '<div class="small">Hanya menampilkan data pada periode ini, bukan seluruh data.</div></div></div>';
+
+    if(!semuaT.length && !semuaB.length){
+      return { html: banner + '<div class="empty-state">Data masih dimuat atau belum ada data sama sekali. Coba lagi beberapa detik.</div>', adaData: false };
+    }
+    if(!adaData && !cepat){
+      return { html: banner + '<div class="empty-state">Tidak ada transaksi atau biaya pada rentang tanggal ini.</div>', adaData: false };
+    }
+
+    const groups = new Map();
+    const add = (k, tipe, x) => { if(!groups.has(k)) groups.set(k, {trx: [], bia: []}); groups.get(k)[tipe].push(x); };
+    T.forEach(x => add(kunci(jenis, x.tgl), 'trx', x));
+    B.forEach(x => add(kunci(jenis, x.tgl), 'bia', x));
+    if(!groups.size) groups.set(kunci(jenis, awal), {trx: [], bia: []});
+
+    const penTotal = jml(T.filter(x => x.lunas), 'total');
+    const biaTotal = jml(B, 'jumlah');
+    let ringkasan = '';
+    if(groups.size > 1){
+      ringkasan =
+        '<div class="card-box mb-3"><div class="card-title mb-3">Ringkasan Seluruh Periode yang Dipilih</div><div class="row g-3">' +
+        kotakAngka('Pendapatan', rp(penTotal)) +
+        kotakAngka('Biaya Operasional', rp(biaTotal)) +
+        kotakAngka('Keuntungan Bersih', rp(penTotal - biaTotal), (penTotal - biaTotal) < 0 ? '#dc2626' : '#15803d') +
+        kotakAngka('Jumlah Transaksi', T.length) +
+        '</div></div>';
+    }
+
+    const kotak = [...groups.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([k, g]) => {
+      const lunas = g.trx.filter(x => x.lunas);
+      const pen = jml(lunas, 'total'), bi = jml(g.bia, 'jumlah'), bersih = pen - bi;
+
+      const trxRows = g.trx.slice().sort((a, b) => a.tgl.localeCompare(b.tgl)).map(x =>
+        '<tr><td>' + escL(x.tgl) + '</td><td class="fw-semibold">' + escL(x.kode) + '</td><td>' + escL(x.pel) + '</td><td>' + escL(x.lay) + '</td><td>' +
+        (x.lunas ? '<span class="badge-pill badge-soft-success">LUNAS</span>' : '<span class="badge-pill badge-soft-accent">BELUM LUNAS</span>') +
+        '</td><td class="text-end">' + rp(x.total) + '</td></tr>').join('') ||
+        '<tr><td colspan="6" class="text-center text-muted">Tidak ada transaksi pada periode ini</td></tr>';
+
+      const biaRows = g.bia.slice().sort((a, b) => a.tgl.localeCompare(b.tgl)).map(x =>
+        '<tr><td>' + escL(x.tgl) + '</td><td>' + escL(x.kat) + '</td><td>' + escL(x.ket) + '</td><td class="text-end">' + rp(x.jumlah) + '</td></tr>').join('') ||
+        '<tr><td colspan="4" class="text-center text-muted">Tidak ada biaya operasional pada periode ini</td></tr>';
+
+      return '<div class="card-box mb-3">' +
+        '<div class="mb-3"><div class="card-title mb-0">' + escL(labelP(jenis, k, awal, akhir)) + '</div>' +
+        '<div class="card-subtitle">' + g.trx.length + ' transaksi &bull; ' + lunas.length + ' lunas</div></div>' +
+        '<div class="row g-3 mb-3">' +
+          kotakAngka('Pendapatan', rp(pen)) +
+          kotakAngka('Biaya Operasional', rp(bi)) +
+          kotakAngka('Keuntungan Bersih', rp(bersih), bersih < 0 ? '#dc2626' : '#15803d') +
+          kotakAngka('Jumlah Transaksi', g.trx.length) +
+        '</div>' +
+        '<div class="fw-semibold mb-2">Rincian Transaksi</div>' +
+        '<div class="table-responsive mb-3"><table class="table table-sm table-hover"><thead><tr><th>Tanggal</th><th>Kode</th><th>Pelanggan</th><th>Layanan</th><th>Status</th><th class="text-end">Total</th></tr></thead><tbody>' + trxRows + '</tbody></table></div>' +
+        '<div class="fw-semibold mb-2">Biaya Operasional</div>' +
+        '<div class="table-responsive"><table class="table table-sm table-hover"><thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th class="text-end">Jumlah</th></tr></thead><tbody>' + biaRows + '</tbody></table></div>' +
+        '</div>';
+    }).join('');
+
+    return { html: banner + ringkasan + kotak, adaData: adaData };
+  }
+
+  /* ---------- Jendela laporan cepat (dari kotak di Dashboard) ---------- */
+  let aktif = null;
+  function siapkanModal(){
+    let el = document.getElementById('modalLaporanCepat');
+    if(el) return el;
+    document.body.insertAdjacentHTML('beforeend',
+      '<div class="modal fade" id="modalLaporanCepat" tabindex="-1" aria-hidden="true">' +
+      '<div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content">' +
+      '<div class="modal-header"><h5 class="modal-title" id="judulLaporanCepat">Laporan</h5>' +
+      '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button></div>' +
+      '<div class="modal-body" id="isiLaporanCepat"></div>' +
+      '<div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>' +
+      '<button type="button" class="btn btn-primary" id="btnPdfLaporanCepat"><i class="bi bi-file-earmark-pdf"></i> Unduh PDF</button></div>' +
+      '</div></div></div>');
+    document.getElementById('btnPdfLaporanCepat').addEventListener('click', function(){
+      if(!aktif) return;
+      if(!aktif.adaData){ alert('Tidak ada data pada periode ini untuk dibuat PDF.'); return; }
+      document.getElementById('laporanJenis').value = aktif.jenis;
+      document.getElementById('laporanMulai').value = aktif.awal;
+      document.getElementById('laporanAkhir').value = aktif.akhir;
+      unduh();
+    });
+    return document.getElementById('modalLaporanCepat');
+  }
+
+  function laporanCepat(jenis){
+    const r = rentang(jenis);
+    const j = document.getElementById('laporanJenis'), m = document.getElementById('laporanMulai'), a = document.getElementById('laporanAkhir');
+    if(j) j.value = jenis;
+    if(m) m.value = r.awal;
+    if(a) a.value = r.akhir;
+    const hasil = bangunLaporan(jenis, r.awal, r.akhir, true);
+    aktif = { jenis: jenis, awal: r.awal, akhir: r.akhir, adaData: hasil.adaData };
+    const el = siapkanModal();
+    document.getElementById('judulLaporanCepat').textContent = 'Laporan ' + NAMA_JENIS[jenis];
+    document.getElementById('isiLaporanCepat').innerHTML = hasil.html;
+    bootstrap.Modal.getOrCreateInstance(el).show();
+    segarkanPratinjau();
+  }
+  window.laporanCepat = laporanCepat;
+
+  /* ---------- Pratinjau di menu Laporan (pilih tanggal sendiri) ---------- */
+  function wadahPratinjau(){
+    let w = document.getElementById('laporanPratinjau');
+    if(w) return w;
+    const p = document.getElementById('laporanPesan');
+    if(!p) return null;
+    w = document.createElement('div');
+    w.id = 'laporanPratinjau';
+    w.className = 'mt-4';
+    p.insertAdjacentElement('afterend', w);
+    return w;
+  }
+
+  function segarkanPratinjau(){
+    const w = wadahPratinjau();
+    if(!w) return;
+    const jenis = document.getElementById('laporanJenis').value;
+    const awal = document.getElementById('laporanMulai').value;
+    const akhir = document.getElementById('laporanAkhir').value;
+    if(!awal || !akhir){ w.innerHTML = '<div class="text-muted small">Pilih tanggal mulai dan tanggal akhir untuk melihat laporan.</div>'; return; }
+    if(awal > akhir){ w.innerHTML = '<div class="alert alert-warning mb-0">Tanggal mulai tidak boleh melewati tanggal akhir.</div>'; return; }
+    w.innerHTML = bangunLaporan(jenis, awal, akhir, false).html;
+  }
+
+  const elJenis = document.getElementById('laporanJenis');
+  if(elJenis) elJenis.addEventListener('change', function(){
+    const r = rentang(elJenis.value);
+    document.getElementById('laporanMulai').value = r.awal;
+    document.getElementById('laporanAkhir').value = r.akhir;
+    segarkanPratinjau();
+  });
+  ['laporanMulai', 'laporanAkhir'].forEach(function(id){
+    const el = document.getElementById(id);
+    if(el) el.addEventListener('change', segarkanPratinjau);
+  });
+
+  let percobaan = 0;
+  const timer = setInterval(function(){
+    percobaan++;
+    segarkanPratinjau();
+    if((Array.isArray(trx) && trx.length) || (Array.isArray(bia) && bia.length) || percobaan > 20) clearInterval(timer);
+  }, 500);
 })();
 /* ===== Event & muat data ===== */
 function showErr(e){const b=$('err');b.classList.remove('d-none');b.textContent='Gagal memuat data: '+e.message}
