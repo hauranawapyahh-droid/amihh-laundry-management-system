@@ -1000,7 +1000,7 @@ Promise.all([getAll('/transaksi'),getAll('/biaya-operasional')]).then(([t,b])=>{
  };
  const label=k=>{
    if(jenis==='harian')return dateFmt(k);
-   if(jenis==='mingguan'){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()+6);return dateFmt(k)+' ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“ '+dateFmt(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
+   if(jenis==='mingguan'){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()+6);return dateFmt(k)+' – '+dateFmt(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
    if(jenis==='bulanan'){const [y,m]=k.split('-').map(Number);return new Date(y,m-1,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});}
    return 'Tahun '+k;
  };
