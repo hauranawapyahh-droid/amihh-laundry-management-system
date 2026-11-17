@@ -1598,7 +1598,7 @@
 
   let pelangganList = [];
   let layananList = [];
-  let transaksiList = [];
+  let transaksiList = [];`r`n  let pembayaranRequestId = 0;`r`n  let riwayatRequestId = 0;
 
   let selectedServices = {};
 
@@ -1893,6 +1893,7 @@
     }
   }
   async function loadPembayaran() {
+  const requestId = ++pembayaranRequestId;
     const tbody = document.getElementById("tabelPembayaran");
     if (!tbody.children.length) tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Memuat pembayaran...</div></td></tr>`;
 
@@ -3047,6 +3048,7 @@ async function loadTransaksi(forceRefresh = false) {
     }
   }
   async function loadPembayaran() {
+  const requestId = ++pembayaranRequestId;
   const tbody = document.getElementById("tabelPembayaran");
   const totalElement = document.getElementById("totalNominalPembayaran");
   if (!tbody) return;
@@ -3060,6 +3062,7 @@ async function loadTransaksi(forceRefresh = false) {
       apiRequest("/api/pembayaran/menunggu")
     ]);
 
+    if (requestId !== pembayaranRequestId) return;
     const metodeFilter = norm(document.getElementById("filterMetodePembayaran")?.value);
     const statusFilter = norm(document.getElementById("filterStatusPembayaran")?.value);
 
@@ -3440,12 +3443,14 @@ async function loadTransaksi(forceRefresh = false) {
   ========================================================= */
 
   async function loadRiwayat() {
+  const requestId = ++riwayatRequestId;
   const tbody = document.getElementById("tabelRiwayat");
   if (!tbody) return;
   if (!tbody.children.length) tbody.innerHTML = `<tr><td colspan="6">Memuat data...</td></tr>`;
 
   try {
     const list = await loadTransaksi();
+    if (requestId !== riwayatRequestId) return;
 
     const metode = String(document.getElementById("filterMetodeRiwayat")?.value || "").trim().toUpperCase();
     const status = String(document.getElementById("filterStatusRiwayat")?.value || "").trim().toUpperCase();
@@ -4240,30 +4245,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
-/* AMIH_AUTO_REFRESH_KASIR */
-(function(){
-  let busy = false;
-  setInterval(async function(){
-    if (busy || document.hidden) return;
-    busy = true;
-    try {
-      const active = document.querySelector(".page-section:not(.d-none)");
-      const id = active ? active.id.toLowerCase() : "";
-      if (id.includes("dashboard")) await loadDashboard();
-      else if (id.includes("pembayaran")) await loadPembayaran();
-      else if (id.includes("riwayat")) await loadRiwayat();
-    } catch(e) {
-      console.warn("Auto refresh kasir:", e);
-    } finally {
-      busy = false;
-    }
-  }, 3000);
-})();
+/* Auto-refresh dimatikan agar tabel tidak berkedip dan menimpa filter. */
 </script>
 
 <script src="/js/dashboard-mobile.js?v=1"></script>
 </body>
 </html>
+
 
 
 
