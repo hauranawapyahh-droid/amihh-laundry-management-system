@@ -720,9 +720,10 @@ $('xls').onclick=()=>{
 $("pdfRiwayat").onclick=()=>{const data=rows();const w=window.open("","_blank");if(!w){alert("Izinkan pop-up untuk membuat PDF.");return;}const e=v=>String(v??"-").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");const body=data.map((x,i)=>`<tr><td>${i+1}</td><td>${e(x.kode)}</td><td>${e(x.tgl)}</td><td>${e(x.pel)}</td><td>${e(x.lay)}</td><td>${e(x.kasir)}</td><td>Rp ${Number(x.total||0).toLocaleString("id-ID")}</td><td>${x.lunas?"Lunas":"Belum Bayar"}</td><td>${e(x.pr)}</td></tr>`).join("");w.document.write(`<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>Riwayat Transaksi - Amih Laundry</title><style>body{font-family:Arial;padding:20px;color:#1f2937}h2{color:#164e8b}table{width:100%;border-collapse:collapse;font-size:10px}th,td{border:1px solid #ccc;padding:7px;text-align:left}th{background:#eaf3ff} @page{size:landscape;margin:12mm}</style></head><body><h2>AMIH LAUNDRY</h2><h3>Riwayat Transaksi</h3><p>Tanggal cetak: ${new Date().toLocaleString("id-ID")}</p><p>Jumlah transaksi: ${data.length}</p><table><thead><tr><th>No</th><th>Kode</th><th>Tanggal</th><th>Pelanggan</th><th>Layanan</th><th>Kasir</th><th>Total</th><th>Pembayaran</th><th>Proses</th></tr></thead><tbody>${body}</tbody></table></body></html>`);w.document.close();w.focus();setTimeout(()=>w.print(),500);};/* Default tanggal laporan Owner */
 
 {const r=rentangLaporan('harian');$('laporanMulai').value=r.awal;$('laporanAkhir').value=r.akhir;}
-/* AMIH-LAPORAN-CEPAT-V1 */
+/* AMIH-LAPORAN-CEPAT-V2 */
 (function(){
   const NAMA_JENIS = {harian:'Harian', mingguan:'Mingguan', bulanan:'Bulanan', tahunan:'Tahunan'};
+  const SATUAN = {harian:'hari', mingguan:'minggu', bulanan:'bulan', tahunan:'tahun'};
   const escL = s => String(s == null ? '-' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const p2 = n => String(n).padStart(2, '0');
   const iso = d => d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate());
@@ -730,7 +731,7 @@ $("pdfRiwayat").onclick=()=>{const data=rows();const w=window.open("","_blank");
   const tgl = (s, hari) => dariIso(s).toLocaleDateString('id-ID', Object.assign(hari ? {weekday:'long'} : {}, {day:'numeric', month:'long', year:'numeric'}));
   const jml = (arr, f) => arr.reduce((n, x) => n + (Number(x[f]) || 0), 0);
 
-  function rentang(jenis){
+  function rentangSekarang(jenis){
     const now = new Date();
     let a = new Date(now), b = new Date(now);
     if(jenis === 'mingguan'){
@@ -746,6 +747,16 @@ $("pdfRiwayat").onclick=()=>{const data=rows();const w=window.open("","_blank");
     return { awal: iso(a), akhir: iso(b) };
   }
 
+  function rentangSemua(jenis){
+    if(jenis === 'harian') return rentangSekarang('harian');
+    const semua = [];
+    (Array.isArray(trx) ? trx : []).forEach(x => { if(x.tgl) semua.push(x.tgl); });
+    (Array.isArray(bia) ? bia : []).forEach(x => { if(x.tgl) semua.push(x.tgl); });
+    if(!semua.length) return rentangSekarang(jenis);
+    semua.sort();
+    return { awal: semua[0], akhir: semua[semua.length - 1] };
+  }
+
   function kunci(jenis, t){
     if(jenis === 'harian') return t;
     if(jenis === 'bulanan') return t.slice(0, 7);
@@ -755,14 +766,16 @@ $("pdfRiwayat").onclick=()=>{const data=rows();const w=window.open("","_blank");
     return iso(d);
   }
 
-  function labelP(jenis, k, awal, akhir){
+  function labelP(jenis, k, awal, akhir, cepat){
     if(jenis === 'harian') return tgl(k, true);
     if(jenis === 'mingguan'){
       const s = dariIso(k), e = new Date(s);
       e.setDate(e.getDate() + 6);
       let a = iso(s), b = iso(e);
-      if(a < awal) a = awal;
-      if(b > akhir) b = akhir;
+      if(!cepat){
+        if(a < awal) a = awal;
+        if(b > akhir) b = akhir;
+      }
       return 'Dari ' + tgl(a) + ' sampai ' + tgl(b);
     }
     if(jenis === 'bulanan'){
@@ -772,18 +785,14 @@ $("pdfRiwayat").onclick=()=>{const data=rows();const w=window.open("","_blank");
     return 'Tahun ' + k;
   }
 
-  function teksPeriode(jenis, awal, akhir, cepat){
-    if(!cepat) return 'Dari ' + tgl(awal) + ' sampai ' + tgl(akhir);
-    if(jenis === 'harian') return tgl(awal, true);
-    if(jenis === 'mingguan') return 'Dari ' + tgl(awal) + ' sampai ' + tgl(akhir);
-    if(jenis === 'bulanan') return labelP('bulanan', awal.slice(0, 7), awal, akhir);
-    return 'Tahun ' + awal.slice(0, 4);
-  }
-
   const kotakAngka = (judul, nilai, warna) =>
     '<div class="col-6 col-lg-3"><div class="stat-card" style="min-height:0;padding:16px">' +
     '<div class="stat-title">' + judul + '</div>' +
     '<div class="stat-value" style="font-size:20px' + (warna ? ';color:' + warna : '') + '">' + nilai + '</div></div></div>';
+
+  const banner = (judul, isi) =>
+    '<div class="alert alert-info d-flex gap-2 align-items-start mb-3"><i class="bi bi-info-circle mt-1"></i><div>' +
+    '<div class="fw-semibold">' + judul + '</div><div class="small">' + isi + '</div></div></div>';
 
   function bangunLaporan(jenis, awal, akhir, cepat){
     const semuaT = Array.isArray(trx) ? trx : [];
@@ -791,17 +800,14 @@ $("pdfRiwayat").onclick=()=>{const data=rows();const w=window.open("","_blank");
     const T = semuaT.filter(x => x.tgl && x.tgl >= awal && x.tgl <= akhir);
     const B = semuaB.filter(x => x.tgl && x.tgl >= awal && x.tgl <= akhir);
     const adaData = T.length > 0 || B.length > 0;
-
-    const banner =
-      '<div class="alert alert-info d-flex gap-2 align-items-start mb-3"><i class="bi bi-info-circle mt-1"></i><div>' +
-      '<div class="fw-semibold">Laporan ' + NAMA_JENIS[jenis] + ' &mdash; ' + escL(teksPeriode(jenis, awal, akhir, cepat)) + '</div>' +
-      '<div class="small">Hanya menampilkan data pada periode ini, bukan seluruh data.</div></div></div>';
+    const satuan = SATUAN[jenis];
+    const judul = 'Laporan ' + NAMA_JENIS[jenis];
 
     if(!semuaT.length && !semuaB.length){
-      return { html: banner + '<div class="empty-state">Data masih dimuat atau belum ada data sama sekali. Coba lagi beberapa detik.</div>', adaData: false };
+      return { html: banner(judul, 'Data masih dimuat atau belum ada data sama sekali.') + '<div class="empty-state">Coba lagi beberapa detik.</div>', adaData: false };
     }
     if(!adaData && !cepat){
-      return { html: banner + '<div class="empty-state">Tidak ada transaksi atau biaya pada rentang tanggal ini.</div>', adaData: false };
+      return { html: banner(judul + ' &mdash; Dari ' + escL(tgl(awal)) + ' sampai ' + escL(tgl(akhir)), 'Hanya menampilkan data pada rentang tanggal ini.') + '<div class="empty-state">Tidak ada transaksi atau biaya pada rentang tanggal ini.</div>', adaData: false };
     }
 
     const groups = new Map();
@@ -809,13 +815,26 @@ $("pdfRiwayat").onclick=()=>{const data=rows();const w=window.open("","_blank");
     T.forEach(x => add(kunci(jenis, x.tgl), 'trx', x));
     B.forEach(x => add(kunci(jenis, x.tgl), 'bia', x));
     if(!groups.size) groups.set(kunci(jenis, awal), {trx: [], bia: []});
+    const n = groups.size;
+
+    let bannerHtml;
+    if(cepat && jenis === 'harian'){
+      bannerHtml = banner(judul + ' &mdash; ' + escL(tgl(awal, true)), 'Hanya menampilkan data pada hari ini, bukan seluruh data.');
+    } else if(cepat){
+      bannerHtml = banner(judul + ' &mdash; dipisah per ' + satuan,
+        'Setiap kotak adalah satu ' + satuan + (jenis === 'mingguan' ? ' (Senin sampai Minggu)' : '') +
+        '. Hanya ' + satuan + ' yang ada datanya yang ditampilkan: ' + n + ' ' + satuan + '.');
+    } else {
+      bannerHtml = banner(judul + ' &mdash; Dari ' + escL(tgl(awal)) + ' sampai ' + escL(tgl(akhir)),
+        'Hanya menampilkan data pada rentang tanggal ini, dipisah per ' + satuan + ' (' + n + ' kotak).');
+    }
 
     const penTotal = jml(T.filter(x => x.lunas), 'total');
     const biaTotal = jml(B, 'jumlah');
     let ringkasan = '';
-    if(groups.size > 1){
+    if(!cepat && n > 1){
       ringkasan =
-        '<div class="card-box mb-3"><div class="card-title mb-3">Ringkasan Seluruh Periode yang Dipilih</div><div class="row g-3">' +
+        '<div class="card-box mb-3"><div class="card-title mb-3">Ringkasan Seluruh Rentang yang Dipilih</div><div class="row g-3">' +
         kotakAngka('Pendapatan', rp(penTotal)) +
         kotakAngka('Biaya Operasional', rp(biaTotal)) +
         kotakAngka('Keuntungan Bersih', rp(penTotal - biaTotal), (penTotal - biaTotal) < 0 ? '#dc2626' : '#15803d') +
@@ -838,7 +857,7 @@ $("pdfRiwayat").onclick=()=>{const data=rows();const w=window.open("","_blank");
         '<tr><td colspan="4" class="text-center text-muted">Tidak ada biaya operasional pada periode ini</td></tr>';
 
       return '<div class="card-box mb-3">' +
-        '<div class="mb-3"><div class="card-title mb-0">' + escL(labelP(jenis, k, awal, akhir)) + '</div>' +
+        '<div class="mb-3"><div class="card-title mb-0">' + escL(labelP(jenis, k, awal, akhir, cepat)) + '</div>' +
         '<div class="card-subtitle">' + g.trx.length + ' transaksi &bull; ' + lunas.length + ' lunas</div></div>' +
         '<div class="row g-3 mb-3">' +
           kotakAngka('Pendapatan', rp(pen)) +
@@ -853,7 +872,7 @@ $("pdfRiwayat").onclick=()=>{const data=rows();const w=window.open("","_blank");
         '</div>';
     }).join('');
 
-    return { html: banner + ringkasan + kotak, adaData: adaData };
+    return { html: bannerHtml + ringkasan + kotak, adaData: adaData };
   }
 
   /* ---------- Jendela laporan cepat (dari kotak di Dashboard) ---------- */
@@ -882,7 +901,7 @@ $("pdfRiwayat").onclick=()=>{const data=rows();const w=window.open("","_blank");
   }
 
   function laporanCepat(jenis){
-    const r = rentang(jenis);
+    const r = rentangSemua(jenis);
     const j = document.getElementById('laporanJenis'), m = document.getElementById('laporanMulai'), a = document.getElementById('laporanAkhir');
     if(j) j.value = jenis;
     if(m) m.value = r.awal;
@@ -923,7 +942,7 @@ $("pdfRiwayat").onclick=()=>{const data=rows();const w=window.open("","_blank");
 
   const elJenis = document.getElementById('laporanJenis');
   if(elJenis) elJenis.addEventListener('change', function(){
-    const r = rentang(elJenis.value);
+    const r = rentangSekarang(elJenis.value);
     document.getElementById('laporanMulai').value = r.awal;
     document.getElementById('laporanAkhir').value = r.akhir;
     segarkanPratinjau();
