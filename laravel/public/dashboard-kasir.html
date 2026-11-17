@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
@@ -1598,7 +1598,9 @@
 
   let pelangganList = [];
   let layananList = [];
-  let transaksiList = [];`r`n  let pembayaranRequestId = 0;`r`n  let riwayatRequestId = 0;
+  let transaksiList = [];
+  let pembayaranRequestId = 0;
+  let riwayatRequestId = 0;
 
   let selectedServices = {};
 
@@ -1887,6 +1889,7 @@
       });
       if (hasil.success === false) throw new Error(hasil.message || "Gagal menolak bukti.");
       alert(hasil.message || "Bukti berhasil ditolak.");
+      await loadTransaksi(true);
       await loadPembayaran();
     } catch (error) {
       alert(error.message || "Gagal menolak bukti.");
@@ -1898,10 +1901,12 @@
     if (!tbody.children.length) tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Memuat pembayaran...</div></td></tr>`;
 
     try {
-      const [list, hasilPending] = await Promise.all([
-        loadTransaksi(),
-        apiRequest("/api/pembayaran/menunggu")
-      ]);
+      const [r1, r2] = await Promise.allSettled([
+      loadTransaksi(),
+      apiRequest("/api/pembayaran/menunggu")
+    ]);
+    const list = r1.status === "fulfilled" ? r1.value : transaksiList;
+    const hasilPending = r2.status === "fulfilled" ? r2.value : { data: [] };
 
       const metodeFilter = (document.getElementById("filterMetodePembayaran")?.value || "").toUpperCase();
       const statusFilter = (document.getElementById("filterStatusPembayaran")?.value || "").toUpperCase();
@@ -2006,6 +2011,7 @@
       }
 
       alert(hasil.message || "Pembayaran berhasil diverifikasi.");
+      await loadTransaksi(true);
       await loadPembayaran();
     } catch (error) {
       console.error(error);
@@ -2680,8 +2686,7 @@ async function loadPelanggan() {
         );
       }
       resetTransaksi();
-
-
+      await loadTransaksi(true);
       await loadDashboard();
 
 
@@ -2744,31 +2749,23 @@ async function loadPelanggan() {
 let transaksiCachePromise = null;
 
 async function loadTransaksi(forceRefresh = false) {
-  if (!forceRefresh && transaksiList.length && Date.now() - transaksiCacheAt < 15000) {
-    return transaksiList;
-  }
-  if (!forceRefresh && transaksiCachePromise) return transaksiCachePromise;
+  const masihFresh = Date.now() - transaksiCacheAt < 15000;
+  if (!forceRefresh && transaksiList.length && masihFresh) return transaksiList;
+  if (transaksiCachePromise) return transaksiCachePromise;
 
-  transaksiCachePromise = (async () => {
-    try {
-      const response = await apiRequest("/api/transaksi");
-      let data = response.data;
-      if (Array.isArray(data)) transaksiList = data;
-      else if (data && Array.isArray(data.data)) transaksiList = data.data;
-      else transaksiList = [];
+  transaksiCachePromise = apiRequest("/api/transaksi")
+    .then(response => {
+      const data = response.data;
+      transaksiList = Array.isArray(data) ? data
+                    : Array.isArray(data?.data) ? data.data : [];
       transaksiCacheAt = Date.now();
-      console.log("TRANSAKSI YANG DIBACA FRONTEND:", transaksiList);
       return transaksiList;
-    } catch (error) {
+    })
+    .catch(error => {
       console.error("GAGAL LOAD TRANSAKSI:", error);
-      alert("Gagal mengambil data transaksi dari server.\n\n" + error.message);
-      transaksiList = [];
-      transaksiCacheAt = 0;
-      return [];
-    } finally {
-      transaksiCachePromise = null;
-    }
-  })();
+      return transaksiList;
+    })
+    .finally(() => { transaksiCachePromise = null; });
 
   return transaksiCachePromise;
 }
@@ -3042,6 +3039,7 @@ async function loadTransaksi(forceRefresh = false) {
       });
       if (hasil.success === false) throw new Error(hasil.message || "Gagal menolak bukti.");
       alert(hasil.message || "Bukti berhasil ditolak.");
+      await loadTransaksi(true);
       await loadPembayaran();
     } catch (error) {
       alert(error.message || "Gagal menolak bukti.");
@@ -3057,10 +3055,12 @@ async function loadTransaksi(forceRefresh = false) {
   const norm = v => String(v ?? "").trim().toUpperCase();
 
   try {
-    const [list, hasilPending] = await Promise.all([
+    const [r1, r2] = await Promise.allSettled([
       loadTransaksi(),
       apiRequest("/api/pembayaran/menunggu")
     ]);
+    const list = r1.status === "fulfilled" ? r1.value : transaksiList;
+    const hasilPending = r2.status === "fulfilled" ? r2.value : { data: [] };
 
     if (requestId !== pembayaranRequestId) return;
     const metodeFilter = norm(document.getElementById("filterMetodePembayaran")?.value);
@@ -3185,6 +3185,7 @@ async function loadTransaksi(forceRefresh = false) {
       }
 
       alert(hasil.message || "Pembayaran berhasil diverifikasi.");
+      await loadTransaksi(true);
       await loadPembayaran();
     } catch (error) {
       console.error(error);
@@ -3422,6 +3423,7 @@ async function loadTransaksi(forceRefresh = false) {
         null;
 
 
+      await loadTransaksi(true);
       await loadPembayaran();
 
       await loadDashboard();
@@ -4251,6 +4253,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <script src="/js/dashboard-mobile.js?v=1"></script>
 </body>
 </html>
+
 
 
 
