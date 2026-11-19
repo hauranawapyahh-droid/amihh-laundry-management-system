@@ -17,3 +17,14 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+
+# jangan ikut ke repo
+amih_laundry_db.sql
+amih_laundry_db_import.sql
+backup-amih-sebelum-akun.sql
+import_siap.sql
+debug-*.txt
+project-dump.txt
+*.zip
+deploy-upload/
+*.bak
