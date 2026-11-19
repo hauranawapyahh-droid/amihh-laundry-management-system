@@ -104,10 +104,38 @@ Route::middleware('jwt')->group(function () {
     Route::middleware('role:CUSTOMER')->prefix('customer')->group(function () {
         Route::get('/dashboard', [CustomerController::class, 'dashboard']);
         Route::put('/password', [CustomerController::class, 'ubahPassword']);
+        Route::post('/email-pemulihan/kirim-otp', [CustomerController::class, 'kirimOtpEmail']);
+        Route::post('/email-pemulihan/verifikasi-otp', [CustomerController::class, 'verifikasiOtpEmail']);
 
         Route::post(
             '/transaksi/{id}/bukti-pembayaran',
             [CustomerController::class, 'unggahBukti']
         );
     });
+});
+
+// Pemulihan akun pelanggan menggunakan email terverifikasi
+\Illuminate\Support\Facades\Route::prefix('pemulihan-email')->middleware('throttle:10,1')->group(function () {
+    $c = \App\Http\Controllers\PemulihanEmailController::class;
+    \Illuminate\Support\Facades\Route::post('/kirim-otp', [$c, 'kirimOtp']);
+    \Illuminate\Support\Facades\Route::post('/verifikasi-otp', [$c, 'verifikasiOtp']);
+    \Illuminate\Support\Facades\Route::post('/reset-password', [$c, 'resetPassword']);
+});
+// Booking antrean
+\Illuminate\Support\Facades\Route::middleware('jwt')->prefix('booking')->group(function () {
+    $c = \App\Http\Controllers\BookingController::class;
+    \Illuminate\Support\Facades\Route::get('/', [$c, 'index']);
+    \Illuminate\Support\Facades\Route::post('/', [$c, 'store']);
+    \Illuminate\Support\Facades\Route::post('/{id}/panggil', [$c, 'panggil']);
+    \Illuminate\Support\Facades\Route::post('/{id}/konfirmasi', [$c, 'konfirmasi']);
+    \Illuminate\Support\Facades\Route::post('/{id}/batal', [$c, 'batal']);
+    \Illuminate\Support\Facades\Route::post('/{id}/selesai', [$c, 'selesai']);
+});
+
+// Pemulihan akun pelanggan (publik, dibatasi)
+\Illuminate\Support\Facades\Route::prefix('pemulihan')->middleware('throttle:10,1')->group(function () {
+    $c = \App\Http\Controllers\PemulihanAkunController::class;
+    \Illuminate\Support\Facades\Route::post('/kirim-otp', [$c, 'kirimOtp']);
+    \Illuminate\Support\Facades\Route::post('/verifikasi-otp', [$c, 'verifikasiOtp']);
+    \Illuminate\Support\Facades\Route::post('/reset-password', [$c, 'resetPassword']);
 });

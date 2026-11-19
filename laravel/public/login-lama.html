@@ -299,5 +299,59 @@ document.getElementById("contactAdmin").addEventListener("click",function(e){
   alert("Silakan hubungi Admin Amih Laundry untuk membuat akun.");
 });
 </script>
+<script id="wa-admin-final">
+(function () {
+  var NO = "6285794590048";
+  var PESAN = "Halo Admin Amih Laundry, saya ingin bertanya mengenai layanan atau mengalami kendala pada sistem.";
+  var WA_URL = "https://wa.me/" + NO + "?text=" + encodeURIComponent(PESAN);
+
+  function cocok(re) {
+    var hasil = [];
+    document.querySelectorAll("body *").forEach(function (el) {
+      if (/^(SCRIPT|STYLE)$/.test(el.tagName)) return;
+      if (!re.test(el.textContent)) return;
+      var adaAnak = Array.prototype.some.call(el.children, function (c) { return re.test(c.textContent); });
+      if (!adaAnak) hasil.push(el);
+    });
+    return hasil;
+  }
+
+  // 1. hapus link "Lupa password?"
+  cocok(/lupa\s*(username|password|pw)/i).forEach(function (el) {
+    var tgt = el.closest("a,button") || el;
+    if (tgt.parentNode) tgt.parentNode.removeChild(tgt);
+  });
+
+  // 2. ganti teks di bawah tombol Masuk
+  cocok(/belum\s*punya\s*akun/i).forEach(function (el) {
+    var lama = el.querySelector("a,button");
+    var a = document.createElement("a");
+    a.href = WA_URL;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.setAttribute("data-wa-admin", "1");
+    a.textContent = "Hubungi Admin";
+    if (lama) {
+      a.className = lama.className;
+      var st = lama.getAttribute("style");
+      if (st) a.setAttribute("style", st);
+    }
+    el.textContent = "Ada kendala atau butuh bantuan? ";
+    el.appendChild(a);
+    el.appendChild(document.createTextNode("."));
+  });
+
+  // 3. semua tombol "Hubungi Admin" langsung membuka WhatsApp
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest("a,button");
+    if (!a || !/hubungi\s*admin/i.test(a.textContent)) return;
+    e.stopImmediatePropagation();
+    if (!a.hasAttribute("data-wa-admin")) {
+      e.preventDefault();
+      window.open(WA_URL, "_blank", "noopener");
+    }
+  }, true);
+})();
+</script>
 </body>
 </html>

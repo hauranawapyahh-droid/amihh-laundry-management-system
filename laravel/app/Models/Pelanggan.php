@@ -22,7 +22,14 @@ class Pelanggan extends Model
         'nama',
         'no_telepon',
         'alamat',
+        'email_pemulihan',
+        'email_pemulihan_verified_at',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user', 'id_user');
+    }
 
     public function transaksi()
     {
@@ -33,3 +40,5 @@ class Pelanggan extends Model
         );
     }
 }
+
+

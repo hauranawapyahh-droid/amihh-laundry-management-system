@@ -4251,6 +4251,194 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 <script src="/js/dashboard-mobile.js?v=1"></script>
+<script id="booking-kasir">
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var _api = apiRequest;
+  var DATA = [];
+  var STAT = {
+    MENUNGGU: ["badge-soft-accent", "Menunggu"], DIPANGGIL: ["badge-soft-secondary", "Dipanggil"],
+    DIKONFIRMASI: ["badge-soft-success", "Dikonfirmasi"], SELESAI: ["badge-soft-muted", "Selesai"],
+    DIBATALKAN: ["badge-soft-danger", "Dibatalkan"]
+  };
+
+  // ---- menu + halaman (disisipkan lewat JS) ----
+  var logoutLink = document.querySelector('.sidebar-menu a[onclick*="logout"]');
+  var link = document.createElement("a");
+  link.className = "menu-link";
+  link.setAttribute("data-page", "booking");
+  link.innerHTML = '<i class="bi bi-ticket-perforated"></i><span>Antrean Booking</span>';
+  logoutLink.parentNode.insertBefore(link, logoutLink);
+
+  document.querySelector(".content").insertAdjacentHTML("beforeend",
+    '<section id="page-booking" class="page-section d-none">' +
+    '<div class="page-header"><h2>Antrean Booking</h2><p>Booking dari pelanggan. Konfirmasi kedatangan, lalu lanjutkan ke transaksi.</p></div>' +
+    '<div class="card-box"><div class="row g-3 mb-3">' +
+    '<div class="col-md-8"><label class="form-label">Cari</label><input id="bkCari" class="form-control" placeholder="Nomor antrean, nama, atau no. HP..."></div>' +
+    '<div class="col-md-4"><label class="form-label">Status</label><select id="bkStatus" class="form-select">' +
+    '<option value="AKTIF">Antrean aktif</option><option value="MENUNGGU">Menunggu</option><option value="DIPANGGIL">Dipanggil</option>' +
+    '<option value="DIKONFIRMASI">Dikonfirmasi</option><option value="SELESAI">Selesai</option><option value="DIBATALKAN">Dibatalkan</option><option value="SEMUA">Semua (riwayat)</option></select></div></div>' +
+    '<div class="table-responsive"><table class="table table-hover"><thead><tr><th>No. Antrean</th><th>Tanggal</th><th>Pelanggan</th><th>Layanan</th><th>Status</th><th>Aksi</th></tr></thead>' +
+    '<tbody id="bkTabel"><tr><td colspan="6"><div class="empty-state">Memuat data...</div></td></tr></tbody></table></div></div></section>');
+
+  document.body.insertAdjacentHTML("beforeend",
+    '<div class="modal fade" id="modalBookingDetail" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">' +
+    '<div class="modal-header"><h5 class="modal-title">Detail Booking</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>' +
+    '<div class="modal-body" id="bkDetailBody"></div></div></div></div>');
+
+  function cari(id) { return DATA.filter(function (b) { return Number(b.id_booking) === Number(id); })[0]; }
+  function layText(b) {
+    return (b.detail || []).map(function (d) { return escapeHtml(d.nama_layanan) + " - " + Number(d.jumlah) + " " + escapeHtml(d.jenis_satuan || ""); }).join("<br>") || "-";
+  }
+  function aksi(b) {
+    var id = Number(b.id_booking);
+    var h = '<div class="d-flex flex-wrap gap-1"><button class="btn btn-sm btn-outline-secondary" onclick="bkDetail(' + id + ')">Detail</button>';
+    if (b.status === "MENUNGGU") h += '<button class="btn btn-sm btn-outline-primary" onclick="bkAksi(' + id + ',\'panggil\')">Panggil</button>';
+    if (b.status === "MENUNGGU" || b.status === "DIPANGGIL") h += '<button class="btn btn-sm btn-success" onclick="bkAksi(' + id + ',\'konfirmasi\')">Konfirmasi Kedatangan</button>';
+    if (b.status === "DIKONFIRMASI") h += '<button class="btn btn-sm btn-primary" onclick="bkBuatTransaksi(' + id + ')">Buat Transaksi</button>';
+    if (b.status !== "SELESAI" && b.status !== "DIBATALKAN") h += '<button class="btn btn-sm btn-outline-danger" onclick="bkBatal(' + id + ')">Batal</button>';
+    return h + "</div>";
+  }
+  function render() {
+    var q = $("bkCari").value.toLowerCase().trim(), st = $("bkStatus").value;
+    var list = DATA.filter(function (b) {
+      var okS = st === "SEMUA" || (st === "AKTIF" ? ["MENUNGGU", "DIPANGGIL", "DIKONFIRMASI"].indexOf(b.status) >= 0 : b.status === st);
+      var okQ = !q || (String(b.nomor_antrean) + " " + String(b.nama_pelanggan) + " " + String(b.no_telepon)).toLowerCase().indexOf(q) >= 0;
+      return okS && okQ;
+    });
+    $("bkTabel").innerHTML = list.length ? list.map(function (b) {
+      var s = STAT[b.status] || ["badge-soft-muted", b.status];
+      return "<tr><td><strong>" + escapeHtml(b.nomor_antrean) + "</strong></td><td>" + escapeHtml(b.tanggal_booking) + "</td><td>" +
+        escapeHtml(b.nama_pelanggan) + '<div class="small text-muted">' + escapeHtml(b.no_telepon) + "</div></td><td>" + layText(b) +
+        '</td><td><span class="badge-pill ' + s[0] + '">' + s[1] + "</span></td><td>" + aksi(b) + "</td></tr>";
+    }).join("") : '<tr><td colspan="6"><div class="empty-state">Tidak ada booking.</div></td></tr>';
+  }
+  function muat() {
+    return _api("/api/booking").then(function (j) { DATA = j.data || []; render(); })
+      .catch(function (e) { $("bkTabel").innerHTML = '<tr><td colspan="6"><div class="empty-state text-danger">' + escapeHtml(e.message) + "</div></td></tr>"; });
+  }
+
+  link.addEventListener("click", function () { bukaPage("booking"); muat(); });
+  $("bkCari").addEventListener("input", render);
+  $("bkStatus").addEventListener("change", render);
+  setInterval(function () {
+    var sec = $("page-booking");
+    if (sec && !sec.classList.contains("d-none") && !document.hidden) muat();
+  }, 15000);
+
+  window.bkDetail = function (id) {
+    var b = cari(id); if (!b) return;
+    var s = STAT[b.status] || ["badge-soft-muted", b.status];
+    $("bkDetailBody").innerHTML =
+      '<div class="d-flex justify-content-between align-items-center mb-2"><div class="fs-4 fw-bold">' + escapeHtml(b.nomor_antrean) + '</div><span class="badge-pill ' + s[0] + '">' + s[1] + "</span></div>" +
+      '<div class="summary-row"><span>Pelanggan</span><strong>' + escapeHtml(b.nama_pelanggan) + "</strong></div>" +
+      '<div class="summary-row"><span>No. HP</span><span>' + escapeHtml(b.no_telepon) + "</span></div>" +
+      '<div class="summary-row"><span>Tanggal datang</span><span>' + escapeHtml(b.tanggal_booking) + "</span></div>" +
+      '<div class="summary-row"><span>Layanan</span><span class="text-end">' + layText(b) + "</span></div>" +
+      '<div class="summary-row"><span>Catatan</span><span>' + escapeHtml(b.catatan || "-") + "</span></div>" +
+      (b.alasan_batal ? '<div class="summary-row"><span>Alasan batal</span><span>' + escapeHtml(b.alasan_batal) + "</span></div>" : "");
+    bootstrap.Modal.getOrCreateInstance($("modalBookingDetail")).show();
+  };
+  window.bkAksi = function (id, jenis) {
+    _api("/api/booking/" + Number(id) + "/" + jenis, { method: "POST", body: JSON.stringify({}) })
+      .then(muat).catch(function (e) { alert(e.message); });
+  };
+  window.bkBatal = function (id) {
+    var a = prompt("Alasan pembatalan booking:");
+    if (!a || !a.trim()) return;
+    _api("/api/booking/" + Number(id) + "/batal", { method: "POST", body: JSON.stringify({ alasan: a.trim() }) })
+      .then(muat).catch(function (e) { alert(e.message); });
+  };
+  window.bkBuatTransaksi = async function (id) {
+    var b = cari(id); if (!b) return;
+    await loadPelanggan();
+    window.__bookingAktif = Number(b.id_booking);
+    selectedServices = {};
+    (b.detail || []).forEach(function (d) { selectedServices[Number(d.id_layanan)] = Number(d.jumlah); });
+    bukaPage("transaksi");
+    $("selectPelanggan").value = String(b.id_pelanggan);
+    tampilPelangganTerpilih();
+    $("catatanTransaksi").value = "Booking " + b.nomor_antrean + (b.catatan ? ": " + b.catatan : "");
+    await loadLayanan();
+    updateSummary();
+  };
+
+  // ---- booking otomatis ditandai selesai setelah transaksi berhasil dibuat ----
+  apiRequest = async function (url, options) {
+    var res = await _api(url, options);
+    try {
+      var isTrx = url === "/api/transaksi" && options && String(options.method).toUpperCase() === "POST";
+      if (isTrx && window.__bookingAktif) {
+        var t = (res && res.data && (res.data.transaksi || res.data)) || {};
+        var idT = t.id_transaksi || t.id;
+        if (idT) {
+          var bid = window.__bookingAktif;
+          window.__bookingAktif = null;
+          await _api("/api/booking/" + bid + "/selesai", { method: "POST", body: JSON.stringify({ id_transaksi: idT }) });
+          muat();
+        }
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Transaksi berhasil, tetapi booking gagal ditandai selesai: " + e.message);
+    }
+    return res;
+  };
+  var _reset = resetTransaksi;
+  resetTransaksi = function () { window.__bookingAktif = null; return _reset.apply(this, arguments); };
+
+  // ---- Riwayat: tambah kolom Metode Pembayaran ----
+  var METODE = { TUNAI: "Tunai", QRIS: "QRIS", TRANSFER_BANK: "Transfer", TRANSFER: "Transfer" };
+  function pays(item) { return Array.isArray(item.pembayaran) ? item.pembayaran : (item.pembayaran ? [item.pembayaran] : []); }
+  function metodeItem(item) {
+    var p = pays(item).slice().sort(function (a, b) { return Number(b.id_pembayaran || 0) - Number(a.id_pembayaran || 0); })[0];
+    var m = String((p && p.metode_pembayaran) || item.metode_pembayaran || "").trim().toUpperCase();
+    return m ? (METODE[m] || m) : "\u2014";
+  }
+  var trHead = $("tabelRiwayat").closest("table").querySelector("thead tr");
+  if (trHead && !/Metode/i.test(trHead.textContent)) {
+    var th = document.createElement("th");
+    th.textContent = "Metode Pembayaran";
+    trHead.insertBefore(th, trHead.children[3]);
+  }
+  loadRiwayat = async function () {
+    var requestId = ++riwayatRequestId;
+    var tbody = $("tabelRiwayat");
+    if (!tbody) return;
+    try {
+      var list = await loadTransaksi();
+      if (requestId !== riwayatRequestId) return;
+      var metode = String(($("filterMetodeRiwayat") || {}).value || "").trim().toUpperCase();
+      var status = String(($("filterStatusRiwayat") || {}).value || "").trim().toUpperCase();
+      var filtered = list.filter(function (item) {
+        var okM = !metode || String(item.metode_pembayaran || "").trim().toUpperCase() === metode ||
+          pays(item).some(function (p) { return String((p && p.metode_pembayaran) || "").trim().toUpperCase() === metode; });
+        var okS = !status || String(item.status_pengambilan || "").trim().toUpperCase() === status;
+        return okM && okS;
+      }).sort(function (a, b) { return Number(b.id_transaksi) - Number(a.id_transaksi); });
+      var total = filtered.reduce(function (s, i) { return s + Number(i.total_harga || 0); }, 0);
+      var te = $("totalNominalRiwayat");
+      if (te) te.textContent = formatRupiah(total);
+      if (!filtered.length) {
+        tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state">Tidak ada transaksi yang sesuai filter.</div></td></tr>';
+        return;
+      }
+      tbody.innerHTML = filtered.map(function (item) {
+        return "<tr><td><span class=\"fw-semibold\">" + escapeHtml(item.kode_transaksi || "-") + "</span></td>" +
+          "<td>" + escapeHtml((item.pelanggan && item.pelanggan.nama) || "-") + "</td>" +
+          "<td>" + formatRupiah(item.total_harga) + "</td>" +
+          "<td>" + escapeHtml(metodeItem(item)) + "</td>" +
+          "<td>" + badgePembayaran(item.status_pembayaran) + "</td>" +
+          "<td>" + badgeProses(getStatusProses(item)) + "</td>" +
+          '<td><button class="btn btn-sm btn-outline-primary" onclick="lihatDetail(' + Number(item.id_transaksi) + ')"><i class="bi bi-eye"></i> Detail</button></td></tr>';
+      }).join("");
+    } catch (error) {
+      console.error("Gagal memuat riwayat:", error);
+      tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state">Gagal memuat riwayat: ' + escapeHtml(error.message || "Kesalahan server") + "</div></td></tr>";
+    }
+  };
+})();
+</script>
 </body>
 </html>
 

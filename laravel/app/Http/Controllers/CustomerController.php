@@ -8,6 +8,10 @@ use App\Models\Transaksi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Carbon;
 use App\Models\Pembayaran;
 
 /**
@@ -116,6 +120,8 @@ class CustomerController extends Controller
                     'no_telepon' => $pelanggan->no_telepon,
                     'alamat'     => $pelanggan->alamat,
                     'created_at' => $pelanggan->created_at ?? null,
+                    'email_pemulihan' => $pelanggan->email_pemulihan,
+                    'email_pemulihan_verified' => !empty($pelanggan->email_pemulihan_verified_at),
                 ],
                 'layanan'   => $layanan,
                 'transaksi' => $transaksi,
@@ -168,6 +174,122 @@ class CustomerController extends Controller
      * 1) lewat kolom pelanggan.id_user (kalau kolomnya ada)
      * 2) username user = no_telepon pelanggan
      */
+    public function kirimOtpEmail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()], 422);
+        }
+
+        $pelanggan = $this->cariPelanggan(auth()->user());
+
+        if (!$pelanggan) {
+            return response()->json(['success' => false, 'message' => 'Data pelanggan tidak ditemukan.'], 404);
+        }
+
+        $email = strtolower(trim($request->email));
+
+        $dipakai = Pelanggan::where('email_pemulihan', $email)
+            ->where('id_pelanggan', '!=', $pelanggan->id_pelanggan)
+            ->exists();
+
+        if ($dipakai) {
+            return response()->json(['success' => false, 'message' => 'Email sudah digunakan akun lain.'], 422);
+        }
+
+        $terakhir = DB::table('email_otp')
+            ->where('email', $email)
+            ->where('purpose', 'registrasi')
+            ->latest('id')
+            ->first();
+
+        if ($terakhir && Carbon::parse($terakhir->created_at)->addSeconds(60)->isFuture()) {
+            return response()->json(['success' => false, 'message' => 'Tunggu 60 detik sebelum meminta OTP lagi.'], 429);
+        }
+
+        $kode = (string) random_int(100000, 999999);
+
+        DB::table('email_otp')->where('email', $email)->where('purpose', 'registrasi')->delete();
+
+        DB::table('email_otp')->insert([
+            'email' => $email,
+            'purpose' => 'registrasi',
+            'code_hash' => Hash::make($kode),
+            'attempts' => 0,
+            'expires_at' => now()->addMinutes(5),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        try {
+            Mail::raw("Kode verifikasi email Amih Laundry: {$kode}\nKode berlaku selama 5 menit. Jangan berikan kode ini kepada siapa pun.", function ($message) use ($email) {
+                $message->to($email)->subject('Verifikasi Email Pemulihan Amih Laundry');
+            });
+        } catch (\Throwable $e) {
+            DB::table('email_otp')->where('email', $email)->where('purpose', 'registrasi')->delete();
+            return response()->json(['success' => false, 'message' => 'Email gagal dikirim. Periksa konfigurasi email aplikasi.'], 500);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Kode OTP berhasil dikirim ke email.']);
+    }
+
+    public function verifikasiOtpEmail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|max:255',
+            'kode' => 'required|digits:6',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()], 422);
+        }
+
+        $pelanggan = $this->cariPelanggan(auth()->user());
+
+        if (!$pelanggan) {
+            return response()->json(['success' => false, 'message' => 'Data pelanggan tidak ditemukan.'], 404);
+        }
+
+        $email = strtolower(trim($request->email));
+
+        $otp = DB::table('email_otp')
+            ->where('email', $email)
+            ->where('purpose', 'registrasi')
+            ->latest('id')
+            ->first();
+
+        if (!$otp || Carbon::parse($otp->expires_at)->isPast()) {
+            return response()->json(['success' => false, 'message' => 'OTP tidak ditemukan atau sudah kedaluwarsa.'], 422);
+        }
+
+        if ($otp->attempts >= 5) {
+            return response()->json(['success' => false, 'message' => 'Batas percobaan OTP habis. Minta kode baru.'], 429);
+        }
+
+        if (!Hash::check($request->kode, $otp->code_hash)) {
+            DB::table('email_otp')->where('id', $otp->id)->increment('attempts');
+            return response()->json(['success' => false, 'message' => 'Kode OTP salah.'], 422);
+        }
+
+        $dipakai = Pelanggan::where('email_pemulihan', $email)
+            ->where('id_pelanggan', '!=', $pelanggan->id_pelanggan)
+            ->exists();
+
+        if ($dipakai) {
+            return response()->json(['success' => false, 'message' => 'Email sudah digunakan akun lain.'], 422);
+        }
+
+        $pelanggan->email_pemulihan = $email;
+        $pelanggan->email_pemulihan_verified_at = now();
+        $pelanggan->save();
+
+        DB::table('email_otp')->where('id', $otp->id)->delete();
+
+        return response()->json(['success' => true, 'message' => 'Email pemulihan berhasil diverifikasi.']);
+    }
     private function cariPelanggan($user)
     {
         $table = (new Pelanggan())->getTable();
@@ -262,3 +384,4 @@ class CustomerController extends Controller
     ], 201);
 }
 }
+
