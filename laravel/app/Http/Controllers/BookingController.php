@@ -147,24 +147,38 @@ class BookingController extends Controller
             return $this->fail('Total laundry kiloan maksimal 10 kg dalam satu booking.');
         }
 
-        $id = DB::transaction(function () use ($data, $pid, $gabung) {
-            $tgl = $data['tanggal_booking'];
-            $urutan = ((int) DB::table('booking')->where('tanggal_booking', $tgl)->lockForUpdate()->max('urutan')) + 1;
-            $idB = DB::table('booking')->insertGetId([
-                'id_pelanggan' => $pid,
-                'tanggal_booking' => $tgl,
-                'urutan' => $urutan,
-                'nomor_antrean' => 'A-' . str_pad((string) $urutan, 3, '0', STR_PAD_LEFT),
-                'status' => 'MENUNGGU',
-                'catatan' => $data['catatan'] ?? null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ], 'id_booking');
-            foreach ($gabung as $idL => $jml) {
-                DB::table('booking_detail')->insert(['id_booking' => $idB, 'id_layanan' => $idL, 'jumlah' => $jml]);
+        $id = null;
+        for ($coba = 0; $coba < 8 && !$id; $coba++) {
+            try {
+                $id = DB::transaction(function () use ($data, $pid, $gabung) {
+                    $tgl = $data['tanggal_booking'];
+                    $urutan = ((int) DB::table('booking')->where('tanggal_booking', $tgl)->max('urutan')) + 1;
+                    $kode = 'A-' . \Illuminate\Support\Carbon::parse($tgl)->format('dmy') . '-' . str_pad((string) $urutan, 3, '0', STR_PAD_LEFT);
+                    $idB = DB::table('booking')->insertGetId([
+                        'id_pelanggan' => $pid,
+                        'tanggal_booking' => $tgl,
+                        'urutan' => $urutan,
+                        'nomor_antrean' => $kode,
+                        'status' => 'MENUNGGU',
+                        'catatan' => $data['catatan'] ?? null,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ], 'id_booking');
+                    foreach ($gabung as $idL => $jml) {
+                        DB::table('booking_detail')->insert(['id_booking' => $idB, 'id_layanan' => $idL, 'jumlah' => $jml]);
+                    }
+                    return $idB;
+                });
+            } catch (\Illuminate\Database\QueryException $e) {
+                if (($e->errorInfo[0] ?? '') !== '23000') {
+                    throw $e;
+                }
+                usleep(random_int(30000, 150000));
             }
-            return $idB;
-        });
+        }
+        if (!$id) {
+            return $this->fail('Antrean sedang ramai. Silakan coba lagi sebentar lagi.', 503);
+        }
 
         $baru = $this->hydrate(DB::table('booking')->where('id_booking', $id)->get())->first();
         return response()->json(['success' => true, 'message' => 'Booking berhasil dibuat.', 'data' => $baru], 201);
